@@ -2,7 +2,10 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 
-const API_URL = 'http://localhost:3001/api';
+import config from '../config';
+
+const API_URL = config.API_URL;
+
 
 const PremiumInvitation = ({ data, isEditMode = false, forceShowCover = false, onEdit = () => {} }) => {
   const location = useLocation();

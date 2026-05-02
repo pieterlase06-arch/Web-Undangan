@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 
-const API_URL = 'http://localhost:3001/api';
+import config from '../config';
+
+const API_URL = config.API_URL;
+
 
 const RSVPTracking = ({ guests }) => {
   const [rsvps, setRsvps] = useState([]);

@@ -379,25 +379,33 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
     <div className="space-y-4">
        {[
          { id: 'cover', name: 'Cover Frame (Amplop)', icon: 'mail', status: showCover ? 'Editing' : 'Hidden', toggle: () => setShowCover(!showCover) },
-         { id: 'bg', name: 'Background Frame', icon: 'image', status: 'Active', toggle: () => { setActiveTab('design'); setTimeout(() => document.getElementById('bg-section')?.scrollIntoView({ behavior: 'smooth' }), 100); } },
+         { id: 'bg', name: 'Background Frame', icon: 'image', status: 'Active', toggle: () => { setActiveTab('design'); setTimeout(() => document.getElementById('bg-section')?.scrollIntoView({ behavior: 'smooth' }), 100); }, canUpload: true },
          { id: 'floral', name: 'Premium Floral Art', icon: 'filter_vintage', status: 'Active', toggle: () => { setActiveTab('design'); setTimeout(() => document.getElementById('design-theme-section')?.scrollIntoView({ behavior: 'smooth' }), 100); } },
          { id: 'text', name: 'Core Typography', icon: 'text_fields', status: 'Active', toggle: () => { setActiveTab('content'); setTimeout(() => document.getElementById('basic-section')?.scrollIntoView({ behavior: 'smooth' }), 100); } },
        ].map(layer => (
          <div 
            key={layer.id} 
-           onClick={layer.toggle}
-           className={`flex items-center justify-between p-4 rounded-2xl border group cursor-pointer hover:translate-x-1 transition-all ${theme === 'dark' ? 'bg-slate-800/50 border-slate-700 hover:bg-slate-800' : 'bg-stone-50/50 border-stone-100 hover:bg-stone-50'} ${layer.status === 'Editing' ? 'ring-2 ring-[#C5A059]' : ''}`}
+           className={`flex items-center justify-between p-4 rounded-2xl border group transition-all ${theme === 'dark' ? 'bg-slate-800/50 border-slate-700' : 'bg-stone-50/50 border-stone-100'} ${layer.status === 'Editing' ? 'ring-2 ring-[#C5A059]' : ''}`}
          >
-            <div className="flex items-center gap-4">
+            <div onClick={layer.toggle} className="flex items-center gap-4 cursor-pointer flex-1">
                <span className="material-symbols-outlined text-[20px] text-stone-400 group-hover:text-[#C5A059] transition-colors">{layer.icon}</span>
                <div className="flex flex-col">
                  <span className={`text-[11px] font-black uppercase tracking-widest ${theme === 'dark' ? 'text-slate-300' : 'text-stone-700'}`}>{layer.name}</span>
                  <span className="text-[8px] text-stone-400 uppercase font-bold">{layer.status}</span>
                </div>
             </div>
-            <div className="flex items-center gap-2">
-               <span className="material-symbols-outlined text-[16px] text-stone-300 hover:text-stone-900 dark:hover:text-white transition-colors">lock</span>
-               <span className="material-symbols-outlined text-[18px] text-stone-300 group-hover:text-[#C5A059] transition-colors">{layer.status === 'Hidden' ? 'visibility_off' : 'visibility'}</span>
+            <div className="flex items-center gap-3">
+               {layer.canUpload && (
+                 <label className="p-2 text-stone-300 hover:text-[#C5A059] cursor-pointer transition-colors">
+                    <span className="material-symbols-outlined text-[18px]">upload</span>
+                    <input type="file" className="hidden" accept="image/*" onChange={(e) => {
+                       const file = e.target.files[0];
+                       if (file) updateData({ backgroundImage: URL.createObjectURL(file) });
+                    }} />
+                 </label>
+               )}
+               <span className="material-symbols-outlined text-[16px] text-stone-300 hover:text-stone-900 dark:hover:text-white transition-colors cursor-pointer">lock</span>
+               <span onClick={layer.toggle} className="material-symbols-outlined text-[18px] text-stone-300 group-hover:text-[#C5A059] transition-colors cursor-pointer">{layer.status === 'Hidden' ? 'visibility_off' : 'visibility'}</span>
             </div>
          </div>
        ))}

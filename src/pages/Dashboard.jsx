@@ -1,5 +1,26 @@
+import { useState, useEffect } from 'react';
+import config from '../config';
 
 const Dashboard = ({ setView, invitationData, guestCount, theme, onReset }) => {
+  const [liveStats, setLiveStats] = useState({ rsvps: 0, messages: 0 });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await fetch(`${config.API_URL}/data`);
+        if (res.ok) {
+          const data = await res.json();
+          setLiveStats({
+            rsvps: data.rsvps.length,
+            messages: data.messages.length
+          });
+        }
+      } catch (err) {
+        console.error("Failed to fetch dashboard stats:", err);
+      }
+    };
+    fetchStats();
+  }, []);
   const isDark = theme === 'dark';
   const cardClass = isDark ? 'bg-[#1e293b] border-slate-700' : 'bg-white border-stone-100';
   const textClass = isDark ? 'text-white' : 'text-stone-900';
@@ -28,14 +49,14 @@ const Dashboard = ({ setView, invitationData, guestCount, theme, onReset }) => {
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400">Active Design</p>
         </div>
         <div className={`${cardClass} p-6 lg:p-8 rounded-3xl border shadow-sm flex flex-col gap-4 transition-colors`}>
-          <span className="material-symbols-outlined text-blue-500 text-3xl">group</span>
-          <p className={`text-3xl lg:text-4xl serif font-bold ${textClass}`}>{guestCount}</p>
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400">Guests Tracked</p>
+          <span className="material-symbols-outlined text-green-500 text-3xl">event_available</span>
+          <p className={`text-3xl lg:text-4xl serif font-bold ${textClass}`}>{liveStats.rsvps}</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400">RSVP Confirmed</p>
         </div>
         <div className="bg-[#0F172A] p-6 lg:p-8 rounded-3xl shadow-2xl flex flex-col gap-4 text-white relative overflow-hidden sm:col-span-2 md:col-span-1">
-          <span className="material-symbols-outlined text-[#C5A059] text-3xl">auto_awesome</span>
-          <p className="text-3xl lg:text-4xl serif font-bold">12</p>
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400">Days to Event</p>
+          <span className="material-symbols-outlined text-[#C5A059] text-3xl">chat</span>
+          <p className="text-3xl lg:text-4xl serif font-bold">{liveStats.messages}</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400">Total Wishes</p>
           <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-white/5 blur-3xl rounded-full"></div>
         </div>
       </div>
@@ -64,7 +85,7 @@ const Dashboard = ({ setView, invitationData, guestCount, theme, onReset }) => {
                   <button onClick={() => setView('/editor')} className="bg-[#C5A059] text-white px-6 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-xl hover:brightness-110 transition-all">Resume Design</button>
                   <button 
                     onClick={() => {
-                      navigator.clipboard.writeText('https://pieterlase06-arch.github.io/Web-Undangan/');
+                      navigator.clipboard.writeText(`${config.BASE_URL}#/v`);
                       alert('Link copied to clipboard!');
                     }}
                     className={`px-6 py-3 border rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${isDark ? 'border-slate-700 text-slate-400 hover:bg-slate-800' : 'border-stone-200 text-stone-500 hover:bg-stone-50'}`}
