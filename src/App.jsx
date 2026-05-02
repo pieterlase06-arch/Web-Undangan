@@ -8,6 +8,7 @@ import GuestList from './pages/GuestList';
 import RSVPTracking from './pages/RSVPTracking';
 import Sidebar from './components/Sidebar';
 import PremiumInvitation from './components/PremiumInvitation';
+import config from './config';
 
 // Root Component to handle Routing
 function App() {
@@ -83,10 +84,9 @@ function AppContent() {
   const selectTemplate = (template) => {
     setInvitationData(prev => ({
       ...prev,
-      templateId: template.id,
-      primaryColor: template.primaryColor,
-      accentColor: template.accentColor,
-      fontFamily: template.fontFamily,
+      ...template,
+      partner1: prev.partner1 || 'Nama Mempelai 1',
+      partner2: prev.partner2 || 'Nama Mempelai 2',
     }));
     navigate('/editor');
   };
@@ -94,24 +94,20 @@ function AppContent() {
   const resetInvitation = async () => {
     if (window.confirm('Hapus seluruh data desain dan tanggapan tamu? Tindakan ini tidak dapat dibatalkan.')) {
       try {
-        // Wipe Backend Data
-        await fetch(`${config.API_URL}/all`, { method: 'DELETE' });
-        
-        // Reset Local State
+        // Reset Local State FIRST for immediate feedback
         setInvitationData(initialInvitation);
         setGuests([]);
+        localStorage.clear(); // Clear all including login/theme
         
-        // Clear Local Storage
-        localStorage.removeItem('invitationData');
-        localStorage.removeItem('guests');
+        // Wipe Backend Data in background
+        fetch(`${config.API_URL}/all`, { method: 'DELETE' }).catch(e => console.error("Wipe API failed:", e));
         
-        alert('Data berhasil dihapus. Silakan mulai desain baru.');
-        navigate('/templat');
+        alert('Data berhasil dihapus.');
+        window.location.href = '/'; // Force reload and go home
       } catch (err) {
-        console.error("Wipe failed:", err);
-        alert("Gagal menghapus data di server, namun desain lokal telah direset.");
-        setInvitationData(initialInvitation);
-        setGuests([]);
+        console.error("Reset failed:", err);
+        localStorage.clear();
+        window.location.reload();
       }
     }
   };

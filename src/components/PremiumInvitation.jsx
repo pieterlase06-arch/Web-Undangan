@@ -93,7 +93,12 @@ const PremiumInvitation = ({ data, isEditMode = false, forceShowCover = false, o
     }
   };
 
-  const currentTheme = themes[data.themeId] || themes.gold;
+  const currentTheme = {
+    ...(themes[data.themeId] || themes.gold),
+    primary: data.primaryColor || (themes[data.themeId] || themes.gold).primary,
+    fontSerif: data.fontFamily || (themes[data.themeId] || themes.gold).fontSerif,
+    fontScript: data.titleFont || (themes[data.themeId] || themes.gold).fontScript,
+  };
   
   const Editable = ({ children, sectionId }) => {
     if (!isEditMode) return children;

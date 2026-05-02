@@ -15,27 +15,101 @@ const Catalog = ({ onSelectTemplate, theme }) => {
 
   const templates = [
     // GOLD SERIES
-    { id: 'g1', themeId: 'gold', category: 'Classic', name: 'Classic Gold Luxe', primaryColor: '#C5A059', accentColor: '#1C1917', image: './assets/themes/gold.png', backgroundImage: './assets/themes/gold.png' },
-    { id: 'g2', themeId: 'gold', category: 'Floral', name: 'Royal Heritage', primaryColor: '#8B4513', accentColor: '#C5A059', image: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80', backgroundImage: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'g3', themeId: 'gold', category: 'Premium', name: 'Vintage Bloom', primaryColor: '#BE123C', accentColor: '#C5A059', image: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=600&q=80', backgroundImage: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'g4', themeId: 'gold', category: 'Islamic', name: 'Al-Barakah Gold', primaryColor: '#C5A059', accentColor: '#064E3B', image: 'https://images.unsplash.com/photo-1542810634-71277d95dcbb?auto=format&fit=crop&w=600&q=80', backgroundImage: 'https://images.unsplash.com/photo-1542810634-71277d95dcbb?auto=format&fit=crop&w=1200&q=80' },
+    { 
+      id: 'g1', 
+      themeId: 'gold', 
+      category: 'Classic', 
+      name: 'Classic Gold Luxe', 
+      primaryColor: '#C5A059', 
+      accentColor: '#1C1917', 
+      image: './assets/themes/gold.png', 
+      backgroundImage: '', 
+      fontFamily: "'Cinzel', serif",
+      titleFont: "'Pinyon Script', cursive",
+      musicUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
+    },
+    { 
+      id: 'g2', 
+      themeId: 'gold', 
+      category: 'Floral', 
+      name: 'Royal Heritage', 
+      primaryColor: '#8B4513', 
+      accentColor: '#C5A059', 
+      image: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80', 
+      backgroundImage: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80',
+      fontFamily: "'Playfair Display', serif",
+      titleFont: "'Great Vibes', cursive",
+      musicUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
+    },
+    { 
+      id: 'g3', 
+      themeId: 'gold', 
+      category: 'Premium', 
+      name: 'Vintage Bloom', 
+      primaryColor: '#BE123C', 
+      accentColor: '#C5A059', 
+      image: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=600&q=80', 
+      backgroundImage: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=1200&q=80',
+      fontFamily: "'Cormorant Garamond', serif",
+      titleFont: "'Dancing Script', cursive",
+      musicUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'
+    },
+    { 
+      id: 'g4', 
+      themeId: 'gold', 
+      category: 'Islamic', 
+      name: 'Al-Barakah Gold', 
+      primaryColor: '#C5A059', 
+      accentColor: '#064E3B', 
+      image: 'https://images.unsplash.com/photo-1542810634-71277d95dcbb?auto=format&fit=crop&w=600&q=80', 
+      backgroundImage: 'https://images.unsplash.com/photo-1542810634-71277d95dcbb?auto=format&fit=crop&w=1200&q=80',
+      fontFamily: "'Lora', serif",
+      titleFont: "'Satisfy', cursive",
+      musicUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3'
+    },
     
     // EMERALD SERIES
-    { id: 'e1', themeId: 'emerald', category: 'Modern', name: 'Emerald Garden', primaryColor: '#064E3B', accentColor: '#D4AF37', image: './assets/themes/emerald.png', backgroundImage: './assets/themes/emerald.png' },
-    { id: 'e2', themeId: 'emerald', category: 'Floral', name: 'Forest Serenity', primaryColor: '#064E3B', accentColor: '#F0FDFA', image: 'https://images.unsplash.com/photo-1522673607200-164883eeca48?auto=format&fit=crop&w=600&q=80', backgroundImage: 'https://images.unsplash.com/photo-1522673607200-164883eeca48?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'e3', themeId: 'emerald', category: 'Modern', name: 'Ethereal Green', primaryColor: '#0F766E', accentColor: '#F0FDF4', image: 'https://images.unsplash.com/photo-1465495910484-de3b250fecaa?auto=format&fit=crop&w=600&q=80', backgroundImage: 'https://images.unsplash.com/photo-1465495910484-de3b250fecaa?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'e4', themeId: 'emerald', category: 'Islamic', name: 'Madina Emerald', primaryColor: '#064E3B', accentColor: '#C5A059', image: 'https://images.unsplash.com/photo-1591604466107-ec97de577aff?auto=format&fit=crop&w=600&q=80', backgroundImage: 'https://images.unsplash.com/photo-1591604466107-ec97de577aff?auto=format&fit=crop&w=1200&q=80' },
+    { 
+      id: 'e1', 
+      themeId: 'emerald', 
+      category: 'Modern', 
+      name: 'Emerald Garden', 
+      primaryColor: '#064E3B', 
+      accentColor: '#D4AF37', 
+      image: './assets/themes/emerald.png', 
+      backgroundImage: '',
+      fontFamily: "'Montserrat', sans-serif",
+      titleFont: "'Alex Brush', cursive",
+      musicUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3'
+    },
+    { 
+      id: 'e2', 
+      themeId: 'emerald', 
+      category: 'Floral', 
+      name: 'Forest Serenity', 
+      primaryColor: '#064E3B', 
+      accentColor: '#F0FDFA', 
+      image: 'https://images.unsplash.com/photo-1522673607200-164883eeca48?auto=format&fit=crop&w=600&q=80', 
+      backgroundImage: 'https://images.unsplash.com/photo-1522673607200-164883eeca48?auto=format&fit=crop&w=1200&q=80',
+      fontFamily: "'Playfair Display', serif",
+      titleFont: "'Sacramento', cursive",
+      musicUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3'
+    },
 
     // LINEN SERIES
-    { id: 'l1', themeId: 'linen', category: 'Modern', name: 'Linen Minimalist', primaryColor: '#44403C', accentColor: '#A8A29E', image: './assets/themes/linen.png', backgroundImage: './assets/themes/linen.png' },
-    { id: 'l2', themeId: 'linen', category: 'Classic', name: 'Modern Simplicity', primaryColor: '#1F2937', accentColor: '#D1D5DB', image: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=600&q=80', backgroundImage: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'l3', themeId: 'linen', category: 'Premium', name: 'Luxe Monochrome', primaryColor: '#000000', accentColor: '#FFFFFF', image: 'https://images.unsplash.com/photo-1523438885200-e635ba2c371e?auto=format&fit=crop&w=600&q=80', backgroundImage: 'https://images.unsplash.com/photo-1523438885200-e635ba2c371e?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'l4', themeId: 'linen', category: 'Islamic', name: 'Pure White Mosque', primaryColor: '#1C1917', accentColor: '#F5F5F4', image: 'https://images.unsplash.com/photo-1516062423079-7ca13cdc7f5a?auto=format&fit=crop&w=600&q=80', backgroundImage: 'https://images.unsplash.com/photo-1516062423079-7ca13cdc7f5a?auto=format&fit=crop&w=1200&q=80' },
-    
-    // ADDITIONAL VARIANTS
-    { id: 'v1', themeId: 'gold', category: 'Floral', name: 'Spring Blossom', primaryColor: '#db2777', accentColor: '#fdf2f8', image: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=600&q=80', backgroundImage: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'v2', themeId: 'emerald', category: 'Modern', name: 'Urban Chic', primaryColor: '#111827', accentColor: '#10b981', image: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=600&q=80', backgroundImage: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'v3', themeId: 'linen', category: 'Premium', name: 'Velvet Night', primaryColor: '#312e81', accentColor: '#c084fc', image: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&w=600&q=80', backgroundImage: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&w=1200&q=80' },
+    { 
+      id: 'l1', 
+      themeId: 'linen', 
+      category: 'Modern', 
+      name: 'Linen Minimalist', 
+      primaryColor: '#44403C', 
+      accentColor: '#A8A29E', 
+      image: './assets/themes/linen.png', 
+      backgroundImage: '',
+      fontFamily: "'Inter', sans-serif",
+      titleFont: "'Prata', serif",
+      musicUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3'
+    }
   ];
 
   const filteredTemplates = activeCategory === 'All' 
@@ -53,7 +127,9 @@ const Catalog = ({ onSelectTemplate, theme }) => {
     backgroundImage: template.backgroundImage,
     primaryColor: template.primaryColor,
     accentColor: template.accentColor,
-    fontFamily: 'serif',
+    fontFamily: template.fontFamily,
+    titleFont: template.titleFont,
+    musicUrl: template.musicUrl,
     groomImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
     brideImage: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80',
   });
@@ -63,7 +139,7 @@ const Catalog = ({ onSelectTemplate, theme }) => {
       <header className="space-y-6">
         <div className="space-y-2">
            <h1 className={`serif text-3xl lg:text-5xl ${textClass}`}>Design Catalog</h1>
-           <p className={`${mutedClass} text-sm lg:text-lg max-w-2xl`}>Jelajahi puluhan koleksi desain premium kami. Cari yang paling sesuai dengan gaya pernikahan impian Anda.</p>
+           <p className={`${mutedClass} text-sm lg:text-lg max-w-2xl`}>Jelajahi puluhan koleksi desain premium kami. Setiap desain memiliki font dan palet warna unik.</p>
         </div>
 
         {/* CATEGORY FILTER */}
@@ -82,7 +158,7 @@ const Catalog = ({ onSelectTemplate, theme }) => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
         <AnimatePresence mode="popLayout">
-          {filteredTemplates.map((template, i) => (
+          {filteredTemplates.map((template) => (
             <motion.div 
               layout
               key={template.id}
@@ -95,7 +171,6 @@ const Catalog = ({ onSelectTemplate, theme }) => {
               <div className="aspect-[3/4] relative overflow-hidden bg-stone-100">
                 <img src={template.image} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" alt={template.name} />
                 
-                {/* HOVER ACTIONS */}
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col items-center justify-center backdrop-blur-md p-6 gap-3">
                   <button 
                     onClick={() => setPreviewTemplate(dummyData(template))}
@@ -113,7 +188,6 @@ const Catalog = ({ onSelectTemplate, theme }) => {
                   </button>
                 </div>
 
-                {/* TAGS */}
                 <div className="absolute top-4 left-4 flex gap-2">
                    <div className="px-3 py-1 bg-white/20 backdrop-blur-md text-white rounded-full text-[8px] font-black uppercase tracking-widest border border-white/20">
                       {template.category}
@@ -124,11 +198,14 @@ const Catalog = ({ onSelectTemplate, theme }) => {
               <div className={`p-6 transition-colors ${cardClass}`}>
                 <h3 className={`serif font-bold text-lg leading-tight ${textClass}`}>{template.name}</h3>
                 <div className="mt-3 flex items-center justify-between">
+                   <div className="flex flex-col gap-1">
+                      <span className="text-[7px] font-black uppercase tracking-widest opacity-30">Typography</span>
+                      <p className="text-[10px] font-bold" style={{ fontFamily: template.fontFamily }}>Aa Bb Cc</p>
+                   </div>
                    <div className="flex -space-x-1">
                       <div className="w-4 h-4 rounded-full border border-white" style={{ backgroundColor: template.primaryColor }} />
                       <div className="w-4 h-4 rounded-full border border-white" style={{ backgroundColor: template.accentColor }} />
                    </div>
-                   <span className="text-[9px] font-black opacity-30 uppercase tracking-[0.2em]">{template.themeId} Edition</span>
                 </div>
               </div>
             </motion.div>
@@ -136,7 +213,6 @@ const Catalog = ({ onSelectTemplate, theme }) => {
         </AnimatePresence>
       </div>
 
-      {/* PREVIEW MODAL */}
       <AnimatePresence>
         {previewTemplate && (
           <motion.div 

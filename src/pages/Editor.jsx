@@ -151,6 +151,34 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
           </div>
         </section>
 
+        {/* TYPOGRAPHY */}
+        <section className="space-y-6 pt-6 border-t border-stone-100 dark:border-slate-800">
+           <p className={`text-[10px] font-bold uppercase tracking-widest ${theme === 'dark' ? 'text-slate-500' : 'text-stone-400'}`}>Premium Typography</p>
+           <div className="space-y-3">
+              {[
+                { name: 'Imperial Luxe', body: "'Cinzel', serif", title: "'Pinyon Script', cursive" },
+                { name: 'Royal Garden', body: "'Playfair Display', serif", title: "'Great Vibes', cursive" },
+                { name: 'Modern Chic', body: "'Montserrat', sans-serif", title: "'Alex Brush', cursive" },
+                { name: 'Classic Serif', body: "'Cormorant Garamond', serif", title: "'Dancing Script', cursive" },
+                { name: 'Islamic Elegant', body: "'Lora', serif", title: "'Satisfy', cursive" },
+                { name: 'Minimalist', body: "'Inter', sans-serif", title: "'Prata', serif" }
+              ].map((font, i) => (
+                <button 
+                 key={i} 
+                 onClick={() => updateData({ fontFamily: font.body, titleFont: font.title })}
+                 className={`w-full p-4 rounded-2xl border text-left flex items-center justify-between transition-all ${data.fontFamily === font.body ? 'bg-[#C5A059]/10 border-[#C5A059]' : 'border-stone-100 dark:border-slate-800 hover:bg-stone-50'}`}
+                >
+                   <div className="space-y-1">
+                      <p className={`text-[10px] font-black uppercase tracking-widest ${data.fontFamily === font.body ? 'text-[#C5A059]' : 'text-stone-400'}`}>{font.name}</p>
+                      <p className="text-sm font-bold" style={{ fontFamily: font.body }}>Main Body Font Preview</p>
+                      <p className="text-xl italic" style={{ fontFamily: font.title }}>Title Font Style</p>
+                   </div>
+                   {data.fontFamily === font.body && <span className="material-symbols-outlined text-[#C5A059]">check_circle</span>}
+                </button>
+              ))}
+           </div>
+        </section>
+
         {/* BACKGROUND IMAGE */}
         <section id="bg-section" className="space-y-4 pt-6 border-t border-stone-100 dark:border-slate-800">
            <p className={`text-[10px] font-bold uppercase tracking-widest ${theme === 'dark' ? 'text-slate-500' : 'text-stone-400'}`}>Background Frame Image</p>
