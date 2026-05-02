@@ -9,6 +9,7 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
   const [isPublished, setIsPublished] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Mobile sidebar toggle
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);   // Mobile drawer toggle
+  const [showCover, setShowCover] = useState(false);         // Toggle cover frame view in editor
 
   const t = {
     id: { 
@@ -146,7 +147,25 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
                </button>
              ))}
           </div>
-       </section>
+        </section>
+
+        {/* BACKGROUND IMAGE */}
+        <section id="bg-section" className="space-y-4 pt-6 border-t border-stone-100 dark:border-slate-800">
+           <p className={`text-[10px] font-bold uppercase tracking-widest ${theme === 'dark' ? 'text-slate-500' : 'text-stone-400'}`}>Background Frame Image</p>
+           <div className="relative aspect-video rounded-2xl overflow-hidden border-2 border-stone-100 dark:border-slate-700 group shadow-sm hover:shadow-lg transition-all">
+              <img src={data.backgroundImage || 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80'} className="w-full h-full object-cover" />
+              <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+                 <div className="flex flex-col items-center gap-2">
+                    <span className="material-symbols-outlined text-white text-3xl">upload</span>
+                    <span className="text-[10px] text-white font-black uppercase tracking-widest">Ganti Background</span>
+                 </div>
+                 <input type="file" className="hidden" accept="image/*" onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) updateData({ backgroundImage: URL.createObjectURL(file) });
+                 }} />
+              </label>
+           </div>
+        </section>
 
        {/* TYPOGRAPHY */}
        <section className="space-y-4">
@@ -319,12 +338,16 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
   const renderLayersTab = () => (
     <div className="space-y-4">
        {[
-         { id: 'bg', name: 'Background Frame', icon: 'image', status: 'Locked' },
+         { id: 'cover', name: 'Cover Frame (Amplop)', icon: 'mail', status: showCover ? 'Editing' : 'Hidden', toggle: () => setShowCover(!showCover) },
+         { id: 'bg', name: 'Background Frame', icon: 'image', status: 'Active', toggle: () => { setActiveTab('design'); setTimeout(() => document.getElementById('bg-section')?.scrollIntoView({ behavior: 'smooth' }), 100); } },
          { id: 'floral', name: 'Premium Floral Art', icon: 'filter_vintage', status: 'Active' },
          { id: 'text', name: 'Core Typography', icon: 'text_fields', status: 'Active' },
-         { id: 'rsvp', name: 'Interactive RSVP', icon: 'check_circle', status: 'Hidden' },
        ].map(layer => (
-         <div key={layer.id} className={`flex items-center justify-between p-4 rounded-2xl border group cursor-pointer hover:translate-x-1 transition-all ${theme === 'dark' ? 'bg-slate-800/50 border-slate-700 hover:bg-slate-800' : 'bg-stone-50/50 border-stone-100 hover:bg-stone-50'}`}>
+         <div 
+           key={layer.id} 
+           onClick={layer.toggle}
+           className={`flex items-center justify-between p-4 rounded-2xl border group cursor-pointer hover:translate-x-1 transition-all ${theme === 'dark' ? 'bg-slate-800/50 border-slate-700 hover:bg-slate-800' : 'bg-stone-50/50 border-stone-100 hover:bg-stone-50'} ${layer.status === 'Editing' ? 'ring-2 ring-[#C5A059]' : ''}`}
+         >
             <div className="flex items-center gap-4">
                <span className="material-symbols-outlined text-[20px] text-stone-400 group-hover:text-[#C5A059] transition-colors">{layer.icon}</span>
                <div className="flex flex-col">
@@ -405,7 +428,7 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
                <div className={`w-full h-full overflow-hidden transition-colors ${theme === 'dark' ? 'bg-[#0b1120]' : 'bg-white'}`}>
                   <div className="w-full h-full overflow-y-auto no-scrollbar scroll-smooth relative">
                      <div className="w-full min-h-full">
-                       <PremiumInvitation data={data} isEditMode={true} />
+                        <PremiumInvitation data={data} isEditMode={true} forceShowCover={showCover} />
                      </div>
                   </div>
                </div>
