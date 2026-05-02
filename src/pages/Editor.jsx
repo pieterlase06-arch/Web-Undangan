@@ -393,19 +393,18 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
             <button onClick={() => setZoom(100)} className="text-[10px] font-black uppercase tracking-widest text-[#C5A059] hover:brightness-110">Reset Zoom</button>
           </div>
 
-          <div className="min-w-full min-h-full flex items-center justify-center p-4 lg:p-12">
-            {/* MOBILE PREVIEW FRAME (MOCKUP) */}
+          <div className="w-full min-h-[calc(100vh-100px)] lg:min-h-full flex items-center justify-center p-4 lg:p-8">
             <motion.div 
               style={{ 
                 scale: zoom / 100,
-                transformOrigin: 'center center'
+                transformOrigin: 'top center'
               }}
-              className="relative"
+              className="relative w-full h-[85vh] lg:h-[90vh]"
             >
-               {/* Clean Canvas Wrapper */}
-               <div className={`w-[390px] h-[844px] overflow-hidden rounded-2xl shadow-2xl border transition-colors ${theme === 'dark' ? 'border-slate-800 bg-slate-900' : 'border-stone-200 bg-white'}`}>
+               {/* Responsive Canvas Wrapper */}
+               <div className={`w-full h-full overflow-hidden rounded-[20px] lg:rounded-[40px] shadow-2xl border transition-colors ${theme === 'dark' ? 'border-slate-800 bg-slate-900' : 'border-stone-200 bg-white'}`}>
                   <div className="w-full h-full overflow-y-auto no-scrollbar scroll-smooth relative">
-                     <div className="w-full origin-top" style={{ transform: 'scale(1)', width: '100%', minHeight: '100%' }}>
+                     <div className="w-full min-h-full">
                        <PremiumInvitation data={data} isEditMode={true} />
                      </div>
                   </div>
