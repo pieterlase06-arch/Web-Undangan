@@ -164,7 +164,7 @@ const PremiumInvitation = ({ data, isEditMode = false, forceShowCover = false, o
               </motion.div>
               <motion.div {...reveal} transition={{ delay: 0.3 }} className="lg:w-1/2 text-center lg:text-left space-y-8">
                  <p className="text-xs font-black uppercase tracking-[0.8em] opacity-40">Wedding Invitation</p>
-                 <h2 className="text-8xl md:text-[10rem] leading-none" style={{ fontFamily: theme.fontScript, color: theme.primary }}>{data.partner1} & {data.partner2}</h2>
+                 <h2 className="text-7xl md:text-8xl lg:text-[9rem] leading-tight" style={{ fontFamily: theme.fontScript, color: theme.primary }}>{data.partner1} & {data.partner2}</h2>
                  <p className="text-xl font-bold tracking-widest">{new Date(data.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
               </motion.div>
            </section>
