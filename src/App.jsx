@@ -119,7 +119,6 @@ function AppContent() {
     );
   }
 
-  const isEditor = location.pathname === '/editor';
 
   return (
     <div className={`min-h-screen flex ${theme === 'dark' ? 'bg-[#0f172a]' : 'bg-[#fcf9f6]'} transition-colors duration-300 relative`}>
