@@ -174,9 +174,9 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
               <h3 className={`serif text-xl ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>{t.themes}</h3>
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  { id: 'gold', img: '/assets/themes/gold.png' },
-                  { id: 'emerald', img: '/assets/themes/emerald.png' },
-                  { id: 'linen', img: '/assets/themes/linen.png' }
+                  { id: 'gold', img: './assets/themes/gold.png' },
+                  { id: 'emerald', img: './assets/themes/emerald.png' },
+                  { id: 'linen', img: './assets/themes/linen.png' }
                 ].map(themeItem => (
                   <button 
                     key={themeItem.id}
@@ -208,7 +208,7 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
               <h2 className={`serif text-3xl font-black mb-4 ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>{t.success}</h2>
               <p className="text-stone-400 text-sm mb-10">{t.link}</p>
               <div className={`p-4 rounded-2xl mb-8 font-mono text-xs break-all ${theme === 'dark' ? 'bg-slate-800 text-[#C5A059]' : 'bg-stone-50 text-stone-600'}`}>
-                https://luxeinvite.io/{data.partner1.toLowerCase()}-{data.partner2.toLowerCase()}
+                https://pieterlase06-arch.github.io/Web-Undangan/
               </div>
               <button 
                 onClick={() => setIsPublished(false)}

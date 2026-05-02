@@ -33,7 +33,7 @@ function App() {
     accentColor: '#d4af37',
     fontFamily: 'serif',
     themeId: 'gold',
-    backgroundImage: '/assets/themes/gold.png',
+    backgroundImage: './assets/themes/gold.png',
   };
 
   const [invitationData, setInvitationData] = useState(() => {
