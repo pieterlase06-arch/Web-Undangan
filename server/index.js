@@ -129,6 +129,12 @@ app.post('/api/message/:id/like', (req, res) => {
     }
 });
 
+// DELETE ALL DATA (Wipe for fresh start)
+app.delete('/api/all', (req, res) => {
+    saveData({ rsvps: [], messages: [] });
+    res.json({ message: 'All data wiped successfully' });
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

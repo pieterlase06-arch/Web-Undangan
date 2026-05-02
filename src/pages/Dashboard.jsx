@@ -94,10 +94,11 @@ const Dashboard = ({ setView, invitationData, guestCount, theme, onReset }) => {
                   </button>
                   <button 
                     onClick={onReset}
-                    className={`p-3 border rounded-xl text-red-400 hover:text-red-600 hover:bg-red-50 transition-all border-transparent`}
-                    title="Delete / Reset Design"
+                    className={`flex items-center gap-2 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-all border border-transparent hover:border-red-100 font-bold text-[10px] uppercase tracking-widest`}
+                    title="Hapus / Reset Seluruh Data"
                   >
-                    <span className="material-symbols-outlined text-[18px]">delete</span>
+                    <span className="material-symbols-outlined text-[18px]">delete_forever</span>
+                    Hapus Desain
                   </button>
                </div>
             </div>
