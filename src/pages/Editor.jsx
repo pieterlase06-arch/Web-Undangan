@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import PremiumInvitation from '../components/PremiumInvitation';
+import SnapPhotoInvitation from '../components/SnapPhotoInvitation';
 import config from '../config';
 
 const Editor = ({ data, updateData }) => {
@@ -219,7 +220,11 @@ const Editor = ({ data, updateData }) => {
         <main className="flex-1 relative overflow-hidden bg-[#f4f6f8] flex items-center justify-center p-4 md:p-12">
            <motion.div animate={{ width: device === 'mobile' ? '380px' : device === 'tablet' ? '760px' : '100%', height: device === 'desktop' ? '100%' : '88vh', borderRadius: device === 'desktop' ? '0px' : '40px' }} className="bg-white shadow-2xl overflow-hidden relative border-[10px] border-stone-950 transition-all duration-700">
               <div className="w-full h-full overflow-y-auto no-scrollbar scroll-smooth">
-                 <PremiumInvitation data={data} isEditMode={true} forceShowCover={showCover} onEdit={() => { setActiveTab('konten'); setIsSidebarOpen(true); }} />
+                 {data.templateId === 'snap-photo' ? (
+                   <SnapPhotoInvitation data={data} isEditMode={true} />
+                 ) : (
+                   <PremiumInvitation data={data} isEditMode={true} forceShowCover={showCover} onEdit={() => { setActiveTab('konten'); setIsSidebarOpen(true); }} />
+                 )}
               </div>
            </motion.div>
         </main>
