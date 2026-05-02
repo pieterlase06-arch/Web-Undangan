@@ -49,6 +49,16 @@ const PremiumInvitation = ({ data }) => {
 
   const audioRef = useRef(null);
 
+  // HANDLE MUSIC CHANGE
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.load();
+      if (isPlaying) {
+        audioRef.current.play().catch(e => console.log("Auto-play blocked:", e));
+      }
+    }
+  }, [data.musicUrl]);
+
   const handleOpen = () => {
     setIsOpened(true);
     setIsPlaying(true);
@@ -109,7 +119,7 @@ const PremiumInvitation = ({ data }) => {
       `}</style>
 
       {/* BACKGROUND MUSIC */}
-      <audio ref={audioRef} loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" />
+      <audio ref={audioRef} loop src={data.musicUrl || "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"} />
 
       {/* 1. COVER OVERLAY */}
       <AnimatePresence>

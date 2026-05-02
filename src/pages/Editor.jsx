@@ -76,14 +76,14 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
           </div>
           <div className="space-y-2">
              {[
-               { name: 'Classical Wedding', genre: 'Instrumental' },
-               { name: 'Modern Acoustic', genre: 'Acoustic' },
-               { name: 'Traditional Melodic', genre: 'Tradisional' },
-               { name: 'Romantic Piano', genre: 'Piano' }
+               { name: 'Classical Wedding', genre: 'Instrumental', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
+               { name: 'Modern Acoustic', genre: 'Acoustic', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' },
+               { name: 'Traditional Melodic', genre: 'Tradisional', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' },
+               { name: 'Romantic Piano', genre: 'Piano', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3' }
              ].map((music, i) => (
                <button 
                  key={i}
-                 onClick={() => updateData({ musicId: i })}
+                 onClick={() => updateData({ musicId: i, musicUrl: music.url })}
                  className={`w-full p-4 rounded-2xl border flex items-center justify-between transition-all ${data.musicId === i ? 'bg-[#C5A059] border-[#C5A059] text-white shadow-lg' : 'bg-transparent border-stone-100 dark:border-slate-800 text-stone-400 hover:border-stone-900'}`}
                >
                   <div className="flex items-center gap-3 text-left">
