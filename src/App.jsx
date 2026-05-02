@@ -68,30 +68,44 @@ function AppContent() {
   const [invitationData, setInvitationData] = useState(initialInvitation);
   const [guests, setGuests] = useState([]);
 
-  // Load Initial Data from Backend
+  // Load Initial Data
   useEffect(() => {
     if (isLoggedIn) {
+      // 1. Try LocalStorage first for instant feedback
+      const localData = localStorage.getItem('invitationData');
+      if (localData) setInvitationData(JSON.parse(localData));
+
+      // 2. Try API for source of truth
       fetch(`${config.API_URL}/design`)
         .then(res => res.json())
-        .then(data => { if (data.id) setInvitationData(data); })
-        .catch(err => console.log(err));
+        .then(data => { 
+          if (data.id) {
+            setInvitationData(data);
+            localStorage.setItem('invitationData', JSON.stringify(data));
+          }
+        })
+        .catch(err => console.log("API offline, using local storage"));
 
       fetch(`${config.API_URL}/guests`)
         .then(res => res.json())
         .then(data => setGuests(data))
-        .catch(err => console.log(err));
+        .catch(err => console.log("Guests API offline"));
     }
   }, [isLoggedIn]);
 
-  // Sync Data to Backend on Change
+  // Sync Data
   useEffect(() => {
     if (isLoggedIn && invitationData) {
+      // Always save to LocalStorage immediately
+      localStorage.setItem('invitationData', JSON.stringify(invitationData));
+
+      // Sync to API (Debounced)
       const timer = setTimeout(() => {
         fetch(`${config.API_URL}/design`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(invitationData)
-        });
+        }).catch(err => {});
       }, 1000);
       return () => clearTimeout(timer);
     }
