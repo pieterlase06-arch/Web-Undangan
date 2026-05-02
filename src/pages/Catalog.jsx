@@ -10,6 +10,14 @@ const Catalog = ({ onSelectTemplate, theme }) => {
   const templates = [
     // ... existing templates stay the same ...
     { 
+      id: 'premium-luxe', 
+      name: 'Premium Vertical Luxe', 
+      primaryColor: '#0F172A', 
+      accentColor: '#C5A059', 
+      fontFamily: 'serif',
+      image: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=400&q=80'
+    },
+    { 
       id: 'classic', 
       name: 'Classic Elegance', 
       primaryColor: '#0F172A', 
