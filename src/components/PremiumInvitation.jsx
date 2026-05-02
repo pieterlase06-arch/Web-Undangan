@@ -119,7 +119,12 @@ const PremiumInvitation = ({ data }) => {
       `}</style>
 
       {/* BACKGROUND MUSIC */}
-      <audio ref={audioRef} loop src={data.musicUrl || "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"} />
+      <audio 
+        key={data.musicUrl}
+        ref={audioRef} 
+        loop 
+        src={data.musicUrl || "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"} 
+      />
 
       {/* 1. COVER OVERLAY */}
       <AnimatePresence>

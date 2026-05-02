@@ -350,23 +350,50 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
            <button onClick={() => setActiveTab('layers')} className={`p-3 rounded-xl transition-all ${activeTab === 'layers' ? 'bg-[#C5A059] text-white shadow-lg' : 'text-stone-400 hover:bg-stone-50 dark:hover:bg-slate-800'}`}><span className="material-symbols-outlined">layers</span></button>
         </aside>
 
-        <main className="flex-1 relative overflow-hidden flex items-center justify-center p-4 lg:p-12 bg-stone-50/50 dark:bg-slate-950/20">
-          <div className={`absolute bottom-20 lg:bottom-8 left-1/2 -translate-x-1/2 floating-toolbar px-5 py-2 rounded-full shadow-lg backdrop-blur-md flex items-center gap-4 z-[90] border ${theme === 'dark' ? 'bg-slate-800/80 border-slate-700' : 'bg-white/80 border-stone-100'}`}>
-            <button onClick={() => setZoom(z => Math.max(20, z-10))} className="p-1 hover:bg-stone-100 dark:hover:bg-slate-700 rounded-full transition-colors text-stone-400"><span className="material-symbols-outlined text-[16px]">remove</span></button>
-            <span className={`text-[12px] font-bold w-10 text-center ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>{zoom}%</span>
-            <button onClick={() => setZoom(z => Math.min(200, z+10))} className="p-1 hover:bg-stone-100 dark:hover:bg-slate-700 rounded-full transition-colors text-stone-400"><span className="material-symbols-outlined text-[16px]">add</span></button>
+        <main className="flex-1 relative overflow-hidden flex items-center justify-center p-4 lg:p-12 bg-stone-100/50 dark:bg-slate-950/40">
+          {/* FLOATING TOOLBAR */}
+          <div className={`absolute bottom-20 lg:bottom-10 left-1/2 -translate-x-1/2 floating-toolbar px-6 py-3 rounded-full shadow-2xl backdrop-blur-xl flex items-center gap-6 z-[100] border ${theme === 'dark' ? 'bg-slate-800/90 border-slate-700' : 'bg-white/90 border-stone-200'}`}>
+            <div className="flex items-center gap-4 border-r pr-6 border-stone-200 dark:border-slate-700">
+               <button onClick={() => setZoom(z => Math.max(20, z-10))} className="w-8 h-8 flex items-center justify-center hover:bg-stone-100 dark:hover:bg-slate-700 rounded-full transition-colors text-stone-400"><span className="material-symbols-outlined text-[18px]">remove</span></button>
+               <span className={`text-[13px] font-black w-12 text-center ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>{zoom}%</span>
+               <button onClick={() => setZoom(z => Math.min(200, z+10))} className="w-8 h-8 flex items-center justify-center hover:bg-stone-100 dark:hover:bg-slate-700 rounded-full transition-colors text-stone-400"><span className="material-symbols-outlined text-[18px]">add</span></button>
+            </div>
+            <div className="flex gap-4">
+               <span className="material-symbols-outlined text-[20px] text-stone-400 hover:text-[#C5A059] cursor-pointer">smartphone</span>
+               <span className="material-symbols-outlined text-[20px] text-stone-300 hover:text-[#C5A059] cursor-pointer">laptop</span>
+            </div>
           </div>
 
+          {/* MOBILE PREVIEW FRAME (MOCKUP) */}
           <motion.div 
             style={{ 
               scale: zoom / 100,
-              transformOrigin: 'top center'
+              transformOrigin: 'center center'
             }}
-            className="w-full max-w-[400px] h-[750px] bg-white rounded-[40px] relative shadow-2xl overflow-hidden border-[12px] border-stone-900"
+            className="relative"
           >
-             <div className="absolute inset-0 overflow-y-auto no-scrollbar bg-white">
-                <PremiumInvitation data={data} isEditMode={true} />
+             {/* Phone Outer Shell */}
+             <div className="w-[450px] h-[850px] bg-stone-900 rounded-[60px] p-4 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] border-[8px] border-stone-800 relative">
+                {/* Speaker/Camera Notch */}
+                <div className="absolute top-8 left-1/2 -translate-x-1/2 w-32 h-7 bg-stone-900 rounded-full z-50 flex items-center justify-center gap-2">
+                   <div className="w-2 h-2 rounded-full bg-slate-800" />
+                   <div className="w-10 h-1 bg-slate-800 rounded-full" />
+                </div>
+
+                {/* Internal Screen */}
+                <div className="w-full h-full bg-white rounded-[45px] overflow-hidden relative border-4 border-stone-950">
+                   <div className="absolute inset-0 overflow-y-auto no-scrollbar scroll-smooth">
+                      <PremiumInvitation data={data} isEditMode={true} />
+                   </div>
+                   
+                   {/* Bottom Home Indicator */}
+                   <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1.5 bg-black/10 rounded-full z-50" />
+                </div>
              </div>
+
+             {/* Side Buttons Mockup */}
+             <div className="absolute -left-2 top-32 w-2 h-16 bg-stone-800 rounded-l-lg" />
+             <div className="absolute -right-2 top-40 w-2 h-24 bg-stone-800 rounded-r-lg" />
           </motion.div>
         </main>
 
