@@ -14,7 +14,7 @@ const Dashboard = ({ setView, invitationData, guestCount, theme }) => {
           <p className={`${mutedClass} mt-2 italic text-sm`}>Ready to craft your next masterpiece?</p>
         </div>
         <button 
-          onClick={() => setView('catalog')}
+          onClick={() => setView('/templat')}
           className="bg-[#C5A059] text-white px-8 py-4 rounded-2xl font-bold text-[10px] uppercase tracking-widest shadow-2xl hover:scale-105 active:scale-95 transition-all"
         >
           + Create New Invitation
@@ -46,7 +46,7 @@ const Dashboard = ({ setView, invitationData, guestCount, theme }) => {
         <div className={`lg:col-span-8 ${cardClass} rounded-3xl border shadow-sm overflow-hidden flex flex-col transition-colors`}>
           <div className="p-8 border-b border-stone-50/10 flex justify-between items-center">
             <h2 className={`serif text-2xl ${textClass}`}>Current Design</h2>
-            <button onClick={() => setView('editor')} className="text-[#C5A059] font-bold text-[10px] uppercase tracking-widest hover:underline">Edit Canvas</button>
+            <button onClick={() => setView('/editor')} className="text-[#C5A059] font-bold text-[10px] uppercase tracking-widest hover:underline">Edit Canvas</button>
           </div>
           <div className="p-8 flex-1 flex items-center gap-10">
             <div className={`w-48 aspect-[4/5] rounded-xl border shadow-inner flex items-center justify-center p-4 ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-stone-50 border-stone-100'}`}>

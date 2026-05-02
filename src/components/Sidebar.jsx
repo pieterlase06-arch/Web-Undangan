@@ -7,11 +7,11 @@ const Sidebar = ({ currentView, setView, lang, setLang, theme, setTheme, isOpen 
   }[lang];
 
   const menuItems = [
-    { id: 'dashboard', label: t.overview, icon: 'dashboard' },
-    { id: 'catalog', label: t.templates, icon: 'auto_awesome' },
-    { id: 'editor', label: t.designs, icon: 'favorite' },
-    { id: 'guests', label: t.guests, icon: 'group' },
-    { id: 'rsvp', label: t.rsvp, icon: 'event_available' },
+    { id: '/desain-saya', label: t.overview, icon: 'dashboard' },
+    { id: '/templat', label: t.templates, icon: 'auto_awesome' },
+    { id: '/editor', label: t.designs, icon: 'favorite' },
+    { id: '/daftar-tamu', label: t.guests, icon: 'group' },
+    { id: '/lacak-rsvp', label: t.rsvp, icon: 'event_available' },
   ];
 
   return (

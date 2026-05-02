@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { HashRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import Catalog from './pages/Catalog';
 import Editor from './pages/Editor';
@@ -7,20 +8,28 @@ import GuestList from './pages/GuestList';
 import RSVPTracking from './pages/RSVPTracking';
 import Sidebar from './components/Sidebar';
 
+// Root Component to handle Routing
 function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
+  );
+}
+
+function AppContent() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('isLoggedIn') === 'true');
-  const [currentView, setCurrentView] = useState('dashboard');
   const [lang, setLang] = useState(localStorage.getItem('lang') || 'id');
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   
-  // Persist settings
   useEffect(() => {
     localStorage.setItem('lang', lang);
     localStorage.setItem('theme', theme);
     document.documentElement.setAttribute('data-theme', theme);
   }, [lang, theme]);
   
-  // INITIAL DATA
   const initialInvitation = {
     templateId: 'classic',
     partner1: 'Isabella',
@@ -49,7 +58,6 @@ function App() {
     ];
   });
 
-  // AUTO-SAVE TO LOCALSTORAGE
   useEffect(() => {
     localStorage.setItem('invitationData', JSON.stringify(invitationData));
     localStorage.setItem('guests', JSON.stringify(guests));
@@ -58,11 +66,13 @@ function App() {
   const login = () => {
     setIsLoggedIn(true);
     localStorage.setItem('isLoggedIn', 'true');
+    navigate('/desain-saya');
   };
 
   const logout = () => {
     setIsLoggedIn(false);
     localStorage.removeItem('isLoggedIn');
+    navigate('/');
   };
 
   const selectTemplate = (template) => {
@@ -73,7 +83,7 @@ function App() {
       accentColor: template.accentColor,
       fontFamily: template.fontFamily,
     }));
-    setCurrentView('editor');
+    navigate('/editor');
   };
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -102,10 +112,11 @@ function App() {
     );
   }
 
+  const isEditor = location.pathname === '/editor';
+
   return (
     <div className={`min-h-screen flex ${theme === 'dark' ? 'bg-[#0f172a]' : 'bg-[#fcf9f6]'} transition-colors duration-300 relative`}>
-      {/* MOBILE HEADER - Only visible on small screens */}
-      {currentView !== 'editor' && (
+      {!isEditor && (
         <div className={`lg:hidden fixed top-0 left-0 right-0 h-16 px-6 flex items-center justify-between z-[60] backdrop-blur-md border-b ${theme === 'dark' ? 'bg-slate-900/80 border-slate-800' : 'bg-white/80 border-stone-100'}`}>
            <h1 className={`serif font-black text-xl ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>LuxeInvite</h1>
            <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 rounded-xl bg-stone-900 text-white shadow-lg flex items-center justify-center">
@@ -114,11 +125,10 @@ function App() {
         </div>
       )}
 
-      {/* SIDEBAR NAVIGATION - Hide when editing, toggleable on mobile */}
-      {currentView !== 'editor' && (
+      {!isEditor && (
         <Sidebar 
-          currentView={currentView} 
-          setView={(v) => { setCurrentView(v); setIsSidebarOpen(false); }} 
+          currentView={location.pathname} 
+          setView={(v) => { navigate(v); setIsSidebarOpen(false); }} 
           onLogout={logout}
           lang={lang}
           setLang={setLang}
@@ -128,42 +138,36 @@ function App() {
         />
       )}
 
-      <main className={`flex-1 overflow-y-auto transition-all duration-500 ${currentView === 'editor' ? 'ml-0' : 'lg:ml-64 pt-16 lg:pt-0'}`}>
+      <main className={`flex-1 overflow-y-auto transition-all duration-500 ${isEditor ? 'ml-0' : 'lg:ml-64 pt-16 lg:pt-0'}`}>
         <AnimatePresence mode="wait">
-          <motion.div
-            key={currentView}
-            initial={{ opacity: 0, x: 10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -10 }}
-            transition={{ duration: 0.2 }}
-            className="h-full"
-          >
-            {currentView === 'dashboard' && (
-              <Dashboard 
-                setView={setCurrentView} 
-                invitationData={invitationData}
-                guestCount={guests.length}
-                theme={theme}
-              />
-            )}
-            {currentView === 'catalog' && <Catalog onSelectTemplate={selectTemplate} theme={theme} />}
-            {currentView === 'editor' && (
-              <Editor 
-                setView={setCurrentView} 
-                data={invitationData} 
-                updateData={(d) => setInvitationData(prev => ({...prev, ...d}))} 
-                lang={lang}
-                theme={theme}
-              />
-            )}
-            {currentView === 'guests' && (
-              <GuestList 
-                guests={guests} 
-                onAddGuest={(g) => setGuests(prev => [...prev, {...g, id: Date.now()}])} 
-              />
-            )}
-            {currentView === 'rsvp' && <RSVPTracking guests={guests} />}
-          </motion.div>
+          <Routes location={location} key={location.pathname}>
+            <Route path="/desain-saya" element={
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
+                <Dashboard setView={(v) => navigate(v)} invitationData={invitationData} guestCount={guests.length} theme={theme} />
+              </motion.div>
+            } />
+            <Route path="/templat" element={
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
+                <Catalog onSelectTemplate={selectTemplate} theme={theme} />
+              </motion.div>
+            } />
+            <Route path="/editor" element={
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
+                <Editor setView={(v) => navigate(v)} data={invitationData} updateData={(d) => setInvitationData(prev => ({...prev, ...d}))} lang={lang} theme={theme} />
+              </motion.div>
+            } />
+            <Route path="/daftar-tamu" element={
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
+                <GuestList guests={guests} onAddGuest={(g) => setGuests(prev => [...prev, {...g, id: Date.now()}])} />
+              </motion.div>
+            } />
+            <Route path="/lacak-rsvp" element={
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
+                <RSVPTracking guests={guests} />
+              </motion.div>
+            } />
+            <Route path="*" element={<Navigate to="/desain-saya" replace />} />
+          </Routes>
         </AnimatePresence>
       </main>
     </div>
