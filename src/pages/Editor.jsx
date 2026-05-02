@@ -216,6 +216,51 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
                </div>
             </div>
          </div>
+         {/* QUOTE & VERSE */}
+         <div className="space-y-6 pt-6 border-t border-stone-100 dark:border-slate-800">
+            <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#C5A059]">Ayah & Kutipan</h4>
+            <div className="space-y-4">
+               <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">Kutipan Undangan</label>
+               <textarea 
+                  className={`w-full border p-4 rounded-2xl text-xs outline-none transition-all ${theme === 'dark' ? 'bg-slate-800/50 border-slate-700 text-white focus:border-[#C5A059]' : 'bg-stone-50 border-stone-100 text-stone-900 focus:border-stone-900'}`} 
+                  rows="4"
+                  value={data.quote || 'Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu isteri-isteri dari jenismu sendiri...'} 
+                  onChange={(e) => updateData({ quote: e.target.value })} 
+               />
+            </div>
+         </div>
+
+         {/* EVENT DETAILS */}
+         <div className="space-y-6 pt-6 border-t border-stone-100 dark:border-slate-800">
+            <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#C5A059]">Detail Lokasi</h4>
+            <div className="space-y-4">
+               <div className="space-y-2">
+                 <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">Nama Tempat</label>
+                 <input className={`w-full border-b py-2 text-sm outline-none ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white' : 'bg-transparent border-stone-100 text-stone-900'}`} value={data.venue} onChange={(e) => updateData({ venue: e.target.value })} />
+               </div>
+               <div className="space-y-2">
+                 <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">Alamat Lengkap</label>
+                 <textarea className={`w-full border-b py-2 text-sm outline-none ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white' : 'bg-transparent border-stone-100 text-stone-900'}`} value={data.address} onChange={(e) => updateData({ address: e.target.value })} />
+               </div>
+               <div className="space-y-2">
+                 <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">Link Google Maps</label>
+                 <input placeholder="https://maps.google.com/..." className={`w-full border-b py-2 text-sm outline-none ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white' : 'bg-transparent border-stone-100 text-stone-900'}`} value={data.mapsLink || ''} onChange={(e) => updateData({ mapsLink: e.target.value })} />
+               </div>
+            </div>
+         </div>
+
+         {/* DIGITAL GIFT DETAILS */}
+         <div className="space-y-6 pt-6 border-t border-stone-100 dark:border-slate-800">
+            <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#C5A059]">Rekening Kado</h4>
+            <div className="space-y-6">
+               <div className="space-y-4">
+                  <p className="text-[9px] font-bold uppercase tracking-widest opacity-30">Rekening 1</p>
+                  <input placeholder="Nama Bank (BCA/Mandiri)" className={`w-full border-b py-2 text-sm outline-none ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white' : 'bg-transparent border-stone-100 text-stone-900'}`} value={data.bankName1 || ''} onChange={(e) => updateData({ bankName1: e.target.value })} />
+                  <input placeholder="Nomor Rekening" className={`w-full border-b py-2 text-sm outline-none ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white' : 'bg-transparent border-stone-100 text-stone-900'}`} value={data.bankAccount1 || ''} onChange={(e) => updateData({ bankAccount1: e.target.value })} />
+                  <input placeholder="Atas Nama" className={`w-full border-b py-2 text-sm outline-none ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white' : 'bg-transparent border-stone-100 text-stone-900'}`} value={data.bankOwner1 || ''} onChange={(e) => updateData({ bankOwner1: e.target.value })} />
+               </div>
+            </div>
+         </div>
 
          {/* SECTION TOGGLES */}
          <div className="space-y-6 pt-6 border-t border-stone-100 dark:border-slate-800">
@@ -306,7 +351,7 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
         </aside>
 
         <main className="flex-1 relative overflow-hidden flex items-center justify-center p-4 lg:p-12 bg-stone-50/50 dark:bg-slate-950/20">
-          <div className={`absolute bottom-20 lg:bottom-8 left-1/2 -translate-x-1/2 floating-toolbar px-5 py-2 rounded-full shadow-lg backdrop-blur-md flex items-center gap-4 z-30 border ${theme === 'dark' ? 'bg-slate-800/80 border-slate-700' : 'bg-white/80 border-stone-100'}`}>
+          <div className={`absolute bottom-20 lg:bottom-8 left-1/2 -translate-x-1/2 floating-toolbar px-5 py-2 rounded-full shadow-lg backdrop-blur-md flex items-center gap-4 z-[90] border ${theme === 'dark' ? 'bg-slate-800/80 border-slate-700' : 'bg-white/80 border-stone-100'}`}>
             <button onClick={() => setZoom(z => Math.max(20, z-10))} className="p-1 hover:bg-stone-100 dark:hover:bg-slate-700 rounded-full transition-colors text-stone-400"><span className="material-symbols-outlined text-[16px]">remove</span></button>
             <span className={`text-[12px] font-bold w-10 text-center ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>{zoom}%</span>
             <button onClick={() => setZoom(z => Math.min(200, z+10))} className="p-1 hover:bg-stone-100 dark:hover:bg-slate-700 rounded-full transition-colors text-stone-400"><span className="material-symbols-outlined text-[16px]">add</span></button>
@@ -315,22 +360,12 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
           <motion.div 
             style={{ 
               scale: zoom / 100,
-              fontFamily: data.fontFamily === 'serif' ? '"Noto Serif", serif' : '"Manrope", sans-serif'
+              transformOrigin: 'top center'
             }}
-            className="w-full max-w-[450px] aspect-[4/5] bg-white rounded-sm relative p-8 lg:p-16 flex flex-col items-center justify-center border border-stone-200 shadow-2xl overflow-hidden"
+            className="w-full max-w-[400px] h-[750px] bg-white rounded-[40px] relative shadow-2xl overflow-hidden border-[12px] border-stone-900"
           >
-             <div className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-700" style={{ backgroundImage: `url(${data.backgroundImage})` }}></div>
-             <div className="relative z-10 flex flex-col items-center text-center gap-4 lg:gap-8 w-full">
-               <div className="text-stone-400 text-[8px] lg:text-[10px] uppercase tracking-[0.4em] font-bold">The Wedding of</div>
-               <h1 className="text-[32px] lg:text-[48px] text-stone-900 leading-[1] relative font-serif" style={{ color: data.primaryColor }}>
-                 {data.partner1}<br/><span className="text-[20px] lg:text-[32px] italic mx-4 font-light" style={{ color: data.accentColor }}>&</span><br/>{data.partner2}
-               </h1>
-               <div className="w-12 lg:w-16 h-[1px] bg-stone-200"></div>
-               <div className="text-stone-600 space-y-1 lg:space-y-2">
-                 <p className="font-bold uppercase tracking-[0.2em] text-[9px] lg:text-[11px]">{new Date(data.date).toLocaleDateString(lang === 'id' ? 'id-ID' : 'en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
-                 <p className="text-[14px] lg:text-[20px] text-stone-800">Two Thousand Twenty-Four</p>
-               </div>
-               <div className="text-stone-400 text-[10px] lg:text-[13px] leading-relaxed italic">{data.venue}<br/>{data.address}</div>
+             <div className="absolute inset-0 overflow-y-auto no-scrollbar bg-white">
+                <PremiumInvitation data={data} isEditMode={true} />
              </div>
           </motion.div>
         </main>
