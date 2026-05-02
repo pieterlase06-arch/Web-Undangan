@@ -299,9 +299,6 @@ const Editor = ({ data, updateData, theme, setView }) => {
               />
            </div>
         </main>
-
-
-        </main>
       </div>
 
       {/* PUBLISH MODAL */}
