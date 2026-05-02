@@ -8,8 +8,8 @@ const Editor = ({ data, updateData, theme, setView }) => {
   const [isPublished, setIsPublished] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [zoom, setZoom] = useState(100);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [showCover, setShowCover] = useState(true);
+  const [device, setDevice] = useState('mobile'); // 'mobile', 'tablet', 'desktop'
 
   // Localization / UI Text
   const t = {
@@ -47,28 +47,6 @@ const Editor = ({ data, updateData, theme, setView }) => {
                   </button>
                 ))}
              </div>
-             <div className="pt-2">
-                <input 
-                  type="file" 
-                  id="music-upload" 
-                  className="hidden" 
-                  accept="audio/*" 
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                      const url = URL.createObjectURL(file);
-                      updateData({ musicId: 'custom', musicUrl: url });
-                    }
-                  }}
-                />
-                <label 
-                  htmlFor="music-upload"
-                  className={`w-full p-4 rounded-2xl border-2 border-dashed flex items-center justify-center gap-3 cursor-pointer transition-all ${data.musicId === 'custom' ? 'bg-[#C5A059]/10 border-[#C5A059] text-[#C5A059]' : 'border-stone-200 text-stone-400 hover:border-stone-900'}`}
-                >
-                   <span className="material-symbols-outlined">upload_file</span>
-                   <span className="text-[10px] font-black uppercase tracking-widest">Upload Musik Sendiri</span>
-                </label>
-             </div>
           </div>
        </section>
 
@@ -104,10 +82,7 @@ const Editor = ({ data, updateData, theme, setView }) => {
              {[
                { name: 'Imperial Luxe', body: "'Cinzel', serif", title: "'Pinyon Script', cursive" },
                { name: 'Royal Garden', body: "'Playfair Display', serif", title: "'Great Vibes', cursive" },
-               { name: 'Modern Chic', body: "'Montserrat', sans-serif", title: "'Alex Brush', cursive" },
-               { name: 'Classic Serif', body: "'Cormorant Garamond', serif", title: "'Dancing Script', cursive" },
-               { name: 'Islamic Elegant', body: "'Lora', serif", title: "'Satisfy', cursive" },
-               { name: 'Minimalist', body: "'Inter', sans-serif", title: "'Prata', serif" }
+               { name: 'Modern Chic', body: "'Montserrat', sans-serif", title: "'Alex Brush', cursive" }
              ].map((font, i) => (
                <button 
                 key={i} 
@@ -119,7 +94,6 @@ const Editor = ({ data, updateData, theme, setView }) => {
                      <p className="text-sm font-bold" style={{ fontFamily: font.body }}>Body Font</p>
                      <p className="text-xl italic" style={{ fontFamily: font.title }}>Title Style</p>
                   </div>
-                  {data.fontFamily === font.body && <span className="material-symbols-outlined text-[#C5A059]">check_circle</span>}
                </button>
              ))}
           </div>
@@ -129,82 +103,25 @@ const Editor = ({ data, updateData, theme, setView }) => {
 
   const renderContentTab = () => (
     <div className="space-y-10">
-       {/* BASIC INFO */}
-       <section id="basic-section" className="space-y-6">
+       <section className="space-y-6">
           <p className={`text-[10px] font-bold uppercase tracking-widest ${theme === 'dark' ? 'text-slate-500' : 'text-stone-400'}`}>Core Details</p>
           <div className="space-y-4">
              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">Mempelai Pria</label>
-                  <input className={`w-full border-b py-2 text-sm outline-none ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white' : 'bg-transparent border-stone-100 text-stone-900'}`} value={data.partner1} onChange={(e) => updateData({ partner1: e.target.value })} />
+                  <input className={`w-full border-b py-2 text-sm outline-none bg-transparent ${theme === 'dark' ? 'border-slate-700 text-white' : 'border-stone-100 text-stone-900'}`} value={data.partner1} onChange={(e) => updateData({ partner1: e.target.value })} />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">Mempelai Wanita</label>
-                  <input className={`w-full border-b py-2 text-sm outline-none ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white' : 'bg-transparent border-stone-100 text-stone-900'}`} value={data.partner2} onChange={(e) => updateData({ partner2: e.target.value })} />
+                  <input className={`w-full border-b py-2 text-sm outline-none bg-transparent ${theme === 'dark' ? 'border-slate-700 text-white' : 'border-stone-100 text-stone-900'}`} value={data.partner2} onChange={(e) => updateData({ partner2: e.target.value })} />
                 </div>
              </div>
              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">Tanggal Acara</label>
-                  <input type="date" className={`w-full border-b py-2 text-sm outline-none ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white' : 'bg-transparent border-stone-100 text-stone-900'}`} value={data.date} onChange={(e) => updateData({ date: e.target.value })} />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">Jam Mulai</label>
-                  <input type="time" className={`w-full border-b py-2 text-sm outline-none ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white' : 'bg-transparent border-stone-100 text-stone-900'}`} value={data.time} onChange={(e) => updateData({ time: e.target.value })} />
-                </div>
+                <input type="date" className={`w-full border-b py-2 text-sm outline-none bg-transparent ${theme === 'dark' ? 'border-slate-700 text-white' : 'border-stone-100 text-stone-900'}`} value={data.date} onChange={(e) => updateData({ date: e.target.value })} />
+                <input type="time" className={`w-full border-b py-2 text-sm outline-none bg-transparent ${theme === 'dark' ? 'border-slate-700 text-white' : 'border-stone-100 text-stone-900'}`} value={data.time} onChange={(e) => updateData({ time: e.target.value })} />
              </div>
           </div>
        </section>
-
-       {/* MEDIA UPLOAD */}
-       <section className="space-y-6 pt-6 border-t border-stone-100 dark:border-slate-800">
-          <p className={`text-[10px] font-bold uppercase tracking-widest ${theme === 'dark' ? 'text-slate-500' : 'text-stone-400'}`}>Photos & Media</p>
-          <div className="grid grid-cols-2 gap-4">
-             <div className="space-y-4">
-                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">Foto Pria</label>
-                <div className="relative aspect-square rounded-2xl overflow-hidden border-2 border-stone-100 dark:border-slate-700 group shadow-sm">
-                   <img src={data.groomImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'} className="w-full h-full object-cover" />
-                   <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
-                      <span className="material-symbols-outlined text-white text-2xl">upload</span>
-                      <input type="file" className="hidden" accept="image/*" onChange={(e) => {
-                         const file = e.target.files[0];
-                         if (file) updateData({ groomImage: URL.createObjectURL(file) });
-                      }} />
-                   </label>
-                </div>
-             </div>
-             <div className="space-y-4">
-                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">Foto Wanita</label>
-                <div className="relative aspect-square rounded-2xl overflow-hidden border-2 border-stone-100 dark:border-slate-700 group shadow-sm">
-                   <img src={data.brideImage || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80'} className="w-full h-full object-cover" />
-                   <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
-                      <span className="material-symbols-outlined text-white text-2xl">upload</span>
-                      <input type="file" className="hidden" accept="image/*" onChange={(e) => {
-                         const file = e.target.files[0];
-                         if (file) updateData({ brideImage: URL.createObjectURL(file) });
-                      }} />
-                   </label>
-                </div>
-             </div>
-          </div>
-       </section>
-
-       {/* QUOTE & GIFT */}
-       <section className="space-y-6 pt-6 border-t border-stone-100 dark:border-slate-800">
-          <p className={`text-[10px] font-bold uppercase tracking-widest ${theme === 'dark' ? 'text-slate-500' : 'text-stone-400'}`}>Kado Digital & Kutipan</p>
-          <div className="space-y-4">
-             <div className="space-y-2">
-                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">Kutipan Undangan</label>
-                <textarea rows="3" className={`w-full border p-4 rounded-2xl text-xs outline-none transition-all ${theme === 'dark' ? 'bg-slate-800/50 border-slate-700 text-white' : 'bg-stone-50 border-stone-100 text-stone-900'}`} value={data.quote} onChange={(e) => updateData({ quote: e.target.value })} />
-             </div>
-             <div className="grid grid-cols-1 gap-4">
-                <input placeholder="Bank (BCA/Mandiri)" className={`w-full border-b py-2 text-sm outline-none bg-transparent ${theme === 'dark' ? 'border-slate-700 text-white' : 'border-stone-100 text-stone-900'}`} value={data.bankName1} onChange={(e) => updateData({ bankName1: e.target.value })} />
-                <input placeholder="No. Rekening" className={`w-full border-b py-2 text-sm outline-none bg-transparent ${theme === 'dark' ? 'border-slate-700 text-white' : 'border-stone-100 text-stone-900'}`} value={data.bankAccount1} onChange={(e) => updateData({ bankAccount1: e.target.value })} />
-                <input placeholder="Atas Nama" className={`w-full border-b py-2 text-sm outline-none bg-transparent ${theme === 'dark' ? 'border-slate-700 text-white' : 'border-stone-100 text-stone-900'}`} value={data.bankOwner1} onChange={(e) => updateData({ bankOwner1: e.target.value })} />
-             </div>
-          </div>
-       </section>
-
        {/* TOGGLES */}
        <section className="space-y-6 pt-6 border-t border-stone-100 dark:border-slate-800">
           <p className={`text-[10px] font-bold uppercase tracking-widest ${theme === 'dark' ? 'text-slate-500' : 'text-stone-400'}`}>Tampilkan Fitur</p>
@@ -233,17 +150,12 @@ const Editor = ({ data, updateData, theme, setView }) => {
     <div className="space-y-4">
        {[
          { id: 'cover', name: 'Cover Frame', icon: 'mail', status: showCover ? 'Active' : 'Hidden', toggle: () => setShowCover(!showCover) },
-         { id: 'bg', name: 'Luxury Backdrop', icon: 'image', status: 'Active', toggle: () => { setActiveTab('design'); }, canUpload: true },
-         { id: 'timeline', name: 'Love Story Line', icon: 'history_edu', status: data.showStory !== false ? 'Active' : 'Disabled' },
-         { id: 'gallery', name: 'Photo Grid', icon: 'grid_view', status: data.showGallery !== false ? 'Active' : 'Disabled' }
+         { id: 'bg', name: 'Backdrop', icon: 'image', status: 'Active' },
        ].map(layer => (
          <div key={layer.id} className={`flex items-center justify-between p-4 rounded-2xl border ${theme === 'dark' ? 'bg-slate-800/50 border-slate-700' : 'bg-stone-50/50 border-stone-100'}`}>
             <div className="flex items-center gap-4">
                <span className="material-symbols-outlined text-stone-400">{layer.icon}</span>
-               <div className="flex flex-col">
-                 <span className={`text-[11px] font-black uppercase tracking-widest ${theme === 'dark' ? 'text-slate-300' : 'text-stone-700'}`}>{layer.name}</span>
-                 <span className="text-[8px] text-stone-400 font-bold uppercase">{layer.status}</span>
-               </div>
+               <span className={`text-[11px] font-black uppercase tracking-widest ${theme === 'dark' ? 'text-slate-300' : 'text-stone-700'}`}>{layer.name}</span>
             </div>
             {layer.toggle && (
                <button onClick={layer.toggle} className="text-stone-300 hover:text-[#C5A059] transition-colors">
@@ -262,6 +174,24 @@ const Editor = ({ data, updateData, theme, setView }) => {
           <span className="material-symbols-outlined">arrow_back</span>
           <span className={`serif font-black text-xl tracking-tighter ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>LuxeInvite</span>
         </button>
+        
+        {/* DEVICE SWITCHER */}
+        <div className="hidden md:flex items-center bg-stone-100 dark:bg-slate-800 rounded-xl p-1 gap-1">
+           {[
+             { id: 'mobile', icon: 'smartphone' },
+             { id: 'tablet', icon: 'tablet_android' },
+             { id: 'desktop', icon: 'desktop_windows' }
+           ].map(d => (
+             <button 
+               key={d.id}
+               onClick={() => setDevice(d.id)}
+               className={`p-2 rounded-lg transition-all ${device === d.id ? 'bg-white dark:bg-slate-700 text-[#C5A059] shadow-sm' : 'text-stone-400 hover:text-stone-600'}`}
+             >
+                <span className="material-symbols-outlined text-[18px]">{d.icon}</span>
+             </button>
+           ))}
+        </div>
+
         <div className="flex items-center gap-4">
           <button onClick={() => setIsPreviewOpen(true)} className={`px-6 py-2 border rounded-lg text-[12px] font-bold uppercase tracking-widest transition-all flex items-center gap-2 ${theme === 'dark' ? 'border-slate-700 text-slate-300 hover:bg-slate-800' : 'border-stone-200 text-stone-600 hover:bg-stone-50'}`}>
             <span className="material-symbols-outlined text-[18px]">visibility</span> {t.preview}
@@ -288,15 +218,34 @@ const Editor = ({ data, updateData, theme, setView }) => {
            </div>
         </aside>
 
-        <main className={`flex-1 relative overflow-y-auto ${theme === 'dark' ? 'bg-[#0b1120]' : 'bg-[#f4f4f5]'}`}>
-           {/* FULL CANVAS VIEW */}
-           <div className="w-full min-h-full bg-white shadow-inner">
-              <PremiumInvitation 
-                 data={data} 
-                 isEditMode={true} 
-                 forceShowCover={showCover} 
-                 onEdit={(s) => setActiveTab('content')}
-              />
+        <main className={`flex-1 relative overflow-hidden ${theme === 'dark' ? 'bg-[#0b1120]' : 'bg-[#f4f4f5]'} flex items-center justify-center p-6 md:p-12`}>
+           {/* DEVICE CANVAS WRAPPER */}
+           <motion.div 
+             animate={{ 
+               width: device === 'mobile' ? '400px' : device === 'tablet' ? '768px' : '100%',
+               height: device === 'desktop' ? '100%' : '85vh',
+               borderRadius: device === 'desktop' ? '0px' : '40px'
+             }}
+             className="bg-white shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] overflow-hidden relative border-[8px] border-stone-900 transition-all duration-500"
+           >
+              <div className="w-full h-full overflow-y-auto no-scrollbar">
+                 <PremiumInvitation 
+                    data={data} 
+                    isEditMode={true} 
+                    forceShowCover={showCover} 
+                    onEdit={(s) => setActiveTab('content')}
+                 />
+              </div>
+              {device !== 'desktop' && (
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-5 bg-stone-900 rounded-b-2xl z-[200]" />
+              )}
+           </motion.div>
+
+           {/* ZOOM / SCALE CONTROLS (Floating) */}
+           <div className="fixed bottom-10 right-10 bg-stone-900/80 backdrop-blur-md text-white p-4 rounded-2xl shadow-2xl flex flex-col gap-4 z-[100]">
+              <button onClick={() => setZoom(z => Math.max(30, z-10))} className="hover:text-[#C5A059]"><span className="material-symbols-outlined">zoom_out</span></button>
+              <span className="text-[10px] font-black text-center">{zoom}%</span>
+              <button onClick={() => setZoom(z => Math.min(150, z+10))} className="hover:text-[#C5A059]"><span className="material-symbols-outlined">zoom_in</span></button>
            </div>
         </main>
       </div>
