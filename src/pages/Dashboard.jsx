@@ -106,14 +106,14 @@ const Dashboard = ({ setView, invitationData, guestCount, theme, onReset }) => {
         </div>
         
         <div className="lg:col-span-4 flex flex-col gap-4 lg:gap-6">
-           <div className="bg-[#C5A059] p-6 lg:p-8 rounded-3xl text-white shadow-xl flex flex-col gap-4">
-              <h3 className="serif text-xl">Upgrade to Gold</h3>
-              <p className="text-white/80 text-sm leading-relaxed">Unlock premium layouts, music integration, and custom domains.</p>
-              <button className="bg-white text-[#C5A059] py-3 rounded-xl font-bold text-[10px] uppercase tracking-widest mt-2 hover:bg-[#F8F5F2] transition-all">Go Premium</button>
-           </div>
-           <div className={`p-6 lg:p-8 rounded-3xl border border-dashed flex flex-col items-center justify-center text-center gap-2 ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-stone-50 border-stone-200'}`}>
-              <span className="material-symbols-outlined text-stone-400">help</span>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Need Help?</p>
+           <div className={`p-6 lg:p-8 rounded-3xl border border-dashed flex flex-col items-center justify-center text-center gap-4 ${isDark ? 'bg-slate-800/50 border-slate-700' : 'bg-stone-50 border-stone-200'}`}>
+              <div className="w-12 h-12 rounded-full bg-[#C5A059]/10 flex items-center justify-center">
+                 <span className="material-symbols-outlined text-[#C5A059]">verified</span>
+              </div>
+              <div>
+                 <p className="text-[10px] font-bold uppercase tracking-widest text-stone-500">System Ready</p>
+                 <p className={`text-xs mt-1 ${mutedClass}`}>Platform is fully synchronized with secure backend.</p>
+              </div>
            </div>
         </div>
       </div>

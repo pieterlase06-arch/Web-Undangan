@@ -56,20 +56,50 @@ function AppContent() {
     quote: ''
   };
 
-  const [invitationData, setInvitationData] = useState(() => {
-    const saved = localStorage.getItem('invitationData');
-    return saved ? JSON.parse(saved) : initialInvitation;
-  });
+  const [invitationData, setInvitationData] = useState(initialInvitation);
+  const [guests, setGuests] = useState([]);
 
-  const [guests, setGuests] = useState(() => {
-    const saved = localStorage.getItem('guests');
-    return saved ? JSON.parse(saved) : [
-      { id: 1, name: 'Bpk. Budi Santoso', category: 'Keluarga', phone: '08123456789', status: 'Sent' },
-      { id: 2, name: 'Siska Amanda', category: 'Teman Kantor', phone: '08129876543', status: 'Opened' },
-    ];
-  });
-
+  // FETCH DESIGN FROM BACKEND ON LOAD
   useEffect(() => {
+    const loadFullStackData = async () => {
+      try {
+        const res = await fetch(`${config.API_URL}/design`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.templateId) {
+            setInvitationData(data);
+          } else {
+            const savedLocal = localStorage.getItem('invitationData');
+            if (savedLocal) setInvitationData(JSON.parse(savedLocal));
+          }
+        }
+        
+        const savedGuests = localStorage.getItem('guests');
+        if (savedGuests) setGuests(JSON.parse(savedGuests));
+      } catch (err) {
+        console.error("Full-stack data load failed:", err);
+      }
+    };
+    loadFullStackData();
+  }, []);
+
+  // SAVE DESIGN TO BACKEND ON CHANGE
+  useEffect(() => {
+    const saveToFullStack = async () => {
+      try {
+        await fetch(`${config.API_URL}/design`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(invitationData)
+        });
+      } catch (err) {
+        console.error("Backend save failed:", err);
+      }
+    };
+
+    if (invitationData.partner1 !== 'Nama Mempelai 1') {
+      saveToFullStack();
+    }
     localStorage.setItem('invitationData', JSON.stringify(invitationData));
     localStorage.setItem('guests', JSON.stringify(guests));
   }, [invitationData, guests]);
@@ -105,16 +135,16 @@ function AppContent() {
   const resetInvitation = async () => {
     if (window.confirm('Hapus seluruh data desain dan tanggapan tamu? Tindakan ini tidak dapat dibatalkan.')) {
       try {
-        // Reset Local State FIRST for immediate feedback
+        // Reset Local State FIRST
         setInvitationData(initialInvitation);
         setGuests([]);
-        localStorage.clear(); // Clear all including login/theme
+        localStorage.clear();
         
-        // Wipe Backend Data in background
-        fetch(`${config.API_URL}/all`, { method: 'DELETE' }).catch(e => console.error("Wipe API failed:", e));
+        // Wipe Backend Data
+        await fetch(`${config.API_URL}/all`, { method: 'DELETE' });
         
         alert('Data berhasil dihapus.');
-        window.location.href = '/'; // Force reload and go home
+        window.location.reload();
       } catch (err) {
         console.error("Reset failed:", err);
         localStorage.clear();
@@ -191,9 +221,8 @@ function AppContent() {
     );
   }
 
-
   return (
-    <div className={`min-h-screen flex ${theme === 'dark' ? 'bg-[#0f172a]' : 'bg-[#fcf9f6]'} transition-colors duration-300 relative`}>
+    <div className="min-h-screen flex ${theme === 'dark' ? 'bg-[#0f172a]' : 'bg-[#fcf9f6]'} transition-colors duration-300 relative">
       {!isEditor && !isView && (
         <div className={`lg:hidden fixed top-0 left-0 right-0 h-16 px-6 flex items-center justify-between z-[60] backdrop-blur-md border-b ${theme === 'dark' ? 'bg-slate-900/80 border-slate-800' : 'bg-white/80 border-stone-100'}`}>
            <h1 className={`serif font-black text-xl ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>LuxeInvite</h1>
@@ -237,16 +266,17 @@ function AppContent() {
             } />
             <Route path="/editor" element={
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
-                <Editor setView={(v) => navigate(v)} data={invitationData} updateData={(d) => setInvitationData(prev => ({...prev, ...d}))} lang={lang} theme={theme} />
+                <Editor data={invitationData} updateData={(d) => setInvitationData(prev => ({ ...prev, ...d }))} theme={theme} />
               </motion.div>
             } />
-            <Route path="/daftar-tamu" element={
+            <Route path="/buku-tamu" element={
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
                 <GuestList 
                   guests={guests} 
-                  onAddGuest={(g) => setGuests(prev => [...prev, {...g, id: Date.now()}])} 
-                  onDeleteGuest={deleteGuest}
-                  onUpdateStatus={updateGuestStatus}
+                  onDelete={deleteGuest} 
+                  onStatusUpdate={updateGuestStatus} 
+                  onAddGuest={(g) => setGuests(prev => [...prev, { ...g, id: Date.now(), status: 'Sent' }])}
+                  theme={theme}
                 />
               </motion.div>
             } />
@@ -256,9 +286,7 @@ function AppContent() {
               </motion.div>
             } />
             <Route path="/v" element={
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
-                <PremiumInvitation data={invitationData} />
-              </motion.div>
+              <PremiumInvitation data={invitationData} forceShowCover={true} />
             } />
             <Route path="*" element={<Navigate to="/desain-saya" replace />} />
           </Routes>

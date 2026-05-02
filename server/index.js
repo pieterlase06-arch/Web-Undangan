@@ -15,10 +15,14 @@ app.use(cors());
 app.use(express.json());
 
 const DATA_FILE = path.join(__dirname, 'data.json');
+const DESIGN_FILE = path.join(__dirname, 'design.json');
 
-// Initialize data file if it doesn't exist
+// Initialize data files if they don't exist
 if (!fs.existsSync(DATA_FILE)) {
     fs.writeFileSync(DATA_FILE, JSON.stringify({ rsvps: [], messages: [] }, null, 2));
+}
+if (!fs.existsSync(DESIGN_FILE)) {
+    fs.writeFileSync(DESIGN_FILE, JSON.stringify({}, null, 2));
 }
 
 const getData = () => {
@@ -30,24 +34,41 @@ const getData = () => {
     }
 };
 
-const saveData = (data) => fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+const getDesign = () => {
+    try {
+        const content = fs.readFileSync(DESIGN_FILE, 'utf-8');
+        return JSON.parse(content);
+    } catch (e) {
+        return {};
+    }
+};
 
-// GET all data
+const saveData = (data) => fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+const saveDesign = (data) => fs.writeFileSync(DESIGN_FILE, JSON.stringify(data, null, 2));
+
+// DESIGN ENDPOINTS
+app.get('/api/design', (req, res) => {
+    res.json(getDesign());
+});
+
+app.post('/api/design', (req, res) => {
+    saveDesign(req.body);
+    res.json({ message: 'Design saved successfully' });
+});
+
+// DATA ENDPOINTS
 app.get('/api/data', (req, res) => {
     res.json(getData());
 });
 
-// GET RSVPs
 app.get('/api/rsvps', (req, res) => {
     res.json(getData().rsvps);
 });
 
-// GET Messages
 app.get('/api/messages', (req, res) => {
     res.json(getData().messages);
 });
 
-// POST RSVP
 app.post('/api/rsvp', (req, res) => {
     const { name, attendance, guests } = req.body;
     if (!name || attendance === undefined) {
@@ -61,18 +82,16 @@ app.post('/api/rsvp', (req, res) => {
         guests: parseInt(guests) || 1, 
         date: new Date().toISOString() 
     };
-    data.rsvps.unshift(newRSVP); // Newest first
+    data.rsvps.unshift(newRSVP);
     saveData(data);
     res.status(201).json(newRSVP);
 });
 
-// DELETE RSVP by ID
 app.delete('/api/rsvp/:id', (req, res) => {
     const { id } = req.params;
     const data = getData();
     const initialLength = data.rsvps.length;
     data.rsvps = data.rsvps.filter(r => r.id !== id);
-    
     if (data.rsvps.length < initialLength) {
         saveData(data);
         res.json({ message: 'RSVP deleted successfully' });
@@ -81,7 +100,6 @@ app.delete('/api/rsvp/:id', (req, res) => {
     }
 });
 
-// POST Message
 app.post('/api/message', (req, res) => {
     const { name, message } = req.body;
     if (!name || !message) {
@@ -95,18 +113,16 @@ app.post('/api/message', (req, res) => {
         date: new Date().toISOString(),
         likes: 0
     };
-    data.messages.unshift(newMessage); // Newest first
+    data.messages.unshift(newMessage);
     saveData(data);
     res.status(201).json(newMessage);
 });
 
-// DELETE Message by ID
 app.delete('/api/message/:id', (req, res) => {
     const { id } = req.params;
     const data = getData();
     const initialLength = data.messages.length;
     data.messages = data.messages.filter(m => m.id !== id);
-    
     if (data.messages.length < initialLength) {
         saveData(data);
         res.json({ message: 'Message deleted successfully' });
@@ -115,7 +131,6 @@ app.delete('/api/message/:id', (req, res) => {
     }
 });
 
-// LIKE Message
 app.post('/api/message/:id/like', (req, res) => {
     const { id } = req.params;
     const data = getData();
@@ -132,7 +147,8 @@ app.post('/api/message/:id/like', (req, res) => {
 // DELETE ALL DATA (Wipe for fresh start)
 app.delete('/api/all', (req, res) => {
     saveData({ rsvps: [], messages: [] });
-    res.json({ message: 'All data wiped successfully' });
+    saveDesign({}); // Also wipe the design!
+    res.json({ message: 'All data and design wiped successfully' });
 });
 
 app.listen(PORT, () => {
