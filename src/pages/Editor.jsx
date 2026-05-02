@@ -17,6 +17,8 @@ const Editor = ({ data, updateData }) => {
   const handleImageUpload = async (file, field) => {
     if (!file) return;
     setIsUploading(true);
+
+    // 1. Try API Upload first
     const formData = new FormData();
     formData.append('image', file);
     try {
@@ -24,9 +26,20 @@ const Editor = ({ data, updateData }) => {
       if (res.ok) {
         const { url } = await res.json();
         updateData({ [field]: url });
+        setIsUploading(false);
+        return;
       }
-    } catch (err) { console.error(err); }
-    finally { setIsUploading(false); }
+    } catch (err) { 
+      console.log("API Upload failed, falling back to Base64 (Static Mode)");
+    }
+
+    // 2. Fallback to Base64 for Static/GitHub Pages
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      updateData({ [field]: reader.result });
+      setIsUploading(false);
+    };
+    reader.readAsDataURL(file);
   };
 
   const addStory = () => {
@@ -217,11 +230,16 @@ const Editor = ({ data, updateData }) => {
           )}
         </AnimatePresence>
 
+import CustomCanvasInvitation from '../components/CustomCanvasInvitation';
+
+// ... inside Editor component
         <main className="flex-1 relative overflow-hidden bg-[#f4f6f8] flex items-center justify-center p-4 md:p-12">
            <motion.div animate={{ width: device === 'mobile' ? '380px' : device === 'tablet' ? '760px' : '100%', height: device === 'desktop' ? '100%' : '88vh', borderRadius: device === 'desktop' ? '0px' : '40px' }} className="bg-white shadow-2xl overflow-hidden relative border-[10px] border-stone-950 transition-all duration-700">
               <div className="w-full h-full overflow-y-auto no-scrollbar scroll-smooth">
                  {data.templateId === 'snap-photo' ? (
                    <SnapPhotoInvitation data={data} isEditMode={true} />
+                 ) : data.templateId === 'custom' ? (
+                   <CustomCanvasInvitation data={data} isEditMode={true} />
                  ) : (
                    <PremiumInvitation data={data} isEditMode={true} forceShowCover={showCover} onEdit={() => { setActiveTab('konten'); setIsSidebarOpen(true); }} />
                  )}

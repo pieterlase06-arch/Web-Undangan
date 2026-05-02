@@ -9,6 +9,7 @@ import RSVPTracking from './pages/RSVPTracking';
 import Sidebar from './components/Sidebar';
 import PremiumInvitation from './components/PremiumInvitation';
 import SnapPhotoInvitation from './components/SnapPhotoInvitation';
+import CustomCanvasInvitation from './components/CustomCanvasInvitation';
 import config from './config';
 
 // Root Component to handle Routing
@@ -194,7 +195,11 @@ function AppContent() {
             <Route path="/editor" element={<Editor data={invitationData} updateData={(d) => setInvitationData(prev => ({ ...prev, ...d }))} />} />
             <Route path="/buku-tamu" element={<GuestList guests={guests} onDelete={deleteGuest} onStatusUpdate={updateGuestStatus} onAddGuest={(g) => setGuests(prev => [...prev, { ...g, id: Date.now(), status: 'Sent' }])} theme={theme} />} />
             <Route path="/lacak-rsvp" element={<RSVPTracking guests={guests} />} />
-            <Route path="/v" element={invitationData.templateId === 'snap-photo' ? <SnapPhotoInvitation data={invitationData} /> : <PremiumInvitation data={invitationData} forceShowCover={true} />} />
+            <Route path="/v" element={
+              invitationData.templateId === 'snap-photo' ? <SnapPhotoInvitation data={invitationData} /> : 
+              invitationData.templateId === 'custom' ? <CustomCanvasInvitation data={invitationData} /> :
+              <PremiumInvitation data={invitationData} forceShowCover={true} />
+            } />
             <Route path="*" element={<Navigate to="/desain-saya" replace />} />
           </Routes>
         </AnimatePresence>

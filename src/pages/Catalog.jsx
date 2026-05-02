@@ -15,6 +15,13 @@ const Catalog = ({ onSelectTemplate, theme }) => {
       category: 'Minimalist',
       image: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800',
       description: 'Fokus pada keindahan foto dengan bingkai Snap dan desain modern minimalis.'
+    },
+    {
+      id: 'custom',
+      name: 'Create From Scratch',
+      category: 'Pro Builder',
+      image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800',
+      description: 'Mulai dari nol. Bebas atur background, font, dan tata letak sesuka hati Anda.'
     }
   ];
 
