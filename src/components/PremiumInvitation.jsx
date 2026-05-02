@@ -232,7 +232,7 @@ const PremiumInvitation = ({ data, isEditMode = false, forceShowCover = false, o
                 <span className="material-symbols-outlined text-4xl text-[#C5A059]">filter_vintage</span>
                 <p className="text-[10px] font-black uppercase tracking-[0.5em] opacity-80">Wedding Invitation</p>
                 <h1 className="script-font text-7xl lg:text-9xl leading-none">{data.partner1} & {data.partner2}</h1>
-              </motion.h1>
+              </motion.div>
               
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="space-y-4">
                 <p className="text-xs uppercase tracking-[0.4em] font-bold opacity-60">Dear Honorable Guest,</p>
