@@ -374,7 +374,15 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
            <button onClick={() => setActiveTab('layers')} className={`p-3 rounded-xl transition-all ${activeTab === 'layers' ? 'bg-[#C5A059] text-white shadow-lg' : 'text-stone-400 hover:bg-stone-50 dark:hover:bg-slate-800'}`}><span className="material-symbols-outlined">layers</span></button>
         </aside>
 
-        <main className="flex-1 relative overflow-hidden flex items-center justify-center p-4 lg:p-12 bg-stone-100/50 dark:bg-slate-950/40">
+        <main 
+          className={`flex-1 relative overflow-hidden flex items-center justify-center p-4 lg:p-12 ${theme === 'dark' ? 'bg-[#0b1120]' : 'bg-[#f4f4f5]'}`}
+          style={{
+            backgroundImage: theme === 'dark' 
+              ? 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0)' 
+              : 'radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 0)',
+            backgroundSize: '24px 24px'
+          }}
+        >
           {/* FLOATING TOOLBAR */}
           <div className={`absolute bottom-20 lg:bottom-10 left-1/2 -translate-x-1/2 floating-toolbar px-6 py-3 rounded-full shadow-2xl backdrop-blur-xl flex items-center gap-6 z-[100] border ${theme === 'dark' ? 'bg-slate-800/90 border-slate-700' : 'bg-white/90 border-stone-200'}`}>
             <div className="flex items-center gap-4 border-r pr-6 border-stone-200 dark:border-slate-700">
@@ -393,31 +401,38 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
             }}
             className="relative"
           >
-             {/* Phone Outer Shell */}
-             <div className="w-[420px] h-[850px] bg-stone-950 rounded-[60px] p-3 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] border-[4px] border-stone-800 relative ring-1 ring-white/10">
-                {/* Speaker/Camera Notch */}
-                <div className="absolute top-6 left-1/2 -translate-x-1/2 w-28 h-6 bg-stone-950 rounded-full z-[100] flex items-center justify-center gap-2 border border-white/5">
-                   <div className="w-1.5 h-1.5 rounded-full bg-[#1e293b]" />
-                   <div className="w-8 h-1 bg-[#1e293b] rounded-full" />
+             {/* Phone Outer Shell - Modern Frosted Glass / Titanium Look */}
+             <div className="w-[390px] h-[844px] bg-gradient-to-br from-stone-200 via-stone-300 to-stone-400 dark:from-slate-700 dark:via-slate-800 dark:to-slate-900 rounded-[55px] p-2 shadow-[0_0_0_1px_rgba(0,0,0,0.05),0_30px_60px_-15px_rgba(0,0,0,0.2)] relative">
+                
+                {/* Inner Bezel */}
+                <div className="w-full h-full bg-black rounded-[48px] p-1.5 relative overflow-hidden">
+                  
+                  {/* Dynamic Island Notch */}
+                  <div className="absolute top-3 left-1/2 -translate-x-1/2 w-32 h-8 bg-black rounded-full z-[100] flex items-center justify-between px-3 border border-white/10 shadow-[inset_0_-2px_4px_rgba(255,255,255,0.1)]">
+                     <div className="w-3 h-3 rounded-full bg-blue-900/50 border border-blue-400/30 flex items-center justify-center"><div className="w-1 h-1 bg-white rounded-full opacity-50"></div></div>
+                     <div className="w-3 h-3 rounded-full bg-stone-800" />
+                  </div>
+
+                  {/* Internal Screen Area */}
+                  <div className="w-full h-full bg-white rounded-[42px] overflow-hidden relative">
+                     <div className="absolute inset-0 overflow-y-auto no-scrollbar scroll-smooth bg-white">
+                        {/* Scaling Wrapper */}
+                        <div className="w-full origin-top" style={{ transform: 'scale(1)', width: '100%', minHeight: '100%' }}>
+                          <PremiumInvitation data={data} isEditMode={true} />
+                        </div>
+                     </div>
+                     
+                     {/* Bottom Home Indicator */}
+                     <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1.5 bg-black/20 rounded-full z-[100] pointer-events-none" />
+                  </div>
                 </div>
 
-                {/* Internal Screen */}
-                <div className="w-full h-full bg-white rounded-[50px] overflow-hidden relative border-2 border-stone-900/50">
-                   <div className="absolute inset-0 overflow-y-auto no-scrollbar scroll-smooth bg-white">
-                      {/* Scaling Wrapper: Force the full-page invitation to fit the phone width */}
-                      <div className="w-full origin-top" style={{ transform: 'scale(0.75)', width: '133.33%', height: '133.33%' }}>
-                        <PremiumInvitation data={data} isEditMode={true} />
-                      </div>
-                   </div>
-                   
-                   {/* Bottom Home Indicator */}
-                   <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1.5 bg-black/10 rounded-full z-50 pointer-events-none" />
-                </div>
+                {/* Side Buttons Mockup (Titanium finish) */}
+                <div className="absolute -left-1 top-28 w-1 h-8 bg-stone-400 dark:bg-slate-600 rounded-l-sm shadow-inner" />
+                <div className="absolute -left-1 top-44 w-1 h-16 bg-stone-400 dark:bg-slate-600 rounded-l-sm shadow-inner" />
+                <div className="absolute -left-1 top-64 w-1 h-16 bg-stone-400 dark:bg-slate-600 rounded-l-sm shadow-inner" />
+                <div className="absolute -right-1 top-48 w-1 h-24 bg-stone-400 dark:bg-slate-600 rounded-r-sm shadow-inner" />
              </div>
-
-             {/* Side Buttons Mockup */}
-             <div className="absolute -left-1.5 top-32 w-1.5 h-14 bg-stone-800 rounded-l-md border-y border-white/5" />
-             <div className="absolute -right-1.5 top-44 w-1.5 h-20 bg-stone-800 rounded-r-md border-y border-white/5" />
           </motion.div>
         </main>
 
@@ -460,10 +475,25 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
         </AnimatePresence>
 
         <aside className={`hidden lg:flex w-[350px] border-l flex-col h-full z-40 overflow-hidden transition-colors ${theme === 'dark' ? 'bg-[#1e293b] border-slate-700' : 'bg-white border-stone-100'}`}>
-          <div className={`p-6 border-b flex justify-around ${theme === 'dark' ? 'border-slate-800' : 'border-stone-50'}`}>
-             <button onClick={() => setActiveTab('design')} className={`text-[10px] font-black uppercase tracking-[0.2em] transition-all ${activeTab === 'design' ? 'text-[#C5A059] scale-110' : 'text-stone-300'}`}>{t.design}</button>
-             <button onClick={() => setActiveTab('content')} className={`text-[10px] font-black uppercase tracking-[0.2em] transition-all ${activeTab === 'content' ? 'text-[#C5A059] scale-110' : 'text-stone-300'}`}>{t.content}</button>
-             <button onClick={() => setActiveTab('layers')} className={`text-[10px] font-black uppercase tracking-[0.2em] transition-all ${activeTab === 'layers' ? 'text-[#C5A059] scale-110' : 'text-stone-300'}`}>{t.layers}</button>
+          <div className={`p-4 border-b flex gap-2 ${theme === 'dark' ? 'border-slate-800 bg-[#1e293b]' : 'border-stone-100 bg-white'} sticky top-0 z-10`}>
+             <button 
+                onClick={() => setActiveTab('design')} 
+                className={`flex-1 py-2 rounded-lg text-[10px] font-black uppercase tracking-[0.1em] transition-all ${activeTab === 'design' ? 'bg-[#C5A059] text-white shadow-md' : 'text-stone-400 hover:bg-stone-50 dark:hover:bg-slate-800'}`}
+             >
+                {t.design}
+             </button>
+             <button 
+                onClick={() => setActiveTab('content')} 
+                className={`flex-1 py-2 rounded-lg text-[10px] font-black uppercase tracking-[0.1em] transition-all ${activeTab === 'content' ? 'bg-[#C5A059] text-white shadow-md' : 'text-stone-400 hover:bg-stone-50 dark:hover:bg-slate-800'}`}
+             >
+                {t.content}
+             </button>
+             <button 
+                onClick={() => setActiveTab('layers')} 
+                className={`flex-1 py-2 rounded-lg text-[10px] font-black uppercase tracking-[0.1em] transition-all ${activeTab === 'layers' ? 'bg-[#C5A059] text-white shadow-md' : 'text-stone-400 hover:bg-stone-50 dark:hover:bg-slate-800'}`}
+             >
+                {t.layers}
+             </button>
           </div>
 
           <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
