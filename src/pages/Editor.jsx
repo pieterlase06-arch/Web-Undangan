@@ -95,31 +95,42 @@ const Editor = ({ data, updateData, setView: setViewProp }) => {
        <section className="space-y-4">
           <p className="text-[9px] font-black uppercase tracking-widest text-stone-500">Informasi Mempelai</p>
           <div className="space-y-4">
-             <div className="p-4 bg-stone-50 rounded-2xl space-y-4 border border-stone-100 shadow-sm">
-                <div className="flex items-center gap-4">
-                   <div className="w-16 h-16 rounded-xl bg-white shadow-lg overflow-hidden relative group border border-stone-100">
-                      {data.groomImage ? <img src={data.groomImage} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-stone-100 flex items-center justify-center"><span className="material-symbols-outlined text-stone-300">person</span></div>}
-                      <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white">
-                         <span className="material-symbols-outlined text-[18px]">upload</span>
+             <div className="p-6 bg-stone-50 rounded-[32px] space-y-6 border border-stone-100 shadow-sm group">
+                <div className="space-y-4">
+                   <div className="relative w-full h-48 rounded-2xl bg-stone-100 overflow-hidden border-2 border-dashed border-stone-200 group-hover:border-[#C5A059] transition-all flex flex-col items-center justify-center gap-3">
+                      {data.groomImage ? (
+                        <img src={data.groomImage} className="absolute inset-0 w-full h-full object-cover" />
+                      ) : (
+                        <span className="material-symbols-outlined text-4xl text-stone-300">add_a_photo</span>
+                      )}
+                      <label className="relative z-10 bg-white/90 backdrop-blur-md px-6 py-2.5 rounded-full shadow-xl cursor-pointer hover:scale-105 transition-transform border border-stone-100 flex items-center gap-2">
+                         <span className="material-symbols-outlined text-[18px] text-[#C5A059]">photo_camera</span>
+                         <span className="text-[10px] font-black uppercase tracking-widest text-stone-900">Ganti Foto Pria</span>
                          <input type="file" className="hidden" onChange={(e) => handleImageUpload(e.target.files[0], 'groomImage')} />
                       </label>
                    </div>
-                   <div className="flex-1 space-y-2">
+                   <div className="space-y-2">
                       <input className="w-full bg-transparent border-b border-stone-200 py-1 text-sm font-black text-stone-900 outline-none focus:border-stone-900" placeholder="Nama Pria" value={data.partner1} onChange={(e) => updateData({ partner1: e.target.value })} />
                       <input className="w-full bg-transparent py-1 text-[10px] text-stone-500 font-bold outline-none" placeholder="Orang Tua Pria" value={data.partner1Parents} onChange={(e) => updateData({ partner1Parents: e.target.value })} />
                    </div>
                 </div>
              </div>
-             <div className="p-4 bg-stone-50 rounded-2xl space-y-4 border border-stone-100 shadow-sm">
-                <div className="flex items-center gap-4">
-                   <div className="w-16 h-16 rounded-xl bg-white shadow-lg overflow-hidden relative group border border-stone-100">
-                      {data.brideImage ? <img src={data.brideImage} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-stone-100 flex items-center justify-center"><span className="material-symbols-outlined text-stone-300">person</span></div>}
-                      <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white">
-                         <span className="material-symbols-outlined text-[18px]">upload</span>
+
+             <div className="p-6 bg-stone-50 rounded-[32px] space-y-6 border border-stone-100 shadow-sm group">
+                <div className="space-y-4">
+                   <div className="relative w-full h-48 rounded-2xl bg-stone-100 overflow-hidden border-2 border-dashed border-stone-200 group-hover:border-[#C5A059] transition-all flex flex-col items-center justify-center gap-3">
+                      {data.brideImage ? (
+                        <img src={data.brideImage} className="absolute inset-0 w-full h-full object-cover" />
+                      ) : (
+                        <span className="material-symbols-outlined text-4xl text-stone-300">add_a_photo</span>
+                      )}
+                      <label className="relative z-10 bg-white/90 backdrop-blur-md px-6 py-2.5 rounded-full shadow-xl cursor-pointer hover:scale-105 transition-transform border border-stone-100 flex items-center gap-2">
+                         <span className="material-symbols-outlined text-[18px] text-[#C5A059]">photo_camera</span>
+                         <span className="text-[10px] font-black uppercase tracking-widest text-stone-900">Ganti Foto Wanita</span>
                          <input type="file" className="hidden" onChange={(e) => handleImageUpload(e.target.files[0], 'brideImage')} />
                       </label>
                    </div>
-                   <div className="flex-1 space-y-2">
+                   <div className="space-y-2">
                       <input className="w-full bg-transparent border-b border-stone-200 py-1 text-sm font-black text-stone-900 outline-none focus:border-stone-900" placeholder="Nama Wanita" value={data.partner2} onChange={(e) => updateData({ partner2: e.target.value })} />
                       <input className="w-full bg-transparent py-1 text-[10px] text-stone-500 font-bold outline-none" placeholder="Orang Tua Wanita" value={data.partner2Parents} onChange={(e) => updateData({ partner2Parents: e.target.value })} />
                    </div>

@@ -129,9 +129,18 @@ const PremiumInvitation = ({ data, isEditMode = false, forceShowCover = false, o
            {/* HERO */}
            <section ref={sectionRefs.hero} className="min-h-screen flex flex-col lg:flex-row items-center justify-center px-6 lg:px-24 gap-20">
               <motion.div {...reveal} className="lg:w-1/2 flex justify-center">
-                 <div className="w-72 h-[450px] md:w-96 md:h-[650px] rounded-[150px] border-[20px] shadow-2xl overflow-hidden rotate-2 relative" style={{ borderColor: isDark ? '#1C1917' : 'white' }}>
-                    <img src={data.groomImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800'} className="w-full h-full object-cover" />
+                 <div 
+                   onClick={() => isEditMode && onEdit('groomImage')}
+                   className={`w-72 h-[450px] md:w-96 md:h-[650px] rounded-[150px] border-[20px] shadow-2xl overflow-hidden rotate-2 relative ${isEditMode ? 'cursor-pointer group' : ''}`} 
+                   style={{ borderColor: isDark ? '#1C1917' : 'white' }}
+                 >
+                    <img src={data.groomImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800'} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
                     {isDark && <div className="absolute inset-0 bg-stone-900/10 mix-blend-overlay" />}
+                    {isEditMode && (
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                         <span className="material-symbols-outlined text-white text-5xl">photo_camera</span>
+                      </div>
+                    )}
                  </div>
               </motion.div>
               <motion.div {...reveal} transition={{ delay: 0.3 }} className="lg:w-1/2 text-center lg:text-left space-y-10">
