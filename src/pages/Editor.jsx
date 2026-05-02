@@ -47,6 +47,7 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
 
   const renderDesignTab = () => (
     <div className="space-y-12">
+       {/* THEME SELECTION */}
        <section className="space-y-6">
           <h3 className={`serif text-xl ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>{t.themes}</h3>
           <div className="grid grid-cols-3 gap-3">
@@ -61,10 +62,69 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
                 className={`group relative aspect-square rounded-xl overflow-hidden border-2 transition-all ${data.themeId === themeItem.id ? 'border-[#C5A059] scale-105 shadow-xl' : 'border-transparent opacity-60 hover:opacity-100'}`}
               >
                 <img src={themeItem.img} className="w-full h-full object-cover" alt={themeItem.id} />
+                <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-all" />
               </button>
             ))}
           </div>
        </section>
+
+       {/* MUSIC LIBRARY */}
+       <section className="space-y-6">
+          <div className="flex items-center justify-between">
+             <p className={`text-[10px] font-bold uppercase tracking-widest ${theme === 'dark' ? 'text-slate-500' : 'text-stone-400'}`}>Music Library</p>
+             <span className="material-symbols-outlined text-[18px] text-[#C5A059]">music_note</span>
+          </div>
+          <div className="space-y-2">
+             {[
+               { name: 'Classical Wedding', genre: 'Instrumental' },
+               { name: 'Modern Acoustic', genre: 'Acoustic' },
+               { name: 'Traditional Melodic', genre: 'Tradisional' },
+               { name: 'Romantic Piano', genre: 'Piano' }
+             ].map((music, i) => (
+               <button 
+                 key={i}
+                 onClick={() => updateData({ musicId: i })}
+                 className={`w-full p-4 rounded-2xl border flex items-center justify-between transition-all ${data.musicId === i ? 'bg-[#C5A059] border-[#C5A059] text-white shadow-lg' : 'bg-transparent border-stone-100 dark:border-slate-800 text-stone-400 hover:border-stone-900'}`}
+               >
+                  <div className="flex items-center gap-3 text-left">
+                     <span className="material-symbols-outlined text-[20px]">play_circle</span>
+                     <div>
+                        <p className="text-[11px] font-black uppercase tracking-widest">{music.name}</p>
+                        <p className="text-[8px] font-bold opacity-60 uppercase">{music.genre}</p>
+                     </div>
+                  </div>
+                  {data.musicId === i && <span className="material-symbols-outlined text-[16px]">check</span>}
+               </button>
+             ))}
+          </div>
+       </section>
+
+       {/* COLOR PALETTES */}
+       <section className="space-y-6">
+          <p className={`text-[10px] font-bold uppercase tracking-widest ${theme === 'dark' ? 'text-slate-500' : 'text-stone-400'}`}>Global Colors</p>
+          <div className="grid grid-cols-5 gap-3">
+             {[
+               { p: '#C5A059', a: '#1C1917' },
+               { p: '#064E3B', a: '#D4AF37' },
+               { p: '#44403C', a: '#A8A29E' },
+               { p: '#BE123C', a: '#C5A059' },
+               { p: '#0F172A', a: '#334155' }
+             ].map((pal, i) => (
+               <button 
+                key={i} 
+                onClick={() => updateData({ primaryColor: pal.p, accentColor: pal.a })}
+                className="group flex flex-col gap-1 items-center"
+               >
+                  <div className="w-10 h-10 rounded-full border-2 border-white shadow-md relative overflow-hidden" style={{ backgroundColor: pal.p }}>
+                     <div className="absolute inset-y-0 right-0 w-1/2" style={{ backgroundColor: pal.a }} />
+                  </div>
+                  {data.primaryColor === pal.p && <div className="w-1 h-1 rounded-full bg-[#C5A059]" />}
+               </button>
+             ))}
+          </div>
+       </section>
+
+       {/* TYPOGRAPHY */}
        <section className="space-y-4">
           <p className={`text-[10px] font-bold uppercase tracking-widest ${theme === 'dark' ? 'text-slate-500' : 'text-stone-400'}`}>Font Pairing</p>
           <div className="flex gap-2">
@@ -76,27 +136,46 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
   );
 
   const renderContentTab = () => (
-    <div className="space-y-10">
-       <div className="space-y-8">
-         {/* TEXT CONTENT */}
+    <div className="space-y-12">
+       <div className="space-y-10">
+         {/* BASIC INFO */}
          <div className="space-y-6">
-            <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#C5A059]">Basic Information</h4>
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">{t.partner1}</label>
-              <input className={`w-full border-b py-3 text-xl outline-none transition-all font-serif ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white focus:border-[#C5A059]' : 'bg-transparent border-stone-100 text-stone-900 focus:border-stone-900'}`} value={data.partner1} onChange={(e) => updateData({ partner1: e.target.value })} />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">{t.partner2}</label>
-              <input className={`w-full border-b py-3 text-xl outline-none transition-all font-serif ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white focus:border-[#C5A059]' : 'bg-transparent border-stone-100 text-stone-900 focus:border-stone-900'}`} value={data.partner2} onChange={(e) => updateData({ partner2: e.target.value })} />
-            </div>
-            <div className="grid grid-cols-2 gap-6">
+            <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#C5A059]">Mempelai & Acara</h4>
+            <div className="space-y-6">
                <div className="space-y-2">
-                 <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">{t.date}</label>
-                 <input type="date" className={`w-full border-b py-2 text-sm outline-none ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white' : 'bg-transparent border-stone-100 text-stone-900'}`} value={data.date} onChange={(e) => updateData({ date: e.target.value })} />
+                 <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">{t.partner1}</label>
+                 <input className={`w-full border-b py-3 text-xl outline-none transition-all font-serif ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white focus:border-[#C5A059]' : 'bg-transparent border-stone-100 text-stone-900 focus:border-stone-900'}`} value={data.partner1} onChange={(e) => updateData({ partner1: e.target.value })} />
                </div>
                <div className="space-y-2">
-                 <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">{t.time}</label>
-                 <input type="time" className={`w-full border-b py-2 text-sm outline-none ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white' : 'bg-transparent border-stone-100 text-stone-900'}`} value={data.time} onChange={(e) => updateData({ time: e.target.value })} />
+                 <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">{t.partner2}</label>
+                 <input className={`w-full border-b py-3 text-xl outline-none transition-all font-serif ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white focus:border-[#C5A059]' : 'bg-transparent border-stone-100 text-stone-900 focus:border-stone-900'}`} value={data.partner2} onChange={(e) => updateData({ partner2: e.target.value })} />
+               </div>
+               <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">{t.date}</label>
+                    <input type="date" className={`w-full border-b py-2 text-sm outline-none ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white' : 'bg-transparent border-stone-100 text-stone-900'}`} value={data.date} onChange={(e) => updateData({ date: e.target.value })} />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">{t.time}</label>
+                    <input type="time" className={`w-full border-b py-2 text-sm outline-none ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white' : 'bg-transparent border-stone-100 text-stone-900'}`} value={data.time} onChange={(e) => updateData({ time: e.target.value })} />
+                  </div>
+               </div>
+            </div>
+         </div>
+
+         {/* FAMILY INFO */}
+         <div className="space-y-6 pt-6 border-t border-stone-100 dark:border-slate-800">
+            <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#C5A059]">Info Orang Tua</h4>
+            <div className="space-y-6">
+               <div className="space-y-4">
+                  <p className="text-[9px] font-bold uppercase tracking-widest opacity-30">Pihak {data.partner1}</p>
+                  <input placeholder="Nama Ayah" className={`w-full border-b py-2 text-sm outline-none ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white' : 'bg-transparent border-stone-100 text-stone-900'}`} value={data.father1 || ''} onChange={(e) => updateData({ father1: e.target.value })} />
+                  <input placeholder="Nama Ibu" className={`w-full border-b py-2 text-sm outline-none ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white' : 'bg-transparent border-stone-100 text-stone-900'}`} value={data.mother1 || ''} onChange={(e) => updateData({ mother1: e.target.value })} />
+               </div>
+               <div className="space-y-4">
+                  <p className="text-[9px] font-bold uppercase tracking-widest opacity-30">Pihak {data.partner2}</p>
+                  <input placeholder="Nama Ayah" className={`w-full border-b py-2 text-sm outline-none ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white' : 'bg-transparent border-stone-100 text-stone-900'}`} value={data.father2 || ''} onChange={(e) => updateData({ father2: e.target.value })} />
+                  <input placeholder="Nama Ibu" className={`w-full border-b py-2 text-sm outline-none ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white' : 'bg-transparent border-stone-100 text-stone-900'}`} value={data.mother2 || ''} onChange={(e) => updateData({ mother2: e.target.value })} />
                </div>
             </div>
          </div>
@@ -110,7 +189,7 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
                <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                      <p className="text-[9px] font-bold opacity-40 uppercase">Pria</p>
-                     <div className="relative aspect-square rounded-2xl overflow-hidden border-2 border-stone-100 dark:border-slate-700 group">
+                     <div className="relative aspect-square rounded-2xl overflow-hidden border-2 border-stone-100 dark:border-slate-700 group shadow-sm hover:shadow-lg transition-all">
                         <img src={data.groomImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'} className="w-full h-full object-cover" />
                         <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
                            <span className="material-symbols-outlined text-white">upload</span>
@@ -123,7 +202,7 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
                   </div>
                   <div className="space-y-2">
                      <p className="text-[9px] font-bold opacity-40 uppercase">Wanita</p>
-                     <div className="relative aspect-square rounded-2xl overflow-hidden border-2 border-stone-100 dark:border-slate-700 group">
+                     <div className="relative aspect-square rounded-2xl overflow-hidden border-2 border-stone-100 dark:border-slate-700 group shadow-sm hover:shadow-lg transition-all">
                         <img src={data.brideImage || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80'} className="w-full h-full object-cover" />
                         <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
                            <span className="material-symbols-outlined text-white">upload</span>
@@ -136,25 +215,32 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
                   </div>
                </div>
             </div>
+         </div>
 
-            <div className="space-y-4">
-               <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Premium Presets</p>
-               <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
-                  {[
-                    'https://images.unsplash.com/photo-1519741497674-611481863552',
-                    'https://images.unsplash.com/photo-1511285560929-80b456fea0bc',
-                    'https://images.unsplash.com/photo-1519225421980-715cb0215aed',
-                    'https://images.unsplash.com/photo-1522673607200-164883eeca48'
-                  ].map((url, i) => (
-                    <button 
-                      key={i} 
-                      onClick={() => updateData({ backgroundImage: `${url}?auto=format&fit=crop&w=1200&q=80` })}
-                      className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border-2 border-transparent hover:border-[#C5A059] transition-all"
-                    >
-                      <img src={`${url}?auto=format&fit=crop&w=100&q=80`} className="w-full h-full object-cover" />
-                    </button>
-                  ))}
-               </div>
+         {/* SECTION TOGGLES */}
+         <div className="space-y-6 pt-6 border-t border-stone-100 dark:border-slate-800">
+            <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#C5A059]">Section Settings</h4>
+            <div className="space-y-3">
+               {[
+                 { id: 'showGift', name: 'Kado Digital (Angpau)', icon: 'payments' },
+                 { id: 'showGallery', name: 'Galeri Foto', icon: 'image' },
+                 { id: 'showStory', name: 'Love Story', icon: 'history_edu' },
+                 { id: 'showRSVP', name: 'Form Konfirmasi (RSVP)', icon: 'mail' }
+               ].map(s => (
+                 <button 
+                  key={s.id}
+                  onClick={() => updateData({ [s.id]: !data[s.id] })}
+                  className="w-full p-4 rounded-2xl border border-stone-100 dark:border-slate-800 flex items-center justify-between hover:bg-stone-50 transition-colors"
+                 >
+                    <div className="flex items-center gap-3">
+                       <span className="material-symbols-outlined text-[20px] text-stone-400">{s.icon}</span>
+                       <span className="text-[11px] font-bold uppercase tracking-widest text-stone-600 dark:text-slate-300">{s.name}</span>
+                    </div>
+                    <div className={`w-10 h-5 rounded-full p-1 transition-colors ${data[s.id] !== false ? 'bg-[#C5A059]' : 'bg-stone-200'}`}>
+                       <div className={`w-3 h-3 bg-white rounded-full transition-transform ${data[s.id] !== false ? 'translate-x-5' : 'translate-x-0'}`} />
+                    </div>
+                 </button>
+               ))}
             </div>
          </div>
        </div>
