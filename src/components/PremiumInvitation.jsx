@@ -1,19 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const PremiumInvitation = ({ data, lang = 'id' }) => {
+const PremiumInvitation = ({ data }) => {
   const [isOpened, setIsOpened] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [rsvpStatus, setRsvpStatus] = useState(null);
-  const [guestName, setGuestName] = useState('');
-  const audioRef = useRef(null);
-
-  useEffect(() => {
-    // Get guest name from URL if available
+  
+  // Initialize guest name directly from URL
+  const [guestName] = useState(() => {
     const params = new URLSearchParams(window.location.search);
     const kpd = params.get('kpd');
-    if (kpd) setGuestName(decodeURIComponent(kpd));
-  }, []);
+    return kpd ? decodeURIComponent(kpd) : '';
+  });
+
+  const audioRef = useRef(null);
 
   const handleOpen = () => {
     setIsOpened(true);

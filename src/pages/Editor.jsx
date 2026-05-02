@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import PremiumInvitation from '../components/PremiumInvitation';
 
@@ -7,8 +7,6 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
   const [zoom, setZoom] = useState(100);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
-  const [rsvpStatus, setRsvpStatus] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
 
   const t = {
     id: { 
@@ -245,7 +243,7 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
             </div>
             
             <div className="flex-1 overflow-y-auto custom-scrollbar">
-               <PremiumInvitation data={data} lang={lang} />
+               <PremiumInvitation data={data} />
             </div>
           </motion.div>
         )}

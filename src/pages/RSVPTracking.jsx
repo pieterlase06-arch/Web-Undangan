@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 const RSVPTracking = ({ guests }) => {
   const confirmed = guests.filter(g => g.status === 'Confirmed').length;

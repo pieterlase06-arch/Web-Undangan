@@ -1,13 +1,6 @@
-import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
 const RSVP = () => {
-  const [formData, setFormData] = useState({
-    guestName: '',
-    attendance: '',
-    guestCount: '1',
-    note: ''
-  });
 
   return (
     <section id="rsvp" className="relative py-24 bg-background overflow-hidden">

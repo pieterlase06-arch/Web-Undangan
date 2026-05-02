@@ -1,5 +1,4 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+
 
 const Dashboard = ({ setView, invitationData, guestCount, theme }) => {
   const isDark = theme === 'dark';

@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 const Sidebar = ({ currentView, setView, lang, setLang, theme, setTheme, isOpen }) => {
   const t = {
