@@ -23,6 +23,8 @@ function App() {
     primaryColor: '#0F172A',
     accentColor: '#d4af37',
     fontFamily: 'serif',
+    themeId: 'gold',
+    backgroundImage: '/assets/themes/gold.png',
   };
 
   const [invitationData, setInvitationData] = useState(() => {

@@ -48,20 +48,25 @@ const Editor = ({ setView, data, updateData }) => {
 
         {/* MAIN CANVAS */}
         <main className="flex-1 bg-[#fcf9f6] relative overflow-hidden flex items-center justify-center p-12">
-          <div className="absolute top-8 left-1/2 -translate-x-1/2 floating-toolbar px-5 py-2 rounded-full shadow-lg flex items-center gap-4 z-30">
+          <div className="absolute top-8 left-1/2 -translate-x-1/2 floating-toolbar px-5 py-2 rounded-full shadow-lg bg-white/80 backdrop-blur-md flex items-center gap-4 z-30 border border-stone-100">
             <button onClick={() => setZoom(z => Math.max(50, z-10))} className="p-1 hover:bg-stone-100 rounded-full transition-colors"><span className="material-symbols-outlined text-[16px]">remove</span></button>
             <span className="text-[12px] font-bold w-10 text-center text-stone-900">{zoom}%</span>
             <button onClick={() => setZoom(z => Math.min(200, z+10))} className="p-1 hover:bg-stone-100 rounded-full transition-colors"><span className="material-symbols-outlined text-[16px]">add</span></button>
+            <div className="w-[1px] h-4 bg-stone-200"></div>
+            <button className="p-1 hover:bg-stone-100 rounded-full transition-colors"><span className="material-symbols-outlined text-[16px]">devices</span></button>
           </div>
 
           <motion.div 
-            style={{ scale: zoom / 100 }}
-            className="w-full max-w-[450px] aspect-[4/5] bg-white canvas-container rounded-sm relative p-16 flex flex-col items-center justify-center border border-stone-200 shadow-2xl"
+            style={{ 
+              scale: zoom / 100,
+              fontFamily: data.fontFamily === 'serif' ? '"Playfair Display", serif' : '"Inter", sans-serif'
+            }}
+            className="w-full max-w-[450px] aspect-[4/5] bg-white canvas-container rounded-sm relative p-16 flex flex-col items-center justify-center border border-stone-200 shadow-2xl overflow-hidden"
           >
              {/* THE ACTUAL DESIGN PREVIEW */}
              <div className="relative z-10 flex flex-col items-center text-center gap-8 w-full group">
                <div className="text-stone-400 text-[10px] uppercase tracking-[0.4em] font-bold">The Wedding Celebration of</div>
-               <h1 className="serif text-[48px] text-stone-900 leading-[1] relative" style={{ color: data.primaryColor }}>
+               <h1 className="text-[48px] text-stone-900 leading-[1] relative font-serif" style={{ color: data.primaryColor }}>
                  {data.partner1}<br/>
                  <span className="text-[32px] italic mx-4 font-light" style={{ color: data.accentColor }}>&</span><br/>
                  {data.partner2}
@@ -69,16 +74,23 @@ const Editor = ({ setView, data, updateData }) => {
                <div className="w-16 h-[1px] bg-stone-200"></div>
                <div className="text-stone-600 space-y-2">
                  <p className="font-bold uppercase tracking-[0.2em] text-[11px]">{new Date(data.date).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
-                 <p className="serif text-[20px] text-stone-800">Two Thousand Twenty-Four</p>
+                 <p className="text-[20px] text-stone-800">Two Thousand Twenty-Four</p>
                  <p className="italic text-[12px] text-stone-400">at {data.time} in the afternoon</p>
                </div>
-               <div className="text-stone-400 text-[13px] serif leading-relaxed">
+               <div className="text-stone-400 text-[13px] leading-relaxed">
                  {data.venue}<br/>{data.address}
                </div>
              </div>
-             <div className="absolute inset-8 border border-stone-100 pointer-events-none group-hover:border-stone-200 transition-colors"></div>
+             
+             {/* Background Image Layer */}
+             <div 
+               className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-700" 
+               style={{ backgroundImage: `url(${data.backgroundImage})` }}
+             ></div>
+
+             <div className="absolute inset-8 border border-stone-100 pointer-events-none group-hover:border-stone-200 transition-colors z-20"></div>
              {/* Paper Texture Overlay */}
-             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/paper-fibers.png')] opacity-10 pointer-events-none"></div>
+             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/paper-fibers.png')] opacity-10 pointer-events-none z-30"></div>
           </motion.div>
         </main>
 
@@ -137,13 +149,51 @@ const Editor = ({ setView, data, updateData }) => {
 
             <hr className="border-stone-50" />
 
+            <section className="space-y-8">
+              <h3 className="serif text-xl text-stone-900">Premium Themes</h3>
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { id: 'gold', name: 'Classic Gold', img: '/assets/themes/gold.png' },
+                  { id: 'emerald', name: 'Deep Emerald', img: '/assets/themes/emerald.png' },
+                  { id: 'linen', name: 'Organic Linen', img: '/assets/themes/linen.png' }
+                ].map(theme => (
+                  <button 
+                    key={theme.id}
+                    onClick={() => updateData({ themeId: theme.id, backgroundImage: theme.img })}
+                    className={`group relative aspect-square rounded-xl overflow-hidden border-2 transition-all ${data.themeId === theme.id ? 'border-stone-900 scale-105 shadow-xl' : 'border-transparent hover:border-stone-200'}`}
+                  >
+                    <img src={theme.img} alt={theme.name} className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-all"></div>
+                  </button>
+                ))}
+              </div>
+            </section>
+
             <section className="space-y-6">
-              <h3 className="serif text-xl text-stone-900">Global Aesthetics</h3>
-              <div className="space-y-6">
+              <h3 className="serif text-xl text-stone-900">Aesthetics</h3>
+              <div className="space-y-8">
+                 <div className="space-y-3">
+                   <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">Typography Style</label>
+                   <div className="flex gap-2">
+                      <button 
+                        onClick={() => updateData({ fontFamily: 'serif' })}
+                        className={`flex-1 py-3 rounded-xl border text-[10px] font-bold uppercase tracking-widest transition-all ${data.fontFamily === 'serif' ? 'bg-stone-900 text-white border-stone-900' : 'bg-white text-stone-600 border-stone-100 hover:bg-stone-50'}`}
+                      >
+                        Classic Serif
+                      </button>
+                      <button 
+                        onClick={() => updateData({ fontFamily: 'sans' })}
+                        className={`flex-1 py-3 rounded-xl border text-[10px] font-bold uppercase tracking-widest transition-all ${data.fontFamily === 'sans' ? 'bg-stone-900 text-white border-stone-900' : 'bg-white text-stone-600 border-stone-100 hover:bg-stone-50'}`}
+                      >
+                        Modern Sans
+                      </button>
+                   </div>
+                 </div>
+
                  <div className="space-y-3">
                    <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">Accent Tone</label>
                    <div className="flex flex-wrap gap-4">
-                     {['#D4AF37', '#735c00', '#064E3B', '#0F172A', '#8B5CF6'].map(c => (
+                     {['#D4AF37', '#735c00', '#064E3B', '#0F172A', '#8B5CF6', '#F43F5E'].map(c => (
                        <button 
                          key={c} 
                          onClick={() => updateData({ accentColor: c })}
