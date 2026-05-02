@@ -96,6 +96,30 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
                   {data.musicId === i && <span className="material-symbols-outlined text-[16px]">check</span>}
                </button>
              ))}
+             
+             {/* CUSTOM MUSIC UPLOAD */}
+             <div className="mt-4 pt-4 border-t border-dashed border-stone-200 dark:border-slate-700">
+                <input 
+                  type="file" 
+                  id="music-upload" 
+                  accept="audio/*" 
+                  className="hidden" 
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      const url = URL.createObjectURL(file);
+                      updateData({ musicId: 'custom', musicUrl: url });
+                    }
+                  }}
+                />
+                <label 
+                  htmlFor="music-upload"
+                  className={`w-full p-4 rounded-2xl border-2 border-dashed flex items-center justify-center gap-3 cursor-pointer transition-all ${data.musicId === 'custom' ? 'bg-[#C5A059]/10 border-[#C5A059] text-[#C5A059]' : 'border-stone-200 text-stone-400 hover:border-stone-900'}`}
+                >
+                   <span className="material-symbols-outlined">upload_file</span>
+                   <span className="text-[10px] font-black uppercase tracking-widest">Upload Musik Sendiri</span>
+                </label>
+             </div>
           </div>
        </section>
 
@@ -358,10 +382,7 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
                <span className={`text-[13px] font-black w-12 text-center ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>{zoom}%</span>
                <button onClick={() => setZoom(z => Math.min(200, z+10))} className="w-8 h-8 flex items-center justify-center hover:bg-stone-100 dark:hover:bg-slate-700 rounded-full transition-colors text-stone-400"><span className="material-symbols-outlined text-[18px]">add</span></button>
             </div>
-            <div className="flex gap-4">
-               <span className="material-symbols-outlined text-[20px] text-stone-400 hover:text-[#C5A059] cursor-pointer">smartphone</span>
-               <span className="material-symbols-outlined text-[20px] text-stone-300 hover:text-[#C5A059] cursor-pointer">laptop</span>
-            </div>
+            <button onClick={() => setZoom(100)} className="text-[10px] font-black uppercase tracking-widest text-[#C5A059] hover:brightness-110">Reset Zoom</button>
           </div>
 
           {/* MOBILE PREVIEW FRAME (MOCKUP) */}
@@ -373,27 +394,30 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
             className="relative"
           >
              {/* Phone Outer Shell */}
-             <div className="w-[450px] h-[850px] bg-stone-900 rounded-[60px] p-4 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] border-[8px] border-stone-800 relative">
+             <div className="w-[420px] h-[850px] bg-stone-950 rounded-[60px] p-3 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] border-[4px] border-stone-800 relative ring-1 ring-white/10">
                 {/* Speaker/Camera Notch */}
-                <div className="absolute top-8 left-1/2 -translate-x-1/2 w-32 h-7 bg-stone-900 rounded-full z-50 flex items-center justify-center gap-2">
-                   <div className="w-2 h-2 rounded-full bg-slate-800" />
-                   <div className="w-10 h-1 bg-slate-800 rounded-full" />
+                <div className="absolute top-6 left-1/2 -translate-x-1/2 w-28 h-6 bg-stone-950 rounded-full z-[100] flex items-center justify-center gap-2 border border-white/5">
+                   <div className="w-1.5 h-1.5 rounded-full bg-[#1e293b]" />
+                   <div className="w-8 h-1 bg-[#1e293b] rounded-full" />
                 </div>
 
                 {/* Internal Screen */}
-                <div className="w-full h-full bg-white rounded-[45px] overflow-hidden relative border-4 border-stone-950">
-                   <div className="absolute inset-0 overflow-y-auto no-scrollbar scroll-smooth">
-                      <PremiumInvitation data={data} isEditMode={true} />
+                <div className="w-full h-full bg-white rounded-[50px] overflow-hidden relative border-2 border-stone-900/50">
+                   <div className="absolute inset-0 overflow-y-auto no-scrollbar scroll-smooth bg-white">
+                      {/* Scaling Wrapper: Force the full-page invitation to fit the phone width */}
+                      <div className="w-full origin-top" style={{ transform: 'scale(0.75)', width: '133.33%', height: '133.33%' }}>
+                        <PremiumInvitation data={data} isEditMode={true} />
+                      </div>
                    </div>
                    
                    {/* Bottom Home Indicator */}
-                   <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1.5 bg-black/10 rounded-full z-50" />
+                   <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1.5 bg-black/10 rounded-full z-50 pointer-events-none" />
                 </div>
              </div>
 
              {/* Side Buttons Mockup */}
-             <div className="absolute -left-2 top-32 w-2 h-16 bg-stone-800 rounded-l-lg" />
-             <div className="absolute -right-2 top-40 w-2 h-24 bg-stone-800 rounded-r-lg" />
+             <div className="absolute -left-1.5 top-32 w-1.5 h-14 bg-stone-800 rounded-l-md border-y border-white/5" />
+             <div className="absolute -right-1.5 top-44 w-1.5 h-20 bg-stone-800 rounded-r-md border-y border-white/5" />
           </motion.div>
         </main>
 
