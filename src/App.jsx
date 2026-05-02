@@ -26,6 +26,11 @@ function AppContent() {
   const [lang, setLang] = useState(localStorage.getItem('lang') || 'id');
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   
+  // Login State
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+  
   useEffect(() => {
     localStorage.setItem('lang', lang);
     localStorage.setItem('theme', theme);
@@ -69,10 +74,16 @@ function AppContent() {
     localStorage.setItem('guests', JSON.stringify(guests));
   }, [invitationData, guests]);
 
-  const login = () => {
-    setIsLoggedIn(true);
-    localStorage.setItem('isLoggedIn', 'true');
-    navigate('/desain-saya');
+  const login = (e) => {
+    e.preventDefault();
+    if (username === 'admin' && password === 'admin123') {
+      setIsLoggedIn(true);
+      localStorage.setItem('isLoggedIn', 'true');
+      navigate('/desain-saya');
+      setLoginError('');
+    } else {
+      setLoginError('Invalid username or password');
+    }
   };
 
   const logout = () => {
@@ -138,15 +149,43 @@ function AppContent() {
         >
           <h1 className="serif text-5xl font-black text-stone-900 tracking-tighter mb-4">LuxeInvite</h1>
           <p className="text-stone-400 text-sm mb-12 uppercase tracking-widest font-bold">Premium Invitation Suite</p>
-          <div className="space-y-4">
+          
+          <form onSubmit={login} className="space-y-6">
+            <div className="space-y-2 text-left">
+              <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 ml-4">Username</label>
+              <input 
+                type="text" 
+                required
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full px-6 py-4 bg-stone-50 border border-stone-100 rounded-2xl outline-none focus:border-stone-900 transition-all text-sm"
+                placeholder="Enter your username"
+              />
+            </div>
+            <div className="space-y-2 text-left">
+              <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 ml-4">Password</label>
+              <input 
+                type="password" 
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-6 py-4 bg-stone-50 border border-stone-100 rounded-2xl outline-none focus:border-stone-900 transition-all text-sm"
+                placeholder="Enter your password"
+              />
+            </div>
+
+            {loginError && <p className="text-red-500 text-[10px] font-bold uppercase tracking-widest">{loginError}</p>}
+
             <button 
-              onClick={login}
-              className="w-full py-4 bg-stone-900 text-white rounded-2xl font-bold uppercase tracking-[0.2em] text-xs hover:bg-stone-800 transition-all"
+              type="submit"
+              className="w-full py-5 bg-stone-900 text-white rounded-2xl font-bold uppercase tracking-[0.2em] text-[10px] hover:bg-stone-800 shadow-xl active:scale-95 transition-all"
             >
               Sign In to Dashboard
             </button>
-            <p className="text-[10px] text-stone-300 uppercase tracking-widest">Demo Version 1.2</p>
-          </div>
+            <div className="pt-4 border-t border-stone-50">
+               <p className="text-[10px] text-stone-300 uppercase tracking-widest">Demo Version 1.2 • Secured with SSL</p>
+            </div>
+          </form>
         </motion.div>
       </div>
     );
