@@ -375,7 +375,7 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
         </aside>
 
         <main 
-          className={`flex-1 relative overflow-hidden flex items-center justify-center p-4 lg:p-12 ${theme === 'dark' ? 'bg-[#0b1120]' : 'bg-[#f4f4f5]'}`}
+          className={`flex-1 relative overflow-auto ${theme === 'dark' ? 'bg-[#0b1120]' : 'bg-[#f4f4f5]'}`}
           style={{
             backgroundImage: theme === 'dark' 
               ? 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0)' 
@@ -384,7 +384,7 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
           }}
         >
           {/* FLOATING TOOLBAR */}
-          <div className={`absolute bottom-20 lg:bottom-10 left-1/2 -translate-x-1/2 floating-toolbar px-6 py-3 rounded-full shadow-2xl backdrop-blur-xl flex items-center gap-6 z-[100] border ${theme === 'dark' ? 'bg-slate-800/90 border-slate-700' : 'bg-white/90 border-stone-200'}`}>
+          <div className={`fixed bottom-24 lg:bottom-10 left-1/2 -translate-x-1/2 lg:left-[calc(50%-175px)] floating-toolbar px-6 py-3 rounded-full shadow-2xl backdrop-blur-xl flex items-center gap-6 z-[100] border ${theme === 'dark' ? 'bg-slate-800/90 border-slate-700' : 'bg-white/90 border-stone-200'}`}>
             <div className="flex items-center gap-4 border-r pr-6 border-stone-200 dark:border-slate-700">
                <button onClick={() => setZoom(z => Math.max(20, z-10))} className="w-8 h-8 flex items-center justify-center hover:bg-stone-100 dark:hover:bg-slate-700 rounded-full transition-colors text-stone-400"><span className="material-symbols-outlined text-[18px]">remove</span></button>
                <span className={`text-[13px] font-black w-12 text-center ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>{zoom}%</span>
@@ -393,23 +393,25 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
             <button onClick={() => setZoom(100)} className="text-[10px] font-black uppercase tracking-widest text-[#C5A059] hover:brightness-110">Reset Zoom</button>
           </div>
 
-          {/* MOBILE PREVIEW FRAME (MOCKUP) */}
-          <motion.div 
-            style={{ 
-              scale: zoom / 100,
-              transformOrigin: 'center center'
-            }}
-            className="relative"
-          >
-             {/* Clean Canvas Wrapper */}
-             <div className={`w-[390px] h-[844px] overflow-hidden rounded-2xl shadow-2xl border transition-colors ${theme === 'dark' ? 'border-slate-800 bg-slate-900' : 'border-stone-200 bg-white'}`}>
-                <div className="w-full h-full overflow-y-auto no-scrollbar scroll-smooth relative">
-                   <div className="w-full origin-top" style={{ transform: 'scale(1)', width: '100%', minHeight: '100%' }}>
-                     <PremiumInvitation data={data} isEditMode={true} />
-                   </div>
-                </div>
-             </div>
-          </motion.div>
+          <div className="min-w-full min-h-full flex items-center justify-center p-4 lg:p-12">
+            {/* MOBILE PREVIEW FRAME (MOCKUP) */}
+            <motion.div 
+              style={{ 
+                scale: zoom / 100,
+                transformOrigin: 'center center'
+              }}
+              className="relative"
+            >
+               {/* Clean Canvas Wrapper */}
+               <div className={`w-[390px] h-[844px] overflow-hidden rounded-2xl shadow-2xl border transition-colors ${theme === 'dark' ? 'border-slate-800 bg-slate-900' : 'border-stone-200 bg-white'}`}>
+                  <div className="w-full h-full overflow-y-auto no-scrollbar scroll-smooth relative">
+                     <div className="w-full origin-top" style={{ transform: 'scale(1)', width: '100%', minHeight: '100%' }}>
+                       <PremiumInvitation data={data} isEditMode={true} />
+                     </div>
+                  </div>
+               </div>
+            </motion.div>
+          </div>
         </main>
 
         <div className="lg:hidden fixed bottom-6 left-6 right-6 h-16 bg-stone-900 text-white rounded-2xl shadow-2xl z-[80] flex items-center justify-around px-2">

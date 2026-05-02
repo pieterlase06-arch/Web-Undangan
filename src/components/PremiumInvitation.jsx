@@ -2,9 +2,9 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 
-const PremiumInvitation = ({ data }) => {
+const PremiumInvitation = ({ data, isEditMode = false }) => {
   const location = useLocation();
-  const [isOpened, setIsOpened] = useState(false);
+  const [isOpened, setIsOpened] = useState(isEditMode);
   const [isPlaying, setIsPlaying] = useState(false);
   const [rsvpStatus, setRsvpStatus] = useState(null);
   const [activeTab, setActiveTab] = useState('home');
