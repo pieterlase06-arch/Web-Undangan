@@ -16,10 +16,7 @@ const Editor = ({ data, updateData, theme, setView }) => {
     const formData = new FormData();
     formData.append('image', file);
     try {
-      const res = await fetch(`${config.API_URL}/upload`, {
-        method: 'POST',
-        body: formData
-      });
+      const res = await fetch(`${config.API_URL}/upload`, { method: 'POST', body: formData });
       if (res.ok) {
         const { url } = await res.json();
         updateData({ [field]: url });
@@ -29,176 +26,197 @@ const Editor = ({ data, updateData, theme, setView }) => {
   };
 
   const addStory = () => {
-    const newStories = [...(data.stories || []), { year: '2024', title: 'Judul Cerita', desc: 'Deskripsi cerita Anda...', icon: 'favorite' }];
+    const newStories = [...(data.stories || []), { year: '2024', title: 'Moment Baru', desc: 'Deskripsi moment...', icon: 'favorite' }];
     updateData({ stories: newStories });
   };
 
-  const updateStory = (index, field, value) => {
-    const newStories = [...data.stories];
-    newStories[index][field] = value;
-    updateData({ stories: newStories });
+  const addBank = () => {
+    const newBanks = [...(data.bankAccounts || []), { bank: 'BCA', number: '', owner: '' }];
+    updateData({ bankAccounts: newBanks });
   };
 
-  const removeStory = (index) => {
-    const newStories = data.stories.filter((_, i) => i !== index);
-    updateData({ stories: newStories });
+  const updateBank = (index, field, value) => {
+    const newBanks = [...data.bankAccounts];
+    newBanks[index][field] = value;
+    updateData({ bankAccounts: newBanks });
   };
 
   const renderDesignTab = () => (
     <div className="space-y-10">
        <section className="space-y-6">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Background Music</p>
-          <select className="w-full p-4 rounded-2xl border border-stone-100 outline-none text-sm" value={data.musicId} onChange={(e) => updateData({ musicId: e.target.value, musicUrl: e.target.value === 'custom' ? data.musicUrl : `https://www.soundhelix.com/examples/mp3/SoundHelix-Song-${e.target.selectedIndex + 1}.mp3` })}>
-             <option value="romantic">Romantic Piano</option>
-             <option value="classic">Royal Classic</option>
-             <option value="acoustic">Acoustic Love</option>
-             <option value="custom">Custom URL</option>
-          </select>
-          {data.musicId === 'custom' && (
-            <input className="w-full border-b py-2 text-xs outline-none" placeholder="Paste MP3 URL here..." value={data.musicUrl} onChange={(e) => updateData({ musicUrl: e.target.value })} />
-          )}
-       </section>
-
-       <section className="space-y-6 pt-6 border-t border-stone-100">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Appearance</p>
-          <div className="grid grid-cols-2 gap-4">
-             <div className="space-y-2">
-                <label className="text-[10px] font-bold opacity-40 uppercase">Primary Color</label>
-                <input type="color" className="w-full h-10 rounded-lg cursor-pointer" value={data.primaryColor || '#C5A059'} onChange={(e) => updateData({ primaryColor: e.target.value })} />
+          <p className="text-[10px] font-black uppercase tracking-widest text-stone-400">Design Tokens</p>
+          <div className="grid grid-cols-1 gap-6">
+             <div className="space-y-3">
+                <label className="text-[10px] font-black opacity-30 uppercase">Primary Branding Color</label>
+                <div className="flex gap-4">
+                   <input type="color" className="w-16 h-16 rounded-2xl cursor-pointer border-4 border-white shadow-lg" value={data.primaryColor || '#C5A059'} onChange={(e) => updateData({ primaryColor: e.target.value })} />
+                   <input className="flex-1 bg-stone-50 rounded-2xl px-6 text-sm font-mono outline-none" value={data.primaryColor || '#C5A059'} onChange={(e) => updateData({ primaryColor: e.target.value })} />
+                </div>
              </div>
-             <div className="space-y-2">
-                <label className="text-[10px] font-bold opacity-40 uppercase">Font Theme</label>
-                <select className="w-full p-2 border-b outline-none text-xs" value={data.fontFamily} onChange={(e) => updateData({ fontFamily: e.target.value })}>
-                   <option value="'Cinzel', serif">Imperial Luxe</option>
-                   <option value="'Playfair Display', serif">Royal Garden</option>
-                   <option value="'Montserrat', sans-serif">Modern Chic</option>
+             <div className="space-y-3">
+                <label className="text-[10px] font-black opacity-30 uppercase">Typography Style</label>
+                <select className="w-full p-4 bg-stone-50 rounded-2xl outline-none text-sm font-bold" value={data.fontFamily} onChange={(e) => updateData({ fontFamily: e.target.value })}>
+                   <option value="'Cinzel', serif">Imperial Serif (Cinzel)</option>
+                   <option value="'Playfair Display', serif">Classic Serif (Playfair)</option>
+                   <option value="'Montserrat', sans-serif">Modern Sans (Montserrat)</option>
                 </select>
              </div>
           </div>
+       </section>
+
+       <section className="space-y-6 pt-10 border-t border-stone-100">
+          <p className="text-[10px] font-black uppercase tracking-widest text-stone-400">Audio Experience</p>
+          <input className="w-full p-4 bg-stone-50 rounded-2xl text-xs outline-none" placeholder="Background Music MP3 URL..." value={data.musicUrl} onChange={(e) => updateData({ musicUrl: e.target.value })} />
+          <p className="text-[9px] opacity-40 italic px-4">Pastikan URL berakhir dengan .mp3 agar dapat diputar otomatis.</p>
        </section>
     </div>
   );
 
   const renderContentTab = () => (
-    <div className="space-y-10">
+    <div className="space-y-12 pb-20">
        <section className="space-y-6">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Mempelai & Orang Tua</p>
-          <div className="space-y-6">
-             <div className="space-y-4 p-4 bg-stone-50 rounded-2xl">
-                <input className="w-full bg-transparent border-b py-2 text-sm font-bold outline-none" placeholder="Nama Pria" value={data.partner1} onChange={(e) => updateData({ partner1: e.target.value })} />
-                <input className="w-full bg-transparent border-b py-2 text-xs outline-none" placeholder="Orang Tua Pria (Bpk. ... & Ibu ...)" value={data.partner1Parents} onChange={(e) => updateData({ partner1Parents: e.target.value })} />
-                <div className="flex items-center gap-4">
-                   <div className="w-12 h-12 rounded-full bg-stone-200 overflow-hidden flex-shrink-0">
+          <p className="text-[10px] font-black uppercase tracking-widest text-stone-400">Mempelai Pria & Wanita</p>
+          <div className="space-y-8">
+             {/* PRIA */}
+             <div className="p-8 bg-stone-50 rounded-[40px] space-y-6 border border-stone-100">
+                <div className="flex items-center gap-6">
+                   <div className="w-20 h-20 rounded-3xl bg-white shadow-xl overflow-hidden relative group">
                       {data.groomImage && <img src={data.groomImage} className="w-full h-full object-cover" />}
+                      <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white">
+                         <span className="material-symbols-outlined">upload</span>
+                         <input type="file" className="hidden" onChange={(e) => handleImageUpload(e.target.files[0], 'groomImage')} />
+                      </label>
                    </div>
-                   <input type="file" className="text-[10px]" onChange={(e) => handleImageUpload(e.target.files[0], 'groomImage')} />
+                   <div className="flex-1">
+                      <input className="w-full bg-transparent border-b-2 border-stone-200 py-2 text-xl font-black outline-none focus:border-stone-900" placeholder="Nama Pria" value={data.partner1} onChange={(e) => updateData({ partner1: e.target.value })} />
+                      <input className="w-full bg-transparent py-2 text-xs opacity-50 outline-none" placeholder="Putra dari Bpk. ... & Ibu ..." value={data.partner1Parents} onChange={(e) => updateData({ partner1Parents: e.target.value })} />
+                   </div>
                 </div>
              </div>
-             <div className="space-y-4 p-4 bg-stone-50 rounded-2xl">
-                <input className="w-full bg-transparent border-b py-2 text-sm font-bold outline-none" placeholder="Nama Wanita" value={data.partner2} onChange={(e) => updateData({ partner2: e.target.value })} />
-                <input className="w-full bg-transparent border-b py-2 text-xs outline-none" placeholder="Orang Tua Wanita (Bpk. ... & Ibu ...)" value={data.partner2Parents} onChange={(e) => updateData({ partner2Parents: e.target.value })} />
-                <div className="flex items-center gap-4">
-                   <div className="w-12 h-12 rounded-full bg-stone-200 overflow-hidden flex-shrink-0">
+             {/* WANITA */}
+             <div className="p-8 bg-stone-50 rounded-[40px] space-y-6 border border-stone-100">
+                <div className="flex items-center gap-6">
+                   <div className="w-20 h-20 rounded-3xl bg-white shadow-xl overflow-hidden relative group">
                       {data.brideImage && <img src={data.brideImage} className="w-full h-full object-cover" />}
+                      <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white">
+                         <span className="material-symbols-outlined">upload</span>
+                         <input type="file" className="hidden" onChange={(e) => handleImageUpload(e.target.files[0], 'brideImage')} />
+                      </label>
                    </div>
-                   <input type="file" className="text-[10px]" onChange={(e) => handleImageUpload(e.target.files[0], 'brideImage')} />
+                   <div className="flex-1">
+                      <input className="w-full bg-transparent border-b-2 border-stone-200 py-2 text-xl font-black outline-none focus:border-stone-900" placeholder="Nama Wanita" value={data.partner2} onChange={(e) => updateData({ partner2: e.target.value })} />
+                      <input className="w-full bg-transparent py-2 text-xs opacity-50 outline-none" placeholder="Putri dari Bpk. ... & Ibu ..." value={data.partner2Parents} onChange={(e) => updateData({ partner2Parents: e.target.value })} />
+                   </div>
                 </div>
              </div>
           </div>
        </section>
 
-       <section className="space-y-6 pt-6 border-t border-stone-100">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Cerita Cinta (Love Story)</p>
+       <section className="space-y-6 pt-10 border-t border-stone-100">
+          <div className="flex items-center justify-between">
+             <p className="text-[10px] font-black uppercase tracking-widest text-stone-400">Love Journey</p>
+             <button onClick={addStory} className="text-[10px] font-black text-[#C5A059]">+ TAMBAH</button>
+          </div>
           <div className="space-y-4">
              {(data.stories || []).map((s, i) => (
-               <div key={i} className="p-4 border border-stone-100 rounded-2xl space-y-3 relative">
-                  <button onClick={() => removeStory(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600">
+               <div key={i} className="p-6 bg-white border border-stone-100 rounded-3xl space-y-4 shadow-sm relative group">
+                  <button onClick={() => updateData({ stories: data.stories.filter((_, idx) => idx !== i) })} className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 text-red-400">
                      <span className="material-symbols-outlined text-[18px]">delete</span>
                   </button>
-                  <input className="w-full bg-transparent border-b py-1 text-[10px] font-black uppercase outline-none" placeholder="Tahun" value={s.year} onChange={(e) => updateStory(i, 'year', e.target.value)} />
-                  <input className="w-full bg-transparent border-b py-1 text-sm font-bold outline-none" placeholder="Judul" value={s.title} onChange={(e) => updateStory(i, 'title', e.target.value)} />
-                  <textarea className="w-full bg-transparent text-xs outline-none h-20" placeholder="Deskripsi" value={s.desc} onChange={(e) => updateStory(i, 'desc', e.target.value)} />
+                  <div className="grid grid-cols-2 gap-4">
+                     <input className="bg-stone-50 p-2 rounded-xl text-[10px] font-black outline-none" placeholder="Tahun" value={s.year} onChange={(e) => { const st = [...data.stories]; st[i].year = e.target.value; updateData({ stories: st }); }} />
+                     <input className="bg-stone-50 p-2 rounded-xl text-[10px] font-black outline-none" placeholder="Icon (ID)" value={s.icon} onChange={(e) => { const st = [...data.stories]; st[i].icon = e.target.value; updateData({ stories: st }); }} />
+                  </div>
+                  <input className="w-full bg-transparent border-b py-1 text-sm font-bold outline-none" placeholder="Judul Moment" value={s.title} onChange={(e) => { const st = [...data.stories]; st[i].title = e.target.value; updateData({ stories: st }); }} />
+                  <textarea className="w-full bg-transparent text-xs outline-none h-20" placeholder="Ceritakan moment ini..." value={s.desc} onChange={(e) => { const st = [...data.stories]; st[i].desc = e.target.value; updateData({ stories: st }); }} />
                </div>
              ))}
-             <button onClick={addStory} className="w-full py-3 border-2 border-dashed border-stone-200 rounded-2xl text-[10px] font-black uppercase tracking-widest text-stone-400 hover:border-[#C5A059] hover:text-[#C5A059] transition-all">+ Tambah Cerita</button>
           </div>
        </section>
 
-       <section className="space-y-6 pt-6 border-t border-stone-100">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Quote / Kutipan</p>
-          <textarea className="w-full p-4 bg-stone-50 rounded-2xl text-xs outline-none h-32" value={data.quote} onChange={(e) => updateData({ quote: e.target.value })} placeholder="Masukkan kutipan romantis atau ayat suci..." />
-       </section>
-    </div>
-  );
-
-  const renderLayersTab = () => (
-    <div className="space-y-4">
-       <div className="flex items-center justify-between p-4 rounded-2xl border border-stone-100">
-          <div className="flex items-center gap-4">
-             <span className="material-symbols-outlined text-stone-400">mail</span>
-             <span className="text-[11px] font-black uppercase tracking-widest text-stone-700">Cover Frame</span>
+       <section className="space-y-6 pt-10 border-t border-stone-100">
+          <div className="flex items-center justify-between">
+             <p className="text-[10px] font-black uppercase tracking-widest text-stone-400">Digital Gift (Rekening)</p>
+             <button onClick={addBank} className="text-[10px] font-black text-[#C5A059]">+ TAMBAH</button>
           </div>
-          <button onClick={() => setShowCover(!showCover)} className="text-stone-300 hover:text-[#C5A059]">
-             <span className="material-symbols-outlined text-[18px]">{showCover ? 'visibility' : 'visibility_off'}</span>
-          </button>
-       </div>
+          <div className="space-y-4">
+             {(data.bankAccounts || []).map((b, i) => (
+               <div key={i} className="p-6 bg-stone-50 rounded-3xl space-y-3 relative group border border-stone-100">
+                  <button onClick={() => updateData({ bankAccounts: data.bankAccounts.filter((_, idx) => idx !== i) })} className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 text-red-400">
+                     <span className="material-symbols-outlined text-[18px]">delete</span>
+                  </button>
+                  <input className="w-full bg-transparent border-b py-1 text-[10px] font-black outline-none" placeholder="Nama Bank (e.g. BCA)" value={b.bank} onChange={(e) => updateBank(i, 'bank', e.target.value)} />
+                  <input className="w-full bg-transparent border-b py-1 text-sm font-bold outline-none" placeholder="Nomor Rekening" value={b.number} onChange={(e) => updateBank(i, 'number', e.target.value)} />
+                  <input className="w-full bg-transparent py-1 text-xs opacity-50 outline-none" placeholder="Atas Nama" value={b.owner} onChange={(e) => updateBank(i, 'owner', e.target.value)} />
+               </div>
+             ))}
+          </div>
+       </section>
     </div>
   );
 
   return (
-    <div className={`h-screen flex flex-col overflow-hidden bg-[#fcf9f6]`}>
-      <header className="h-16 border-b px-8 flex items-center justify-between z-[100] bg-white border-stone-200">
+    <div className="h-screen flex flex-col overflow-hidden bg-white">
+      <header className="h-16 border-b px-8 flex items-center justify-between z-[100] bg-white border-stone-100">
         <button onClick={() => setView('/desain-saya')} className="text-stone-400 hover:text-stone-900 flex items-center gap-2">
           <span className="material-symbols-outlined">arrow_back</span>
           <span className="serif font-black text-xl tracking-tighter text-stone-900">LuxeInvite</span>
         </button>
         
-        <div className="hidden md:flex items-center bg-stone-100 rounded-xl p-1 gap-1">
+        <div className="hidden md:flex items-center bg-stone-50 rounded-2xl p-1 gap-1">
            {[{ id: 'mobile', icon: 'smartphone' }, { id: 'tablet', icon: 'tablet_android' }, { id: 'desktop', icon: 'desktop_windows' }].map(d => (
-             <button key={d.id} onClick={() => setDevice(d.id)} className={`p-2 rounded-lg transition-all ${device === d.id ? 'bg-white text-[#C5A059] shadow-sm' : 'text-stone-400'}`}>
+             <button key={d.id} onClick={() => setDevice(d.id)} className={`p-2 px-4 rounded-xl transition-all ${device === d.id ? 'bg-white text-[#C5A059] shadow-sm' : 'text-stone-400'}`}>
                 <span className="material-symbols-outlined text-[18px]">{d.icon}</span>
              </button>
            ))}
         </div>
 
-        <div className="flex items-center gap-4">
-          {isUploading && <span className="text-[10px] font-bold text-[#C5A059] animate-pulse">UPLOADING...</span>}
-          <button onClick={() => setIsPublished(true)} className="px-6 py-2 bg-[#C5A059] text-white rounded-lg text-[12px] font-bold uppercase tracking-widest shadow-xl hover:brightness-110">Publish</button>
+        <div className="flex items-center gap-6">
+          {isUploading && <div className="flex items-center gap-2"><div className="w-2 h-2 bg-[#C5A059] rounded-full animate-ping" /><span className="text-[10px] font-black text-[#C5A059]">UPLOADING...</span></div>}
+          <button onClick={() => setIsPublished(true)} className="px-8 py-2 bg-[#C5A059] text-white rounded-xl text-[11px] font-black uppercase tracking-widest shadow-xl hover:brightness-110">Publish</button>
         </div>
       </header>
 
       <div className="flex flex-1 overflow-hidden relative">
-        <aside className="w-[380px] border-r flex flex-col h-full bg-white border-stone-100">
-           <div className="flex border-b">
+        <aside className="w-[420px] border-r flex flex-col h-full bg-white border-stone-50">
+           <div className="flex border-b border-stone-50">
               {['design', 'content', 'layers'].map(tab => (
-                 <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab ? 'text-[#C5A059] border-b-2 border-[#C5A059]' : 'text-stone-400'}`}>{tab}</button>
+                 <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-5 text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab ? 'text-[#C5A059] border-b-2 border-[#C5A059]' : 'text-stone-300'}`}>{tab}</button>
               ))}
            </div>
-           <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+           <div className="flex-1 overflow-y-auto p-10 custom-scrollbar">
               {activeTab === 'design' && renderDesignTab()}
               {activeTab === 'content' && renderContentTab()}
-              {activeTab === 'layers' && renderLayersTab()}
+              {activeTab === 'layers' && (
+                <div className="space-y-4">
+                   <div className="flex items-center justify-between p-6 rounded-3xl bg-stone-50 border border-stone-100">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-stone-500">Cover Animation</span>
+                      <button onClick={() => setShowCover(!showCover)} className="text-[#C5A059]">
+                         <span className="material-symbols-outlined">{showCover ? 'visibility' : 'visibility_off'}</span>
+                      </button>
+                   </div>
+                </div>
+              )}
            </div>
         </aside>
 
-        <main className="flex-1 relative overflow-hidden bg-[#f4f4f5] flex items-center justify-center p-6 md:p-12">
-           <motion.div animate={{ width: device === 'mobile' ? '400px' : device === 'tablet' ? '768px' : '100%', height: device === 'desktop' ? '100%' : '85vh', borderRadius: device === 'desktop' ? '0px' : '40px' }} className="bg-white shadow-2xl overflow-hidden relative border-[8px] border-stone-900 transition-all duration-500">
-              <div className="w-full h-full overflow-y-auto no-scrollbar">
+        <main className="flex-1 relative overflow-hidden bg-[#f8f9fa] flex items-center justify-center p-8 lg:p-12">
+           <motion.div animate={{ width: device === 'mobile' ? '420px' : device === 'tablet' ? '820px' : '100%', height: device === 'desktop' ? '100%' : '88vh', borderRadius: device === 'desktop' ? '0px' : '60px' }} className="bg-white shadow-[0_60px_120px_-20px_rgba(0,0,0,0.3)] overflow-hidden relative border-[10px] border-stone-900 transition-all duration-700 ease-in-out">
+              <div className="w-full h-full overflow-y-auto no-scrollbar scroll-smooth">
                  <PremiumInvitation data={data} isEditMode={true} forceShowCover={showCover} onEdit={(s) => setActiveTab('content')} />
               </div>
            </motion.div>
         </main>
       </div>
 
-      {/* PUBLISH MODAL */}
       <AnimatePresence>
          {isPublished && (
-           <div className="fixed inset-0 z-[2000] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
-              <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="max-w-md w-full p-12 bg-white rounded-[50px] text-center shadow-2xl">
-                 <h2 className="serif text-3xl font-black mb-2 text-stone-900">Live!</h2>
-                 <p className="text-stone-400 text-sm mb-8">Undangan Anda telah online.</p>
-                 <div className="bg-stone-50 p-4 rounded-2xl mb-8 text-[10px] font-mono break-all text-[#C5A059]">{config.BASE_URL}#/v</div>
-                 <button onClick={() => setIsPublished(false)} className="w-full py-4 bg-[#C5A059] text-white rounded-2xl font-black uppercase tracking-widest text-[10px]">Close</button>
+           <div className="fixed inset-0 z-[2000] flex items-center justify-center p-6 bg-black/60 backdrop-blur-md">
+              <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="max-w-md w-full p-16 bg-white rounded-[60px] text-center shadow-2xl border border-white">
+                 <h2 className="serif text-4xl font-black mb-4 text-stone-900">It's Live!</h2>
+                 <p className="text-stone-400 text-sm mb-10">Undangan mewah Anda telah resmi dipublikasikan.</p>
+                 <div className="bg-stone-50 p-6 rounded-3xl mb-10 text-[11px] font-mono break-all text-[#C5A059] border border-stone-100">{config.BASE_URL}#/v</div>
+                 <button onClick={() => setIsPublished(false)} className="w-full py-5 bg-stone-900 text-white rounded-3xl font-black uppercase tracking-[0.2em] text-[10px] hover:bg-[#C5A059] transition-colors">Selesai</button>
               </motion.div>
            </div>
          )}
