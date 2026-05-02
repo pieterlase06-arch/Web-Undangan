@@ -39,8 +39,10 @@ function AppContent() {
   
   const initialInvitation = {
     templateId: 'gold',
-    partner1: 'Nama Mempelai 1',
-    partner2: 'Nama Mempelai 2',
+    partner1: 'Nama Mempelai Pria',
+    partner2: 'Nama Mempelai Wanita',
+    partner1Parents: 'Bpk. Ahmad & Ibu Siti',
+    partner2Parents: 'Bpk. Yusuf & Ibu Aminah',
     date: new Date().toISOString().split('T')[0],
     time: '08:00',
     venue: 'Lokasi Acara',
@@ -53,7 +55,16 @@ function AppContent() {
     groomImage: '',
     brideImage: '',
     musicUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-    quote: ''
+    quote: 'Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu isteri-isteri dari jenismu sendiri...',
+    stories: [
+      { year: '2021', title: 'Pertemuan Pertama', desc: 'Awal segalanya dimulai dari sebuah sapaan hangat.', icon: 'favorite' },
+      { year: '2024', title: 'Janji Suci', desc: 'Kami siap melangkah bersama.', icon: 'ring_volume' }
+    ],
+    gallery: [],
+    showStory: true,
+    showGallery: true,
+    showGift: true,
+    showRSVP: true
   };
 
   const [invitationData, setInvitationData] = useState(initialInvitation);

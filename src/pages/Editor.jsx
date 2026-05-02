@@ -6,96 +6,74 @@ import config from '../config';
 const Editor = ({ data, updateData, theme, setView }) => {
   const [activeTab, setActiveTab] = useState('design');
   const [isPublished, setIsPublished] = useState(false);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [zoom, setZoom] = useState(100);
+  const [device, setDevice] = useState('mobile'); 
   const [showCover, setShowCover] = useState(true);
-  const [device, setDevice] = useState('mobile'); // 'mobile', 'tablet', 'desktop'
+  const [isUploading, setIsUploading] = useState(false);
 
-  // Localization / UI Text
-  const t = {
-    design: 'Desain',
-    content: 'Konten',
-    layers: 'Lapisan',
-    publish: 'Publikasi',
-    preview: 'Pratinjau',
-    success: 'Published!',
-    link: 'Undangan Anda sudah online. Bagikan link ini ke tamu Anda:'
+  const handleImageUpload = async (file, field) => {
+    if (!file) return;
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append('image', file);
+    try {
+      const res = await fetch(`${config.API_URL}/upload`, {
+        method: 'POST',
+        body: formData
+      });
+      if (res.ok) {
+        const { url } = await res.json();
+        updateData({ [field]: url });
+      }
+    } catch (err) { console.error(err); }
+    finally { setIsUploading(false); }
+  };
+
+  const addStory = () => {
+    const newStories = [...(data.stories || []), { year: '2024', title: 'Judul Cerita', desc: 'Deskripsi cerita Anda...', icon: 'favorite' }];
+    updateData({ stories: newStories });
+  };
+
+  const updateStory = (index, field, value) => {
+    const newStories = [...data.stories];
+    newStories[index][field] = value;
+    updateData({ stories: newStories });
+  };
+
+  const removeStory = (index) => {
+    const newStories = data.stories.filter((_, i) => i !== index);
+    updateData({ stories: newStories });
   };
 
   const renderDesignTab = () => (
     <div className="space-y-10">
-       {/* MUSIC SELECTOR */}
        <section className="space-y-6">
-          <p className={`text-[10px] font-bold uppercase tracking-widest ${theme === 'dark' ? 'text-slate-500' : 'text-stone-400'}`}>Background Music</p>
-          <div className="space-y-4">
-             <div className="grid grid-cols-1 gap-2">
-                {[
-                  { id: 'romantic', name: 'Romantic Piano', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
-                  { id: 'classic', name: 'Royal Classic', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' },
-                  { id: 'acoustic', name: 'Acoustic Love', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' }
-                ].map(m => (
-                  <button 
-                    key={m.id}
-                    onClick={() => updateData({ musicId: m.id, musicUrl: m.url })}
-                    className={`p-4 rounded-2xl border text-left flex items-center justify-between transition-all ${data.musicId === m.id ? 'bg-[#C5A059]/10 border-[#C5A059] text-[#C5A059]' : 'border-stone-100 dark:border-slate-800 hover:bg-stone-50'}`}
-                  >
-                     <div className="flex items-center gap-3">
-                        <span className="material-symbols-outlined text-[20px]">{data.musicId === m.id ? 'pause_circle' : 'play_circle'}</span>
-                        <span className="text-[11px] font-bold uppercase tracking-widest">{m.name}</span>
-                     </div>
-                     {data.musicId === m.id && <span className="material-symbols-outlined text-[18px]">check_circle</span>}
-                  </button>
-                ))}
+          <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Background Music</p>
+          <select className="w-full p-4 rounded-2xl border border-stone-100 outline-none text-sm" value={data.musicId} onChange={(e) => updateData({ musicId: e.target.value, musicUrl: e.target.value === 'custom' ? data.musicUrl : `https://www.soundhelix.com/examples/mp3/SoundHelix-Song-${e.target.selectedIndex + 1}.mp3` })}>
+             <option value="romantic">Romantic Piano</option>
+             <option value="classic">Royal Classic</option>
+             <option value="acoustic">Acoustic Love</option>
+             <option value="custom">Custom URL</option>
+          </select>
+          {data.musicId === 'custom' && (
+            <input className="w-full border-b py-2 text-xs outline-none" placeholder="Paste MP3 URL here..." value={data.musicUrl} onChange={(e) => updateData({ musicUrl: e.target.value })} />
+          )}
+       </section>
+
+       <section className="space-y-6 pt-6 border-t border-stone-100">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Appearance</p>
+          <div className="grid grid-cols-2 gap-4">
+             <div className="space-y-2">
+                <label className="text-[10px] font-bold opacity-40 uppercase">Primary Color</label>
+                <input type="color" className="w-full h-10 rounded-lg cursor-pointer" value={data.primaryColor || '#C5A059'} onChange={(e) => updateData({ primaryColor: e.target.value })} />
              </div>
-          </div>
-       </section>
-
-       {/* COLOR PALETTES */}
-       <section className="space-y-6 pt-6 border-t border-stone-100 dark:border-slate-800">
-          <p className={`text-[10px] font-bold uppercase tracking-widest ${theme === 'dark' ? 'text-slate-500' : 'text-stone-400'}`}>Global Colors</p>
-          <div className="grid grid-cols-5 gap-3">
-             {[
-               { p: '#C5A059', a: '#1C1917' },
-               { p: '#064E3B', a: '#D4AF37' },
-               { p: '#44403C', a: '#A8A29E' },
-               { p: '#BE123C', a: '#C5A059' },
-               { p: '#0F172A', a: '#334155' }
-             ].map((pal, i) => (
-               <button 
-                key={i} 
-                onClick={() => updateData({ primaryColor: pal.p, accentColor: pal.a })}
-                className="group flex flex-col gap-1 items-center"
-               >
-                  <div className="w-10 h-10 rounded-full border-2 border-white shadow-md relative overflow-hidden" style={{ backgroundColor: pal.p }}>
-                     <div className="absolute inset-y-0 right-0 w-1/2" style={{ backgroundColor: pal.a }} />
-                  </div>
-                  {data.primaryColor === pal.p && <div className="w-1 h-1 rounded-full bg-[#C5A059]" />}
-               </button>
-             ))}
-          </div>
-       </section>
-
-       {/* TYPOGRAPHY */}
-       <section className="space-y-6 pt-6 border-t border-stone-100 dark:border-slate-800">
-          <p className={`text-[10px] font-bold uppercase tracking-widest ${theme === 'dark' ? 'text-slate-500' : 'text-stone-400'}`}>Premium Typography</p>
-          <div className="space-y-3">
-             {[
-               { name: 'Imperial Luxe', body: "'Cinzel', serif", title: "'Pinyon Script', cursive" },
-               { name: 'Royal Garden', body: "'Playfair Display', serif", title: "'Great Vibes', cursive" },
-               { name: 'Modern Chic', body: "'Montserrat', sans-serif", title: "'Alex Brush', cursive" }
-             ].map((font, i) => (
-               <button 
-                key={i} 
-                onClick={() => updateData({ fontFamily: font.body, titleFont: font.title })}
-                className={`w-full p-4 rounded-2xl border text-left flex items-center justify-between transition-all ${data.fontFamily === font.body ? 'bg-[#C5A059]/10 border-[#C5A059]' : 'border-stone-100 dark:border-slate-800 hover:bg-stone-50'}`}
-               >
-                  <div className="space-y-1">
-                     <p className={`text-[10px] font-black uppercase tracking-widest ${data.fontFamily === font.body ? 'text-[#C5A059]' : 'text-stone-400'}`}>{font.name}</p>
-                     <p className="text-sm font-bold" style={{ fontFamily: font.body }}>Body Font</p>
-                     <p className="text-xl italic" style={{ fontFamily: font.title }}>Title Style</p>
-                  </div>
-               </button>
-             ))}
+             <div className="space-y-2">
+                <label className="text-[10px] font-bold opacity-40 uppercase">Font Theme</label>
+                <select className="w-full p-2 border-b outline-none text-xs" value={data.fontFamily} onChange={(e) => updateData({ fontFamily: e.target.value })}>
+                   <option value="'Cinzel', serif">Imperial Luxe</option>
+                   <option value="'Playfair Display', serif">Royal Garden</option>
+                   <option value="'Montserrat', sans-serif">Modern Chic</option>
+                </select>
+             </div>
           </div>
        </section>
     </div>
@@ -104,111 +82,96 @@ const Editor = ({ data, updateData, theme, setView }) => {
   const renderContentTab = () => (
     <div className="space-y-10">
        <section className="space-y-6">
-          <p className={`text-[10px] font-bold uppercase tracking-widest ${theme === 'dark' ? 'text-slate-500' : 'text-stone-400'}`}>Core Details</p>
-          <div className="space-y-4">
-             <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">Mempelai Pria</label>
-                  <input className={`w-full border-b py-2 text-sm outline-none bg-transparent ${theme === 'dark' ? 'border-slate-700 text-white' : 'border-stone-100 text-stone-900'}`} value={data.partner1} onChange={(e) => updateData({ partner1: e.target.value })} />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">Mempelai Wanita</label>
-                  <input className={`w-full border-b py-2 text-sm outline-none bg-transparent ${theme === 'dark' ? 'border-slate-700 text-white' : 'border-stone-100 text-stone-900'}`} value={data.partner2} onChange={(e) => updateData({ partner2: e.target.value })} />
+          <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Mempelai & Orang Tua</p>
+          <div className="space-y-6">
+             <div className="space-y-4 p-4 bg-stone-50 rounded-2xl">
+                <input className="w-full bg-transparent border-b py-2 text-sm font-bold outline-none" placeholder="Nama Pria" value={data.partner1} onChange={(e) => updateData({ partner1: e.target.value })} />
+                <input className="w-full bg-transparent border-b py-2 text-xs outline-none" placeholder="Orang Tua Pria (Bpk. ... & Ibu ...)" value={data.partner1Parents} onChange={(e) => updateData({ partner1Parents: e.target.value })} />
+                <div className="flex items-center gap-4">
+                   <div className="w-12 h-12 rounded-full bg-stone-200 overflow-hidden flex-shrink-0">
+                      {data.groomImage && <img src={data.groomImage} className="w-full h-full object-cover" />}
+                   </div>
+                   <input type="file" className="text-[10px]" onChange={(e) => handleImageUpload(e.target.files[0], 'groomImage')} />
                 </div>
              </div>
-             <div className="grid grid-cols-2 gap-4">
-                <input type="date" className={`w-full border-b py-2 text-sm outline-none bg-transparent ${theme === 'dark' ? 'border-slate-700 text-white' : 'border-stone-100 text-stone-900'}`} value={data.date} onChange={(e) => updateData({ date: e.target.value })} />
-                <input type="time" className={`w-full border-b py-2 text-sm outline-none bg-transparent ${theme === 'dark' ? 'border-slate-700 text-white' : 'border-stone-100 text-stone-900'}`} value={data.time} onChange={(e) => updateData({ time: e.target.value })} />
+             <div className="space-y-4 p-4 bg-stone-50 rounded-2xl">
+                <input className="w-full bg-transparent border-b py-2 text-sm font-bold outline-none" placeholder="Nama Wanita" value={data.partner2} onChange={(e) => updateData({ partner2: e.target.value })} />
+                <input className="w-full bg-transparent border-b py-2 text-xs outline-none" placeholder="Orang Tua Wanita (Bpk. ... & Ibu ...)" value={data.partner2Parents} onChange={(e) => updateData({ partner2Parents: e.target.value })} />
+                <div className="flex items-center gap-4">
+                   <div className="w-12 h-12 rounded-full bg-stone-200 overflow-hidden flex-shrink-0">
+                      {data.brideImage && <img src={data.brideImage} className="w-full h-full object-cover" />}
+                   </div>
+                   <input type="file" className="text-[10px]" onChange={(e) => handleImageUpload(e.target.files[0], 'brideImage')} />
+                </div>
              </div>
           </div>
        </section>
-       {/* TOGGLES */}
-       <section className="space-y-6 pt-6 border-t border-stone-100 dark:border-slate-800">
-          <p className={`text-[10px] font-bold uppercase tracking-widest ${theme === 'dark' ? 'text-slate-500' : 'text-stone-400'}`}>Tampilkan Fitur</p>
-          <div className="grid grid-cols-2 gap-3">
-             {[
-               { id: 'showGift', name: 'Kado', icon: 'payments' },
-               { id: 'showGallery', name: 'Galeri', icon: 'image' },
-               { id: 'showStory', name: 'Cerita', icon: 'history_edu' },
-               { id: 'showRSVP', name: 'RSVP', icon: 'mail' }
-             ].map(s => (
-               <button 
-                key={s.id}
-                onClick={() => updateData({ [s.id]: !data[s.id] })}
-                className={`p-4 rounded-2xl border flex flex-col items-center gap-2 transition-all ${data[s.id] !== false ? 'bg-[#C5A059]/10 border-[#C5A059] text-[#C5A059]' : 'border-stone-100 dark:border-slate-800 text-stone-400'}`}
-               >
-                  <span className="material-symbols-outlined">{s.icon}</span>
-                  <span className="text-[10px] font-black uppercase tracking-widest">{s.name}</span>
-               </button>
+
+       <section className="space-y-6 pt-6 border-t border-stone-100">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Cerita Cinta (Love Story)</p>
+          <div className="space-y-4">
+             {(data.stories || []).map((s, i) => (
+               <div key={i} className="p-4 border border-stone-100 rounded-2xl space-y-3 relative">
+                  <button onClick={() => removeStory(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600">
+                     <span className="material-symbols-outlined text-[18px]">delete</span>
+                  </button>
+                  <input className="w-full bg-transparent border-b py-1 text-[10px] font-black uppercase outline-none" placeholder="Tahun" value={s.year} onChange={(e) => updateStory(i, 'year', e.target.value)} />
+                  <input className="w-full bg-transparent border-b py-1 text-sm font-bold outline-none" placeholder="Judul" value={s.title} onChange={(e) => updateStory(i, 'title', e.target.value)} />
+                  <textarea className="w-full bg-transparent text-xs outline-none h-20" placeholder="Deskripsi" value={s.desc} onChange={(e) => updateStory(i, 'desc', e.target.value)} />
+               </div>
              ))}
+             <button onClick={addStory} className="w-full py-3 border-2 border-dashed border-stone-200 rounded-2xl text-[10px] font-black uppercase tracking-widest text-stone-400 hover:border-[#C5A059] hover:text-[#C5A059] transition-all">+ Tambah Cerita</button>
           </div>
+       </section>
+
+       <section className="space-y-6 pt-6 border-t border-stone-100">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Quote / Kutipan</p>
+          <textarea className="w-full p-4 bg-stone-50 rounded-2xl text-xs outline-none h-32" value={data.quote} onChange={(e) => updateData({ quote: e.target.value })} placeholder="Masukkan kutipan romantis atau ayat suci..." />
        </section>
     </div>
   );
 
   const renderLayersTab = () => (
     <div className="space-y-4">
-       {[
-         { id: 'cover', name: 'Cover Frame', icon: 'mail', status: showCover ? 'Active' : 'Hidden', toggle: () => setShowCover(!showCover) },
-         { id: 'bg', name: 'Backdrop', icon: 'image', status: 'Active' },
-       ].map(layer => (
-         <div key={layer.id} className={`flex items-center justify-between p-4 rounded-2xl border ${theme === 'dark' ? 'bg-slate-800/50 border-slate-700' : 'bg-stone-50/50 border-stone-100'}`}>
-            <div className="flex items-center gap-4">
-               <span className="material-symbols-outlined text-stone-400">{layer.icon}</span>
-               <span className={`text-[11px] font-black uppercase tracking-widest ${theme === 'dark' ? 'text-slate-300' : 'text-stone-700'}`}>{layer.name}</span>
-            </div>
-            {layer.toggle && (
-               <button onClick={layer.toggle} className="text-stone-300 hover:text-[#C5A059] transition-colors">
-                  <span className="material-symbols-outlined text-[18px]">{layer.status === 'Hidden' ? 'visibility_off' : 'visibility'}</span>
-               </button>
-            )}
-         </div>
-       ))}
+       <div className="flex items-center justify-between p-4 rounded-2xl border border-stone-100">
+          <div className="flex items-center gap-4">
+             <span className="material-symbols-outlined text-stone-400">mail</span>
+             <span className="text-[11px] font-black uppercase tracking-widest text-stone-700">Cover Frame</span>
+          </div>
+          <button onClick={() => setShowCover(!showCover)} className="text-stone-300 hover:text-[#C5A059]">
+             <span className="material-symbols-outlined text-[18px]">{showCover ? 'visibility' : 'visibility_off'}</span>
+          </button>
+       </div>
     </div>
   );
 
   return (
-    <div className={`h-screen flex flex-col overflow-hidden transition-colors duration-300 ${theme === 'dark' ? 'bg-[#0f172a]' : 'bg-[#fcf9f6]'}`}>
-      <header className={`h-16 border-b px-8 flex items-center justify-between z-[100] sticky top-0 ${theme === 'dark' ? 'bg-[#1e293b] border-slate-700' : 'bg-white border-stone-200'}`}>
-        <button onClick={() => setView('/desain-saya')} className="text-stone-400 hover:text-stone-900 dark:hover:text-white transition-colors flex items-center gap-2">
+    <div className={`h-screen flex flex-col overflow-hidden bg-[#fcf9f6]`}>
+      <header className="h-16 border-b px-8 flex items-center justify-between z-[100] bg-white border-stone-200">
+        <button onClick={() => setView('/desain-saya')} className="text-stone-400 hover:text-stone-900 flex items-center gap-2">
           <span className="material-symbols-outlined">arrow_back</span>
-          <span className={`serif font-black text-xl tracking-tighter ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>LuxeInvite</span>
+          <span className="serif font-black text-xl tracking-tighter text-stone-900">LuxeInvite</span>
         </button>
         
-        {/* DEVICE SWITCHER */}
-        <div className="hidden md:flex items-center bg-stone-100 dark:bg-slate-800 rounded-xl p-1 gap-1">
-           {[
-             { id: 'mobile', icon: 'smartphone' },
-             { id: 'tablet', icon: 'tablet_android' },
-             { id: 'desktop', icon: 'desktop_windows' }
-           ].map(d => (
-             <button 
-               key={d.id}
-               onClick={() => setDevice(d.id)}
-               className={`p-2 rounded-lg transition-all ${device === d.id ? 'bg-white dark:bg-slate-700 text-[#C5A059] shadow-sm' : 'text-stone-400 hover:text-stone-600'}`}
-             >
+        <div className="hidden md:flex items-center bg-stone-100 rounded-xl p-1 gap-1">
+           {[{ id: 'mobile', icon: 'smartphone' }, { id: 'tablet', icon: 'tablet_android' }, { id: 'desktop', icon: 'desktop_windows' }].map(d => (
+             <button key={d.id} onClick={() => setDevice(d.id)} className={`p-2 rounded-lg transition-all ${device === d.id ? 'bg-white text-[#C5A059] shadow-sm' : 'text-stone-400'}`}>
                 <span className="material-symbols-outlined text-[18px]">{d.icon}</span>
              </button>
            ))}
         </div>
 
         <div className="flex items-center gap-4">
-          <button onClick={() => setIsPreviewOpen(true)} className={`px-6 py-2 border rounded-lg text-[12px] font-bold uppercase tracking-widest transition-all flex items-center gap-2 ${theme === 'dark' ? 'border-slate-700 text-slate-300 hover:bg-slate-800' : 'border-stone-200 text-stone-600 hover:bg-stone-50'}`}>
-            <span className="material-symbols-outlined text-[18px]">visibility</span> {t.preview}
-          </button>
-          <button onClick={() => setIsPublished(true)} className="px-6 py-2 bg-[#C5A059] text-white rounded-lg text-[12px] font-bold uppercase tracking-widest shadow-xl hover:brightness-110 flex items-center gap-2">
-            <span className="material-symbols-outlined text-[18px]">publish</span> {t.publish}
-          </button>
+          {isUploading && <span className="text-[10px] font-bold text-[#C5A059] animate-pulse">UPLOADING...</span>}
+          <button onClick={() => setIsPublished(true)} className="px-6 py-2 bg-[#C5A059] text-white rounded-lg text-[12px] font-bold uppercase tracking-widest shadow-xl hover:brightness-110">Publish</button>
         </div>
       </header>
 
       <div className="flex flex-1 overflow-hidden relative">
-        <aside className={`w-[350px] border-r flex flex-col h-full z-40 overflow-hidden transition-colors ${theme === 'dark' ? 'bg-[#1e293b] border-slate-700' : 'bg-white border-stone-100'}`}>
+        <aside className="w-[380px] border-r flex flex-col h-full bg-white border-stone-100">
            <div className="flex border-b">
               {['design', 'content', 'layers'].map(tab => (
-                 <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab ? 'text-[#C5A059] border-b-2 border-[#C5A059]' : 'text-stone-400 hover:bg-stone-50'}`}>
-                    {tab}
-                 </button>
+                 <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab ? 'text-[#C5A059] border-b-2 border-[#C5A059]' : 'text-stone-400'}`}>{tab}</button>
               ))}
            </div>
            <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
@@ -218,35 +181,12 @@ const Editor = ({ data, updateData, theme, setView }) => {
            </div>
         </aside>
 
-        <main className={`flex-1 relative overflow-hidden ${theme === 'dark' ? 'bg-[#0b1120]' : 'bg-[#f4f4f5]'} flex items-center justify-center p-6 md:p-12`}>
-           {/* DEVICE CANVAS WRAPPER */}
-           <motion.div 
-             animate={{ 
-               width: device === 'mobile' ? '400px' : device === 'tablet' ? '768px' : '100%',
-               height: device === 'desktop' ? '100%' : '85vh',
-               borderRadius: device === 'desktop' ? '0px' : '40px'
-             }}
-             className="bg-white shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] overflow-hidden relative border-[8px] border-stone-900 transition-all duration-500"
-           >
+        <main className="flex-1 relative overflow-hidden bg-[#f4f4f5] flex items-center justify-center p-6 md:p-12">
+           <motion.div animate={{ width: device === 'mobile' ? '400px' : device === 'tablet' ? '768px' : '100%', height: device === 'desktop' ? '100%' : '85vh', borderRadius: device === 'desktop' ? '0px' : '40px' }} className="bg-white shadow-2xl overflow-hidden relative border-[8px] border-stone-900 transition-all duration-500">
               <div className="w-full h-full overflow-y-auto no-scrollbar">
-                 <PremiumInvitation 
-                    data={data} 
-                    isEditMode={true} 
-                    forceShowCover={showCover} 
-                    onEdit={(s) => setActiveTab('content')}
-                 />
+                 <PremiumInvitation data={data} isEditMode={true} forceShowCover={showCover} onEdit={(s) => setActiveTab('content')} />
               </div>
-              {device !== 'desktop' && (
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-5 bg-stone-900 rounded-b-2xl z-[200]" />
-              )}
            </motion.div>
-
-           {/* ZOOM / SCALE CONTROLS (Floating) */}
-           <div className="fixed bottom-10 right-10 bg-stone-900/80 backdrop-blur-md text-white p-4 rounded-2xl shadow-2xl flex flex-col gap-4 z-[100]">
-              <button onClick={() => setZoom(z => Math.max(30, z-10))} className="hover:text-[#C5A059]"><span className="material-symbols-outlined">zoom_out</span></button>
-              <span className="text-[10px] font-black text-center">{zoom}%</span>
-              <button onClick={() => setZoom(z => Math.min(150, z+10))} className="hover:text-[#C5A059]"><span className="material-symbols-outlined">zoom_in</span></button>
-           </div>
         </main>
       </div>
 
@@ -254,17 +194,11 @@ const Editor = ({ data, updateData, theme, setView }) => {
       <AnimatePresence>
          {isPublished && (
            <div className="fixed inset-0 z-[2000] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
-              <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="max-w-md w-full p-12 bg-white rounded-[50px] text-center shadow-2xl border border-stone-100">
-                 <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <span className="material-symbols-outlined text-4xl">check_circle</span>
-                 </div>
-                 <h2 className="serif text-3xl font-black mb-2 text-stone-900">Success!</h2>
-                 <p className="text-stone-400 text-sm mb-8">Undangan premium Anda telah online.</p>
-                 <div className="bg-stone-50 p-4 rounded-2xl mb-8 text-[10px] font-mono break-all text-[#C5A059] border border-stone-100">{config.BASE_URL}#/v</div>
-                 <div className="space-y-3">
-                    <button onClick={() => window.open(config.BASE_URL+'#/v', '_blank')} className="w-full py-4 bg-[#C5A059] text-white rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl hover:brightness-110">Open Live Version</button>
-                    <button onClick={() => setIsPublished(false)} className="w-full py-4 bg-stone-100 text-stone-500 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-stone-200">Close</button>
-                 </div>
+              <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="max-w-md w-full p-12 bg-white rounded-[50px] text-center shadow-2xl">
+                 <h2 className="serif text-3xl font-black mb-2 text-stone-900">Live!</h2>
+                 <p className="text-stone-400 text-sm mb-8">Undangan Anda telah online.</p>
+                 <div className="bg-stone-50 p-4 rounded-2xl mb-8 text-[10px] font-mono break-all text-[#C5A059]">{config.BASE_URL}#/v</div>
+                 <button onClick={() => setIsPublished(false)} className="w-full py-4 bg-[#C5A059] text-white rounded-2xl font-black uppercase tracking-widest text-[10px]">Close</button>
               </motion.div>
            </div>
          )}
