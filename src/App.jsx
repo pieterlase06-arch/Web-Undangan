@@ -101,19 +101,21 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen flex">
-      {/* SIDEBAR NAVIGATION */}
-      <Sidebar 
-        currentView={currentView} 
-        setView={setCurrentView} 
-        onLogout={logout}
-        lang={lang}
-        setLang={setLang}
-        theme={theme}
-        setTheme={setTheme}
-      />
+    <div className={`min-h-screen flex ${theme === 'dark' ? 'bg-[#0f172a]' : 'bg-[#fcf9f6]'} transition-colors duration-300`}>
+      {/* SIDEBAR NAVIGATION - Hide when editing */}
+      {currentView !== 'editor' && (
+        <Sidebar 
+          currentView={currentView} 
+          setView={setCurrentView} 
+          onLogout={logout}
+          lang={lang}
+          setLang={setLang}
+          theme={theme}
+          setTheme={setTheme}
+        />
+      )}
 
-      <main className="flex-1 ml-64 overflow-y-auto">
+      <main className={`flex-1 overflow-y-auto transition-all duration-300 ${currentView === 'editor' ? 'ml-0' : 'ml-64'}`}>
         <AnimatePresence mode="wait">
           <motion.div
             key={currentView}
@@ -121,15 +123,17 @@ function App() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -10 }}
             transition={{ duration: 0.2 }}
+            className="h-full"
           >
             {currentView === 'dashboard' && (
               <Dashboard 
                 setView={setCurrentView} 
                 invitationData={invitationData}
                 guestCount={guests.length}
+                theme={theme}
               />
             )}
-            {currentView === 'catalog' && <Catalog onSelectTemplate={selectTemplate} />}
+            {currentView === 'catalog' && <Catalog onSelectTemplate={selectTemplate} theme={theme} />}
             {currentView === 'editor' && (
               <Editor 
                 setView={setCurrentView} 

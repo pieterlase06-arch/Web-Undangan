@@ -1,8 +1,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const Catalog = ({ onSelectTemplate }) => {
+const Catalog = ({ onSelectTemplate, theme }) => {
+  const isDark = theme === 'dark';
+  const cardClass = isDark ? 'bg-[#1e293b] border-slate-700' : 'bg-white border-stone-100';
+  const textClass = isDark ? 'text-white' : 'text-stone-900';
+  const mutedClass = isDark ? 'text-slate-400' : 'text-stone-500';
+
   const templates = [
+    // ... existing templates stay the same ...
     { 
       id: 'classic', 
       name: 'Classic Elegance', 
@@ -38,10 +44,10 @@ const Catalog = ({ onSelectTemplate }) => {
   ];
 
   return (
-    <div className="p-10 max-w-[1200px] mx-auto flex flex-col gap-10">
+    <div className="p-10 max-w-[1200px] mx-auto flex flex-col gap-10 transition-colors duration-300">
       <header>
-        <h1 className="serif text-3xl text-stone-900">Design Catalog</h1>
-        <p className="text-stone-500 mt-1">Select a starting point for your premium digital invitation.</p>
+        <h1 className={`serif text-3xl ${textClass}`}>Design Catalog</h1>
+        <p className={`${mutedClass} mt-1`}>Select a starting point for your premium digital invitation.</p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -51,28 +57,28 @@ const Catalog = ({ onSelectTemplate }) => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: i * 0.1 }}
-            className="bg-white rounded-2xl overflow-hidden border border-stone-100 shadow-sm group hover:shadow-xl transition-all duration-500"
+            className={`${cardClass} rounded-2xl overflow-hidden border shadow-sm group hover:shadow-xl transition-all duration-500`}
           >
             <div className="aspect-[4/5] relative overflow-hidden">
               <img src={template.image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={template.name} />
-              <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
                 <button 
                   onClick={() => onSelectTemplate(template)}
-                  className="bg-white text-stone-900 px-8 py-3 rounded-full font-bold text-xs uppercase tracking-widest shadow-xl hover:bg-stone-900 hover:text-white transition-all active:scale-95"
+                  className="bg-white text-stone-900 px-8 py-3 rounded-full font-bold text-[10px] uppercase tracking-widest shadow-xl hover:bg-stone-900 hover:text-white transition-all active:scale-95"
                 >
                   Select Design
                 </button>
               </div>
             </div>
-            <div className="p-6 flex justify-between items-center bg-white relative z-10">
+            <div className={`p-6 flex justify-between items-center relative z-10 transition-colors ${cardClass}`}>
               <div>
-                <h3 className="serif font-bold text-lg text-stone-800">{template.name}</h3>
+                <h3 className={`serif font-bold text-lg ${textClass}`}>{template.name}</h3>
                 <div className="flex gap-2 mt-2">
                   <div className="w-3 h-3 rounded-full" style={{ backgroundColor: template.primaryColor }} />
                   <div className="w-3 h-3 rounded-full" style={{ backgroundColor: template.accentColor }} />
                 </div>
               </div>
-              <span className="material-symbols-outlined text-stone-200">arrow_forward</span>
+              <span className="material-symbols-outlined text-stone-400 opacity-20">arrow_forward</span>
             </div>
           </motion.div>
         ))}

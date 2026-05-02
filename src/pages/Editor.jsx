@@ -1,3 +1,6 @@
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+
 const Editor = ({ setView, data, updateData, lang, theme }) => {
   const [zoom, setZoom] = useState(100);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
