@@ -10,6 +10,15 @@ import Sidebar from './components/Sidebar';
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('isLoggedIn') === 'true');
   const [currentView, setCurrentView] = useState('dashboard');
+  const [lang, setLang] = useState(localStorage.getItem('lang') || 'id');
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+  
+  // Persist settings
+  useEffect(() => {
+    localStorage.setItem('lang', lang);
+    localStorage.setItem('theme', theme);
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [lang, theme]);
   
   // INITIAL DATA
   const initialInvitation = {
@@ -92,8 +101,17 @@ function App() {
   }
 
   return (
-    <div className="flex min-h-screen bg-[#fcf9f6]">
-      <Sidebar currentView={currentView} setView={setCurrentView} onLogout={logout} />
+    <div className="min-h-screen flex">
+      {/* SIDEBAR NAVIGATION */}
+      <Sidebar 
+        currentView={currentView} 
+        setView={setCurrentView} 
+        onLogout={logout}
+        lang={lang}
+        setLang={setLang}
+        theme={theme}
+        setTheme={setTheme}
+      />
 
       <main className="flex-1 ml-64 overflow-y-auto">
         <AnimatePresence mode="wait">
@@ -117,6 +135,8 @@ function App() {
                 setView={setCurrentView} 
                 data={invitationData} 
                 updateData={(d) => setInvitationData(prev => ({...prev, ...d}))} 
+                lang={lang}
+                theme={theme}
               />
             )}
             {currentView === 'guests' && (

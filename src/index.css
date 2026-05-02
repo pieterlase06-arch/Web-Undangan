@@ -11,14 +11,25 @@
   --luxe-gold: #C5A059;
   --luxe-emerald: #064E3B;
   --surface: #fcf9f6;
-  --surface-container: #f0edea;
-  --outline-variant: #c6c6cd;
+  --surface-container: #ffffff;
+  --text-main: #1c1c1a;
+  --text-muted: #6b7280;
+  --border-color: #e5e7eb;
+}
+
+[data-theme='dark'] {
+  --surface: #0f172a;
+  --surface-container: #1e293b;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-color: #334155;
 }
 
 body {
   font-family: 'Manrope', sans-serif;
-  color: #1c1c1a;
+  color: var(--text-main);
   background-color: var(--surface);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .serif {
