@@ -100,22 +100,35 @@ function App() {
     );
   }
 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   return (
-    <div className={`min-h-screen flex ${theme === 'dark' ? 'bg-[#0f172a]' : 'bg-[#fcf9f6]'} transition-colors duration-300`}>
-      {/* SIDEBAR NAVIGATION - Hide when editing */}
+    <div className={`min-h-screen flex ${theme === 'dark' ? 'bg-[#0f172a]' : 'bg-[#fcf9f6]'} transition-colors duration-300 relative`}>
+      {/* MOBILE HEADER - Only visible on small screens */}
+      {currentView !== 'editor' && (
+        <div className={`lg:hidden fixed top-0 left-0 right-0 h-16 px-6 flex items-center justify-between z-[60] backdrop-blur-md border-b ${theme === 'dark' ? 'bg-slate-900/80 border-slate-800' : 'bg-white/80 border-stone-100'}`}>
+           <h1 className={`serif font-black text-xl ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>LuxeInvite</h1>
+           <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 rounded-xl bg-stone-900 text-white shadow-lg flex items-center justify-center">
+             <span className="material-symbols-outlined">{isSidebarOpen ? 'close' : 'menu'}</span>
+           </button>
+        </div>
+      )}
+
+      {/* SIDEBAR NAVIGATION - Hide when editing, toggleable on mobile */}
       {currentView !== 'editor' && (
         <Sidebar 
           currentView={currentView} 
-          setView={setCurrentView} 
+          setView={(v) => { setCurrentView(v); setIsSidebarOpen(false); }} 
           onLogout={logout}
           lang={lang}
           setLang={setLang}
           theme={theme}
           setTheme={setTheme}
+          isOpen={isSidebarOpen}
         />
       )}
 
-      <main className={`flex-1 overflow-y-auto transition-all duration-300 ${currentView === 'editor' ? 'ml-0' : 'ml-64'}`}>
+      <main className={`flex-1 overflow-y-auto transition-all duration-500 ${currentView === 'editor' ? 'ml-0' : 'lg:ml-64 pt-16 lg:pt-0'}`}>
         <AnimatePresence mode="wait">
           <motion.div
             key={currentView}

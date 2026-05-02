@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Sidebar = ({ currentView, setView, lang, setLang, theme, setTheme }) => {
+const Sidebar = ({ currentView, setView, lang, setLang, theme, setTheme, isOpen }) => {
   const t = {
     id: { overview: 'Ikhtisar', templates: 'Templat', designs: 'Desain Saya', guests: 'Daftar Tamu', rsvp: 'Lacak RSVP', settings: 'Pengaturan', upgrade: 'Upgrade ke Gold' },
     en: { overview: 'Overview', templates: 'Templates', designs: 'My Designs', guests: 'Guest Lists', rsvp: 'RSVP Tracking', settings: 'Settings', upgrade: 'Upgrade to Gold' }
@@ -15,7 +15,12 @@ const Sidebar = ({ currentView, setView, lang, setLang, theme, setTheme }) => {
   ];
 
   return (
-    <nav className={`h-screen w-64 border-r fixed left-0 top-0 flex flex-col p-4 z-50 shadow-[10px_0_30px_rgba(0,0,0,0.02)] transition-colors duration-300 ${theme === 'dark' ? 'bg-[#1e293b] border-slate-700' : 'bg-[#fcf9f6] border-stone-200'}`}>
+    <nav className={`
+      fixed inset-y-0 left-0 z-50 w-64 transform transition-all duration-500 ease-in-out lg:translate-x-0
+      ${isOpen ? 'translate-x-0 opacity-100' : '-translate-x-full lg:opacity-100 opacity-0'}
+      flex flex-col p-4 shadow-2xl lg:shadow-none border-r
+      ${theme === 'dark' ? 'bg-[#1e293b] border-slate-700' : 'bg-[#fcf9f6] border-stone-200'}
+    `}>
       {/* Brand Section */}
       <div className="flex flex-col p-6 mb-8 mt-2">
         <h1 className={`serif font-black text-2xl tracking-tighter ${theme === 'dark' ? 'text-white' : 'text-[#0F172A]'}`}>LuxeInvite</h1>
