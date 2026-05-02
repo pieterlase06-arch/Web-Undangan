@@ -2,12 +2,15 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 
+const API_URL = 'http://localhost:3001/api';
+
 const PremiumInvitation = ({ data, isEditMode = false, forceShowCover = false, onEdit = () => {} }) => {
   const location = useLocation();
   const [isOpened, setIsOpened] = useState(isEditMode);
   const [isPlaying, setIsPlaying] = useState(false);
   const [rsvpStatus, setRsvpStatus] = useState(null);
   const [activeTab, setActiveTab] = useState('home');
+  const [messages, setMessages] = useState([]);
   
   // Form States
   const [formName, setFormName] = useState('');
@@ -21,7 +24,33 @@ const PremiumInvitation = ({ data, isEditMode = false, forceShowCover = false, o
     const params = new URLSearchParams(location.search);
     const kpd = params.get('kpd');
     if (kpd) setFormName(decodeURIComponent(kpd));
+    
+    fetchMessages();
   }, [location.search]);
+
+  const fetchMessages = async () => {
+    try {
+      const res = await fetch(`${API_URL}/messages`);
+      if (res.ok) {
+        const data = await res.json();
+        setMessages(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch messages:", err);
+    }
+  };
+
+  const handleLike = async (id) => {
+    try {
+      const res = await fetch(`${API_URL}/message/${id}/like`, { method: 'POST' });
+      if (res.ok) {
+        const updated = await res.json();
+        setMessages(prev => prev.map(m => m.id === id ? updated : m));
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   // Sync isOpened with forceShowCover in edit mode
   useEffect(() => {
@@ -61,6 +90,8 @@ const PremiumInvitation = ({ data, isEditMode = false, forceShowCover = false, o
     }
   };
 
+  const currentTheme = themes[data.themeId] || themes.gold;
+  
   const Editable = ({ children, sectionId }) => {
     if (!isEditMode) return children;
     return (
@@ -79,8 +110,6 @@ const PremiumInvitation = ({ data, isEditMode = false, forceShowCover = false, o
     );
   };
 
-  const currentTheme = themes[data.themeId] || themes.gold;
-  
   const audioRef = useRef(null);
 
   // HANDLE MUSIC CHANGE
@@ -117,7 +146,7 @@ const PremiumInvitation = ({ data, isEditMode = false, forceShowCover = false, o
     setIsSubmitting(true);
     try {
       // Send RSVP
-      await fetch('http://localhost:3001/api/rsvp', {
+      const rsvpRes = await fetch(`${API_URL}/rsvp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -127,9 +156,11 @@ const PremiumInvitation = ({ data, isEditMode = false, forceShowCover = false, o
         })
       });
 
+      if (!rsvpRes.ok) throw new Error("Gagal mengirim RSVP");
+
       // Send Message if exists
       if (formMessage) {
-        await fetch('http://localhost:3001/api/message', {
+        const msgRes = await fetch(`${API_URL}/message`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -137,12 +168,13 @@ const PremiumInvitation = ({ data, isEditMode = false, forceShowCover = false, o
             message: formMessage
           })
         });
+        if (msgRes.ok) fetchMessages(); // Refresh message list
       }
 
       setRsvpStatus('confirmed');
     } catch (err) {
       console.error(err);
-      alert("Terjadi kesalahan saat mengirim konfirmasi.");
+      alert("Terjadi kesalahan saat mengirim konfirmasi. Pastikan server aktif.");
     } finally {
       setIsSubmitting(false);
     }
@@ -393,79 +425,124 @@ const PremiumInvitation = ({ data, isEditMode = false, forceShowCover = false, o
 
         {/* RSVP SECTION */}
         <section id="rsvp" className="py-24 lg:py-40 px-6 bg-pattern">
-           <div className="max-w-2xl mx-auto bg-white p-12 lg:p-20 rounded-[80px] shadow-4xl border border-stone-50 text-center space-y-16">
-              <div className="space-y-6">
-                 <h3 className="script-font text-5xl lg:text-7xl" style={{ color: currentTheme.primary }}>Konfirmasi</h3>
-                 <p className="text-xs uppercase tracking-[0.4em] font-bold opacity-40 italic">Sambut Bahagia Bersama Kami</p>
+           <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
+              <div className="bg-white p-10 lg:p-16 rounded-[80px] shadow-4xl border border-stone-50 text-center space-y-16">
+                 <div className="space-y-6">
+                    <h3 className="script-font text-5xl lg:text-7xl" style={{ color: currentTheme.primary }}>Konfirmasi</h3>
+                    <p className="text-xs uppercase tracking-[0.4em] font-bold opacity-40 italic">Sambut Bahagia Bersama Kami</p>
+                 </div>
+
+                 {rsvpStatus ? (
+                   <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="py-12 space-y-4">
+                      <div className="w-24 h-24 bg-green-500/10 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                         <span className="material-symbols-outlined text-5xl">check_circle</span>
+                      </div>
+                      <p className="serif text-2xl font-black uppercase tracking-tighter">Konfirmasi Terkirim!</p>
+                      <p className="text-stone-500 text-sm">Terima kasih atas doa dan konfirmasinya. Sampai jumpa!</p>
+                   </motion.div>
+                 ) : (
+                   <div className="space-y-8 text-left">
+                      <div className="space-y-3">
+                         <label className="text-[10px] font-black uppercase tracking-widest opacity-40 ml-4">Nama Lengkap</label>
+                         <input 
+                           className="w-full bg-stone-50 border-none rounded-[30px] p-6 text-lg outline-none focus:ring-4 focus:ring-stone-100 transition-all" 
+                           value={formName}
+                           onChange={(e) => setFormName(e.target.value)}
+                           placeholder="Masukkan nama Anda..."
+                         />
+                      </div>
+                      <div className="space-y-3">
+                         <label className="text-[10px] font-black uppercase tracking-widest opacity-40 ml-4">Konfirmasi Kehadiran</label>
+                         <select 
+                           className="w-full bg-stone-50 border-none rounded-[30px] p-6 text-lg outline-none focus:ring-4 focus:ring-stone-100 transition-all appearance-none"
+                           value={formAttendance}
+                           onChange={(e) => setFormAttendance(e.target.value)}
+                         >
+                            <option value="yes">Hadir dengan Senang Hati</option>
+                            <option value="no">Mohon Maaf Tidak Bisa Hadir</option>
+                         </select>
+                      </div>
+                      <div className="space-y-3">
+                         <label className="text-[10px] font-black uppercase tracking-widest opacity-40 ml-4">Jumlah Tamu</label>
+                         <input 
+                           type="number" 
+                           min="1" 
+                           max="10" 
+                           className="w-full bg-stone-50 border-none rounded-[30px] p-6 text-lg outline-none focus:ring-4 focus:ring-stone-100 transition-all" 
+                           value={formGuests}
+                           onChange={(e) => setFormGuests(parseInt(e.target.value))}
+                         />
+                      </div>
+                      <div className="space-y-3">
+                         <label className="text-[10px] font-black uppercase tracking-widest opacity-40 ml-4">Ucapan & Doa</label>
+                         <textarea 
+                           className="w-full bg-stone-50 border-none rounded-[30px] p-6 text-lg outline-none focus:ring-4 focus:ring-stone-100 transition-all h-40 resize-none" 
+                           placeholder="Tuliskan pesan manis Anda..."
+                           value={formMessage}
+                           onChange={(e) => setFormMessage(e.target.value)}
+                         ></textarea>
+                      </div>
+                      <button 
+                       disabled={isSubmitting}
+                       onClick={handleRSVPSubmit}
+                       className={`w-full py-6 text-white rounded-[30px] font-black uppercase tracking-[0.3em] text-[12px] shadow-3xl hover:brightness-110 transition-all active:scale-95 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                       style={{ backgroundColor: currentTheme.primary }}
+                      >
+                        {isSubmitting ? 'Mengirim...' : 'Kirim Konfirmasi'}
+                      </button>
+                   </div>
+                 )}
               </div>
 
-              {rsvpStatus ? (
-                <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="py-12 space-y-4">
-                   <div className="w-24 h-24 bg-green-500/10 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                      <span className="material-symbols-outlined text-5xl">check_circle</span>
-                   </div>
-                   <p className="serif text-2xl font-black uppercase tracking-tighter">Konfirmasi Terkirim!</p>
-                   <p className="text-stone-500 text-sm">Terima kasih atas doa dan konfirmasinya. Sampai jumpa!</p>
-                </motion.div>
-              ) : (
-                <div className="space-y-8 text-left">
-                   <div className="space-y-3">
-                      <label className="text-[10px] font-black uppercase tracking-widest opacity-40 ml-4">Nama Lengkap</label>
-                      <input 
-                        className="w-full bg-stone-50 border-none rounded-[30px] p-6 text-lg outline-none focus:ring-4 focus:ring-stone-100 transition-all" 
-                        value={formName}
-                        onChange={(e) => setFormName(e.target.value)}
-                        placeholder="Masukkan nama Anda..."
-                      />
-                   </div>
-                   <div className="space-y-3">
-                      <label className="text-[10px] font-black uppercase tracking-widest opacity-40 ml-4">Konfirmasi Kehadiran</label>
-                      <select 
-                        className="w-full bg-stone-50 border-none rounded-[30px] p-6 text-lg outline-none focus:ring-4 focus:ring-stone-100 transition-all appearance-none"
-                        value={formAttendance}
-                        onChange={(e) => setFormAttendance(e.target.value)}
+              {/* MESSAGES LIST (LIVE FEED) */}
+              <div className="space-y-8">
+                 <div className="flex justify-between items-center px-4">
+                    <h4 className="serif text-2xl font-bold">Wishes from Friends</h4>
+                    <span className="text-[10px] font-black uppercase tracking-widest opacity-40">{messages.length} Messages</span>
+                 </div>
+                 <div className="space-y-4 max-h-[700px] overflow-y-auto pr-2 custom-scrollbar">
+                    {messages.map((m) => (
+                      <motion.div 
+                        initial={{ opacity: 0, x: 20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        key={m.id} 
+                        className="bg-white/50 backdrop-blur-sm p-8 rounded-[40px] border border-white/50 shadow-sm space-y-4"
                       >
-                         <option value="yes">Hadir dengan Senang Hati</option>
-                         <option value="no">Mohon Maaf Tidak Bisa Hadir</option>
-                      </select>
-                   </div>
-                   <div className="space-y-3">
-                      <label className="text-[10px] font-black uppercase tracking-widest opacity-40 ml-4">Jumlah Tamu</label>
-                      <input 
-                        type="number" 
-                        min="1" 
-                        max="10" 
-                        className="w-full bg-stone-50 border-none rounded-[30px] p-6 text-lg outline-none focus:ring-4 focus:ring-stone-100 transition-all" 
-                        value={formGuests}
-                        onChange={(e) => setFormGuests(parseInt(e.target.value))}
-                      />
-                   </div>
-                   <div className="space-y-3">
-                      <label className="text-[10px] font-black uppercase tracking-widest opacity-40 ml-4">Ucapan & Doa</label>
-                      <textarea 
-                        className="w-full bg-stone-50 border-none rounded-[30px] p-6 text-lg outline-none focus:ring-4 focus:ring-stone-100 transition-all h-40 resize-none" 
-                        placeholder="Tuliskan pesan manis Anda..."
-                        value={formMessage}
-                        onChange={(e) => setFormMessage(e.target.value)}
-                      ></textarea>
-                   </div>
-                   <button 
-                    disabled={isSubmitting}
-                    onClick={handleRSVPSubmit}
-                    className={`w-full py-6 text-white rounded-[30px] font-black uppercase tracking-[0.3em] text-[12px] shadow-3xl hover:brightness-110 transition-all active:scale-95 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    style={{ backgroundColor: currentTheme.primary }}
-                   >
-                     {isSubmitting ? 'Mengirim...' : 'Kirim Konfirmasi'}
-                   </button>
-                </div>
-              )}
+                         <div className="flex justify-between items-start">
+                            <div className="flex items-center gap-3">
+                               <div className="w-10 h-10 rounded-full bg-stone-900 text-white flex items-center justify-center font-bold text-xs">
+                                  {m.name.charAt(0)}
+                               </div>
+                               <div>
+                                  <p className="serif font-bold text-stone-900">{m.name}</p>
+                                  <p className="text-[8px] uppercase tracking-widest opacity-40">{new Date(m.date).toLocaleDateString()}</p>
+                               </div>
+                            </div>
+                            <button 
+                              onClick={() => handleLike(m.id)}
+                              className="flex items-center gap-1 text-[10px] font-black text-pink-500 hover:scale-110 transition-transform"
+                            >
+                               <span className="material-symbols-outlined text-[16px] icon-fill">favorite</span>
+                               {m.likes || 0}
+                            </button>
+                         </div>
+                         <p className="text-stone-600 text-sm italic leading-relaxed">"{m.message}"</p>
+                      </motion.div>
+                    ))}
+                    {messages.length === 0 && (
+                      <div className="p-20 text-center bg-white/30 rounded-[40px] border-2 border-dashed border-white/50">
+                         <p className="text-stone-400 italic text-sm">Be the first to send a wish!</p>
+                      </div>
+                    )}
+                 </div>
+              </div>
            </div>
         </section>
 
         {/* FOOTER */}
         <footer className="py-20 text-center space-y-8 bg-stone-900 text-white">
            <div className="space-y-2">
-              <h2 className="serif text-4xl font-black tracking-tighter uppercase">Alexander & Isabella</h2>
+              <h2 className="serif text-4xl font-black tracking-tighter uppercase">{data.partner1} & {data.partner2}</h2>
               <p className="text-[10px] font-bold uppercase tracking-[0.5em] opacity-40">Terima Kasih</p>
            </div>
            <div className="w-12 h-[1px] bg-white/20 mx-auto" />

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import PremiumInvitation from '../components/PremiumInvitation';
+import config from '../config';
+
 
 const Editor = ({ setView, data, updateData, lang, theme }) => {
   const [activeTab, setActiveTab] = useState('design');
@@ -578,11 +580,11 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
               <h2 className={`serif text-3xl font-black mb-4 ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>{t.success}</h2>
               <p className="text-stone-400 text-sm mb-10">{t.link}</p>
               <div className={`p-4 rounded-2xl mb-8 font-mono text-xs break-all ${theme === 'dark' ? 'bg-slate-800 text-[#C5A059]' : 'bg-stone-50 text-stone-600'}`}>
-                {window.location.origin + window.location.pathname}#/v
+                {config.BASE_URL}#/v
               </div>
               <div className="space-y-3">
                 <button 
-                  onClick={() => window.open(window.location.origin + window.location.pathname + '#/v', '_blank')}
+                  onClick={() => window.open(config.BASE_URL + '#/v', '_blank')}
                   className="w-full py-4 bg-[#C5A059] text-white rounded-2xl font-bold uppercase tracking-widest text-xs hover:brightness-110 shadow-lg transition-all"
                 >
                   Buka Undangan
