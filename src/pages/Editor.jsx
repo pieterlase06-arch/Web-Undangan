@@ -393,16 +393,16 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
             <button onClick={() => setZoom(100)} className="text-[10px] font-black uppercase tracking-widest text-[#C5A059] hover:brightness-110">Reset Zoom</button>
           </div>
 
-          <div className="w-full min-h-[calc(100vh-100px)] lg:min-h-full flex items-center justify-center p-4 lg:p-8">
+          <div className="w-full h-full">
             <motion.div 
               style={{ 
                 scale: zoom / 100,
                 transformOrigin: 'top center'
               }}
-              className="relative w-full h-[85vh] lg:h-[90vh]"
+              className="relative w-full h-full"
             >
-               {/* Responsive Canvas Wrapper */}
-               <div className={`w-full h-full overflow-hidden rounded-[20px] lg:rounded-[40px] shadow-2xl border transition-colors ${theme === 'dark' ? 'border-slate-800 bg-slate-900' : 'border-stone-200 bg-white'}`}>
+               {/* Full Responsive Canvas Wrapper */}
+               <div className={`w-full h-full overflow-hidden transition-colors ${theme === 'dark' ? 'bg-[#0b1120]' : 'bg-white'}`}>
                   <div className="w-full h-full overflow-y-auto no-scrollbar scroll-smooth relative">
                      <div className="w-full min-h-full">
                        <PremiumInvitation data={data} isEditMode={true} />

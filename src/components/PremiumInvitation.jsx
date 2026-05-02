@@ -202,10 +202,9 @@ const PremiumInvitation = ({ data, isEditMode = false }) => {
               <motion.div {...reveal} className="space-y-6">
                  <span className="material-symbols-outlined text-4xl" style={{ color: currentTheme.primary }}>filter_vintage</span>
                  <p className="script-font text-3xl md:text-4xl italic" style={{ color: currentTheme.primary }}>
-                   "Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu isteri-isteri dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya..."
+                   "{data.quote || 'Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu isteri-isteri dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya...'}"
                  </p>
-                 <p className="text-xs uppercase tracking-widest font-bold opacity-60">QS. Ar-Rum: 21</p>
-                 <div className="w-20 h-[1px] mx-auto" style={{ backgroundColor: currentTheme.primary, opacity: 0.3 }}></div>
+                 <div className="w-20 h-[1px] mx-auto mt-6" style={{ backgroundColor: currentTheme.primary, opacity: 0.3 }}></div>
               </motion.div>
               <motion.h2 {...reveal} transition={{ delay: 0.3 }} className="serif-font text-5xl md:text-8xl font-black tracking-tighter uppercase">
                 {data.partner1} <span className="script-font text-5xl lowercase normal-case">&</span> {data.partner2}
@@ -234,9 +233,9 @@ const PremiumInvitation = ({ data, isEditMode = false }) => {
                  </div>
                  <div className="space-y-3">
                     <h4 className="script-font text-5xl lg:text-6xl" style={{ color: currentTheme.primary }}>{data.partner1}</h4>
-                    <p className="text-xs font-black uppercase tracking-[0.3em] opacity-40">Putra Bungsu Dari</p>
-                    <p className="serif text-lg font-bold">Bapak Nama Ayah</p>
-                    <p className="serif text-lg font-bold">& Ibu Nama Ibu</p>
+                    <p className="text-xs font-black uppercase tracking-[0.3em] opacity-40">Putra Dari</p>
+                    <p className="serif text-lg font-bold">Bapak {data.father1 || 'Nama Ayah'}</p>
+                    <p className="serif text-lg font-bold">& Ibu {data.mother1 || 'Nama Ibu'}</p>
                  </div>
                  <a href="#" className="flex items-center gap-3 px-8 py-3 bg-stone-900 text-white rounded-full text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">
                     <span className="material-symbols-outlined text-[18px]">account_circle</span>
@@ -254,9 +253,9 @@ const PremiumInvitation = ({ data, isEditMode = false }) => {
                  </div>
                  <div className="space-y-3">
                     <h4 className="script-font text-5xl lg:text-6xl" style={{ color: currentTheme.primary }}>{data.partner2}</h4>
-                    <p className="text-xs font-black uppercase tracking-[0.3em] opacity-40">Putri Pertama Dari</p>
-                    <p className="serif text-lg font-bold">Bapak Nama Ayah</p>
-                    <p className="serif text-lg font-bold">& Ibu Nama Ibu</p>
+                    <p className="text-xs font-black uppercase tracking-[0.3em] opacity-40">Putri Dari</p>
+                    <p className="serif text-lg font-bold">Bapak {data.father2 || 'Nama Ayah'}</p>
+                    <p className="serif text-lg font-bold">& Ibu {data.mother2 || 'Nama Ibu'}</p>
                  </div>
                  <a href="#" className="flex items-center gap-3 px-8 py-3 bg-stone-900 text-white rounded-full text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">
                     <span className="material-symbols-outlined text-[18px]">account_circle</span>
@@ -286,11 +285,11 @@ const PremiumInvitation = ({ data, isEditMode = false }) => {
                     <div className="space-y-4">
                        <div className="flex flex-col items-center gap-1">
                           <p className="text-xs font-black uppercase tracking-widest opacity-40">Waktu</p>
-                          <p className="text-xl font-bold">08:00 - 10:00 WIB</p>
+                          <p className="text-xl font-bold">{data.time || '08:00'} - Selesai</p>
                        </div>
                        <div className="flex flex-col items-center gap-1">
                           <p className="text-xs font-black uppercase tracking-widest opacity-40">Tempat</p>
-                          <p className="text-lg italic text-stone-500">Masjid Agung Al-Azhar, Jakarta Selatan</p>
+                          <p className="text-lg italic text-stone-500">{data.venue || 'Lokasi Acara'}</p>
                        </div>
                     </div>
                  </motion.div>
@@ -309,7 +308,7 @@ const PremiumInvitation = ({ data, isEditMode = false }) => {
                        </div>
                        <div className="flex flex-col items-center gap-1">
                           <p className="text-xs font-black uppercase tracking-widest opacity-40">Tempat</p>
-                          <p className="text-lg italic text-stone-500">{data.venue}</p>
+                          <p className="text-lg italic text-stone-500">{data.address || 'Alamat Lengkap Tempat Acara'}</p>
                        </div>
                     </div>
                  </motion.div>
@@ -317,7 +316,7 @@ const PremiumInvitation = ({ data, isEditMode = false }) => {
 
               <motion.button 
                 {...reveal}
-                onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.address)}`, '_blank')}
+                onClick={() => window.open(data.mapsLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.address || data.venue || 'Jakarta')}`, '_blank')}
                 className="group px-12 py-5 text-white rounded-full font-black uppercase tracking-[0.3em] text-[10px] shadow-2xl flex items-center gap-4 transition-all hover:scale-105"
                 style={{ backgroundColor: currentTheme.primary }}
               >
@@ -372,15 +371,6 @@ const PremiumInvitation = ({ data, isEditMode = false }) => {
                     <button onClick={() => { navigator.clipboard.writeText('1234567890'); alert('Rekening disalin!'); }} className="w-full py-4 bg-stone-900 text-white rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:brightness-110 transition-all">Salin Rekening</button>
                  </motion.div>
 
-                 <motion.div {...reveal} transition={{ delay: 0.3 }} className="bg-white p-10 rounded-[50px] shadow-2xl border border-stone-100 space-y-6">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Bank_Mandiri_logo_2016.svg" className="h-8 mx-auto" alt="Mandiri" />
-                    <div className="space-y-2">
-                       <p className="text-xs uppercase font-bold tracking-widest opacity-40">Nomor Rekening</p>
-                       <p className="text-2xl font-black tracking-widest">098 765 4321</p>
-                       <p className="serif text-sm font-bold opacity-60">a.n {data.partner2}</p>
-                    </div>
-                    <button onClick={() => { navigator.clipboard.writeText('0987654321'); alert('Rekening disalin!'); }} className="w-full py-4 bg-stone-900 text-white rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:brightness-110 transition-all">Salin Rekening</button>
-                 </motion.div>
               </div>
            </div>
         </section>
