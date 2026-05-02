@@ -210,7 +210,7 @@ const PremiumInvitation = ({ data }) => {
                  <div className="relative group">
                     <div className="absolute -inset-4 border border-dashed rounded-full animate-spin-slow opacity-20" style={{ borderColor: currentTheme.primary }}></div>
                     <div className="w-64 lg:w-80 aspect-[3/4] rounded-[100px] overflow-hidden border-8 border-white shadow-2xl rotate-3 group-hover:rotate-0 transition-transform duration-700">
-                       <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80" className="w-full h-full object-cover" />
+                       <img src={data.groomImage || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80"} className="w-full h-full object-cover" />
                     </div>
                  </div>
                  <div className="space-y-3">
@@ -230,7 +230,7 @@ const PremiumInvitation = ({ data }) => {
                  <div className="relative group">
                     <div className="absolute -inset-4 border border-dashed rounded-full animate-spin-slow opacity-20" style={{ borderColor: currentTheme.primary }}></div>
                     <div className="w-64 lg:w-80 aspect-[3/4] rounded-[100px] overflow-hidden border-8 border-white shadow-2xl -rotate-3 group-hover:rotate-0 transition-transform duration-700">
-                       <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80" className="w-full h-full object-cover" />
+                       <img src={data.brideImage || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80"} className="w-full h-full object-cover" />
                     </div>
                  </div>
                  <div className="space-y-3">

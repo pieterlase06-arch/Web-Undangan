@@ -78,22 +78,83 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
   const renderContentTab = () => (
     <div className="space-y-10">
        <div className="space-y-8">
-         <div className="space-y-2">
-           <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">{t.partner1}</label>
-           <input className={`w-full border-b py-3 text-xl outline-none transition-all font-serif ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white focus:border-[#C5A059]' : 'bg-transparent border-stone-100 text-stone-900 focus:border-stone-900'}`} value={data.partner1} onChange={(e) => updateData({ partner1: e.target.value })} />
-         </div>
-         <div className="space-y-2">
-           <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">{t.partner2}</label>
-           <input className={`w-full border-b py-3 text-xl outline-none transition-all font-serif ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white focus:border-[#C5A059]' : 'bg-transparent border-stone-100 text-stone-900 focus:border-stone-900'}`} value={data.partner2} onChange={(e) => updateData({ partner2: e.target.value })} />
-         </div>
-         <div className="grid grid-cols-2 gap-6">
+         {/* TEXT CONTENT */}
+         <div className="space-y-6">
+            <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#C5A059]">Basic Information</h4>
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">{t.date}</label>
-              <input type="date" className={`w-full border-b py-2 text-sm outline-none ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white' : 'bg-transparent border-stone-100 text-stone-900'}`} value={data.date} onChange={(e) => updateData({ date: e.target.value })} />
+              <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">{t.partner1}</label>
+              <input className={`w-full border-b py-3 text-xl outline-none transition-all font-serif ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white focus:border-[#C5A059]' : 'bg-transparent border-stone-100 text-stone-900 focus:border-stone-900'}`} value={data.partner1} onChange={(e) => updateData({ partner1: e.target.value })} />
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">{t.time}</label>
-              <input type="time" className={`w-full border-b py-2 text-sm outline-none ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white' : 'bg-transparent border-stone-100 text-stone-900'}`} value={data.time} onChange={(e) => updateData({ time: e.target.value })} />
+              <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">{t.partner2}</label>
+              <input className={`w-full border-b py-3 text-xl outline-none transition-all font-serif ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white focus:border-[#C5A059]' : 'bg-transparent border-stone-100 text-stone-900 focus:border-stone-900'}`} value={data.partner2} onChange={(e) => updateData({ partner2: e.target.value })} />
+            </div>
+            <div className="grid grid-cols-2 gap-6">
+               <div className="space-y-2">
+                 <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">{t.date}</label>
+                 <input type="date" className={`w-full border-b py-2 text-sm outline-none ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white' : 'bg-transparent border-stone-100 text-stone-900'}`} value={data.date} onChange={(e) => updateData({ date: e.target.value })} />
+               </div>
+               <div className="space-y-2">
+                 <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">{t.time}</label>
+                 <input type="time" className={`w-full border-b py-2 text-sm outline-none ${theme === 'dark' ? 'bg-transparent border-slate-700 text-white' : 'bg-transparent border-stone-100 text-stone-900'}`} value={data.time} onChange={(e) => updateData({ time: e.target.value })} />
+               </div>
+            </div>
+         </div>
+
+         {/* MEDIA SECTION */}
+         <div className="space-y-6 pt-6 border-t border-stone-100 dark:border-slate-800">
+            <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#C5A059]">Media & Photos</h4>
+            
+            <div className="space-y-4">
+               <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Photo Mempelai</p>
+               <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                     <p className="text-[9px] font-bold opacity-40 uppercase">Pria</p>
+                     <div className="relative aspect-square rounded-2xl overflow-hidden border-2 border-stone-100 dark:border-slate-700 group">
+                        <img src={data.groomImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'} className="w-full h-full object-cover" />
+                        <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+                           <span className="material-symbols-outlined text-white">upload</span>
+                           <input type="file" className="hidden" accept="image/*" onChange={(e) => {
+                              const file = e.target.files[0];
+                              if (file) updateData({ groomImage: URL.createObjectURL(file) });
+                           }} />
+                        </label>
+                     </div>
+                  </div>
+                  <div className="space-y-2">
+                     <p className="text-[9px] font-bold opacity-40 uppercase">Wanita</p>
+                     <div className="relative aspect-square rounded-2xl overflow-hidden border-2 border-stone-100 dark:border-slate-700 group">
+                        <img src={data.brideImage || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80'} className="w-full h-full object-cover" />
+                        <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+                           <span className="material-symbols-outlined text-white">upload</span>
+                           <input type="file" className="hidden" accept="image/*" onChange={(e) => {
+                              const file = e.target.files[0];
+                              if (file) updateData({ brideImage: URL.createObjectURL(file) });
+                           }} />
+                        </label>
+                     </div>
+                  </div>
+               </div>
+            </div>
+
+            <div className="space-y-4">
+               <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Premium Presets</p>
+               <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+                  {[
+                    'https://images.unsplash.com/photo-1519741497674-611481863552',
+                    'https://images.unsplash.com/photo-1511285560929-80b456fea0bc',
+                    'https://images.unsplash.com/photo-1519225421980-715cb0215aed',
+                    'https://images.unsplash.com/photo-1522673607200-164883eeca48'
+                  ].map((url, i) => (
+                    <button 
+                      key={i} 
+                      onClick={() => updateData({ backgroundImage: `${url}?auto=format&fit=crop&w=1200&q=80` })}
+                      className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border-2 border-transparent hover:border-[#C5A059] transition-all"
+                    >
+                      <img src={`${url}?auto=format&fit=crop&w=100&q=80`} className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+               </div>
             </div>
          </div>
        </div>

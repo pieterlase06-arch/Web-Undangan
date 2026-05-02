@@ -31,18 +31,20 @@ function AppContent() {
   }, [lang, theme]);
   
   const initialInvitation = {
-    templateId: 'classic',
-    partner1: 'Isabella',
-    partner2: 'Alexander',
+    templateId: 'gold',
+    partner1: 'Alexander',
+    partner2: 'Isabella',
     date: '2024-10-24',
     time: '16:00',
     venue: 'The Botanical Gardens',
     address: '123 Floral Avenue, San Francisco',
-    primaryColor: '#0F172A',
-    accentColor: '#d4af37',
+    primaryColor: '#C5A059',
+    accentColor: '#1C1917',
     fontFamily: 'serif',
     themeId: 'gold',
     backgroundImage: './assets/themes/gold.png',
+    groomImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
+    brideImage: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80',
   };
 
   const [invitationData, setInvitationData] = useState(() => {
