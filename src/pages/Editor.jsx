@@ -4,22 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import PremiumInvitation from '../components/PremiumInvitation';
 import config from '../config';
 
-const Editor = ({ data, updateData, setView: setViewProp }) => {
+const Editor = ({ data, updateData }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('konten');
   const [isPublished, setIsPublished] = useState(false);
   const [device, setDevice] = useState('mobile'); 
   const [showCover, setShowCover] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 1024);
-
-  const setView = setViewProp || ((v) => navigate(v));
-
-  useEffect(() => {
-    const handleResize = () => setIsSidebarOpen(window.innerWidth >= 1024);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const handleImageUpload = async (file, field) => {
     if (!file) return;
@@ -78,11 +70,11 @@ const Editor = ({ data, updateData, setView: setViewProp }) => {
                    <option value="'Cinzel', serif">Imperial Serif (Cinzel)</option>
                    <option value="'Playfair Display', serif">Classic Serif (Playfair)</option>
                    <option value="'Montserrat', sans-serif">Modern Sans (Montserrat)</option>
+                   <option value="'Outfit', sans-serif">Snap Elegant (Outfit)</option>
                 </select>
              </div>
           </div>
        </section>
-
        <section className="space-y-4 pt-6 border-t border-stone-100">
           <p className="text-[9px] font-black uppercase tracking-widest text-stone-500">Musik Latar</p>
           <input className="w-full p-3 bg-stone-100 rounded-xl text-[10px] text-stone-900 outline-none border border-stone-200" placeholder="URL Lagu MP3..." value={data.musicUrl} onChange={(e) => updateData({ musicUrl: e.target.value })} />
@@ -94,7 +86,7 @@ const Editor = ({ data, updateData, setView: setViewProp }) => {
     <div className="space-y-8 pb-10">
        <section className="space-y-4">
           <p className="text-[9px] font-black uppercase tracking-widest text-stone-500">Informasi Mempelai</p>
-          <div className="space-y-4">
+          <div className="space-y-6">
              <div className="p-6 bg-stone-50 rounded-[32px] space-y-6 border border-stone-100 shadow-sm group">
                 <div className="space-y-4">
                    <div className="relative w-full h-48 rounded-2xl bg-stone-100 overflow-hidden border-2 border-dashed border-stone-200 group-hover:border-[#C5A059] transition-all flex flex-col items-center justify-center gap-3">
@@ -115,7 +107,6 @@ const Editor = ({ data, updateData, setView: setViewProp }) => {
                    </div>
                 </div>
              </div>
-
              <div className="p-6 bg-stone-50 rounded-[32px] space-y-6 border border-stone-100 shadow-sm group">
                 <div className="space-y-4">
                    <div className="relative w-full h-48 rounded-2xl bg-stone-100 overflow-hidden border-2 border-dashed border-stone-200 group-hover:border-[#C5A059] transition-all flex flex-col items-center justify-center gap-3">
@@ -147,11 +138,11 @@ const Editor = ({ data, updateData, setView: setViewProp }) => {
                 <input type="date" className="w-full p-3 bg-white border border-stone-200 rounded-xl outline-none text-xs font-bold text-stone-900" value={data.date} onChange={(e) => updateData({ date: e.target.value })} />
              </div>
              <div className="space-y-2">
-                <label className="text-[9px] font-black text-stone-400 uppercase">Nama Lokasi</label>
+                <label className="text-[9px] font-black text-stone-400 uppercase">Lokasi</label>
                 <input className="w-full p-3 bg-white border border-stone-200 rounded-xl outline-none text-xs font-bold text-stone-900" placeholder="Gedung..." value={data.venue} onChange={(e) => updateData({ venue: e.target.value })} />
              </div>
              <div className="space-y-2">
-                <label className="text-[9px] font-black text-stone-400 uppercase">Google Maps</label>
+                <label className="text-[9px] font-black text-stone-400 uppercase">Maps</label>
                 <input className="w-full p-3 bg-white border border-stone-200 rounded-xl outline-none text-[9px] font-mono text-stone-500" placeholder="Link..." value={data.mapsLink} onChange={(e) => updateData({ mapsLink: e.target.value })} />
              </div>
           </div>
@@ -163,13 +154,13 @@ const Editor = ({ data, updateData, setView: setViewProp }) => {
     <div className="h-screen flex flex-col overflow-hidden bg-white">
       <header className="h-14 border-b px-6 flex items-center justify-between z-[100] bg-white border-stone-100">
         <div className="flex items-center gap-4">
-           <button onClick={() => isSidebarOpen && window.innerWidth < 1024 ? setIsSidebarOpen(false) : setView('/desain-saya')} className="text-stone-400 hover:text-stone-900 flex items-center gap-3 group">
+           <button onClick={() => navigate('/desain-saya')} className="text-stone-400 hover:text-stone-900 flex items-center gap-3 group">
              <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center transition-all">
-               <span className="material-symbols-outlined text-[18px]">chevron_left</span>
+               <span className="material-symbols-outlined text-[18px]">arrow_back</span>
              </div>
              <span className="serif font-black text-xl tracking-tighter text-stone-900 hidden md:inline">LuxeInvite</span>
            </button>
-           <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="lg:hidden p-2 bg-stone-100 rounded-lg text-stone-600">
+           <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 bg-stone-100 rounded-lg text-stone-600">
               <span className="material-symbols-outlined text-[18px]">{isSidebarOpen ? 'close' : 'menu'}</span>
            </button>
         </div>
@@ -194,7 +185,7 @@ const Editor = ({ data, updateData, setView: setViewProp }) => {
           {isSidebarOpen && (
             <motion.aside 
               initial={{ x: -400 }} animate={{ x: 0 }} exit={{ x: -400 }}
-              className="fixed lg:relative w-full md:w-[360px] border-r flex flex-col h-full bg-white border-stone-50 z-[150] shadow-2xl lg:shadow-none"
+              className="absolute lg:relative w-full md:w-[360px] border-r flex flex-col h-full bg-white border-stone-50 z-[150] shadow-2xl lg:shadow-none"
             >
                <div className="flex border-b border-stone-100 bg-stone-50/50">
                   {['desain', 'konten', 'lapisan'].map(tab => (
@@ -226,9 +217,9 @@ const Editor = ({ data, updateData, setView: setViewProp }) => {
         </AnimatePresence>
 
         <main className="flex-1 relative overflow-hidden bg-[#f4f6f8] flex items-center justify-center p-4 md:p-12">
-           <motion.div animate={{ width: device === 'mobile' ? '100%' : device === 'tablet' ? '760px' : '100%', maxWidth: device === 'mobile' ? '380px' : 'none', height: device === 'desktop' ? '100%' : '88vh', borderRadius: device === 'desktop' ? '0px' : '40px' }} className="bg-white shadow-2xl overflow-hidden relative border-[10px] border-stone-950 transition-all duration-700">
+           <motion.div animate={{ width: device === 'mobile' ? '380px' : device === 'tablet' ? '760px' : '100%', height: device === 'desktop' ? '100%' : '88vh', borderRadius: device === 'desktop' ? '0px' : '40px' }} className="bg-white shadow-2xl overflow-hidden relative border-[10px] border-stone-950 transition-all duration-700">
               <div className="w-full h-full overflow-y-auto no-scrollbar scroll-smooth">
-                 <PremiumInvitation data={data} isEditMode={true} forceShowCover={showCover} onEdit={(s) => { setActiveTab('konten'); setIsSidebarOpen(true); }} />
+                 <PremiumInvitation data={data} isEditMode={true} forceShowCover={showCover} onEdit={() => { setActiveTab('konten'); setIsSidebarOpen(true); }} />
               </div>
            </motion.div>
         </main>
