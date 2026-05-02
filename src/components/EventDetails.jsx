@@ -5,7 +5,7 @@ import { MapPin, Calendar, Clock } from 'lucide-react';
 const EventDetails = () => {
   const events = [
     {
-      title: 'The Ceremony',
+      title: 'THE CEREMONY',
       date: 'Saturday, January 1, 2027',
       time: '10:00 AM - 12:00 PM',
       location: 'The Grand Palace Ballroom',
@@ -13,7 +13,7 @@ const EventDetails = () => {
       mapUrl: 'https://goo.gl/maps/xyz'
     },
     {
-      title: 'The Reception',
+      title: 'THE RECEPTION',
       date: 'Saturday, January 1, 2027',
       time: '06:00 PM - 09:00 PM',
       location: 'The Crystal Garden',
@@ -23,51 +23,61 @@ const EventDetails = () => {
   ];
 
   return (
-    <section id="details" className="bg-white">
+    <section id="details" style={{ backgroundColor: 'white', padding: '120px 0' }}>
       <div className="container">
-        <div className="text-center mb-20">
-          <h2 className="text-5xl serif mb-4">Event Details</h2>
-          <div className="w-20 h-1 bg-primary mx-auto"></div>
+        <div style={{ textAlign: 'center', marginBottom: '80px' }}>
+          <span style={{ textTransform: 'uppercase', letterSpacing: '0.2em', fontSize: '12px', color: 'var(--secondary)', fontWeight: '600' }}>When & Where</span>
+          <h2 className="serif" style={{ fontSize: '48px', color: 'var(--on-surface)', marginTop: '16px' }}>Event Details</h2>
+          <div style={{ width: '40px', height: '2px', backgroundColor: 'var(--primary)', margin: '24px auto' }}></div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-12">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '40px' }}>
           {events.map((event, idx) => (
             <motion.div
               key={idx}
-              initial={{ opacity: 0, x: idx === 0 ? -50 : 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="p-10 border border-accent rounded-2xl hover:shadow-xl transition-shadow bg-[#fafafa]"
+              transition={{ duration: 0.8, delay: idx * 0.2 }}
+              className="card"
+              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}
             >
-              <h3 className="text-3xl serif mb-6 text-primary">{event.title}</h3>
+              <h3 className="serif" style={{ fontSize: '24px', marginBottom: '32px', color: 'var(--primary)', letterSpacing: '0.1em' }}>{event.title}</h3>
               
-              <div className="space-y-4 mb-8">
-                <div className="flex items-center gap-4">
-                  <Calendar className="text-primary w-5 h-5" />
-                  <span>{event.date}</span>
+              <div style={{ marginBottom: '40px', width: '100%' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', marginBottom: '32px' }}>
+                  <Calendar size={24} color="var(--primary)" strokeWidth={1.5} />
+                  <span style={{ fontSize: '18px', color: 'var(--on-surface)' }}>{event.date}</span>
                 </div>
-                <div className="flex items-center gap-4">
-                  <Clock className="text-primary w-5 h-5" />
-                  <span>{event.time}</span>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', marginBottom: '32px' }}>
+                  <Clock size={24} color="var(--primary)" strokeWidth={1.5} />
+                  <span style={{ fontSize: '18px', color: 'var(--on-surface)' }}>{event.time}</span>
                 </div>
-                <div className="flex items-start gap-4">
-                  <MapPin className="text-primary w-5 h-5 mt-1" />
-                  <div>
-                    <p className="font-bold">{event.location}</p>
-                    <p className="text-text-light">{event.address}</p>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+                  <MapPin size={24} color="var(--primary)" strokeWidth={1.5} />
+                  <div style={{ textAlign: 'center' }}>
+                    <p style={{ fontWeight: '600', marginBottom: '8px', fontSize: '18px' }}>{event.location}</p>
+                    <p style={{ color: 'var(--secondary)', fontSize: '15px', lineHeight: '1.6' }}>{event.address}</p>
                   </div>
                 </div>
               </div>
 
-              <a 
+              <motion.a 
                 href={event.mapUrl} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="btn w-full text-center"
+                className="btn"
+                style={{ 
+                  backgroundColor: 'transparent', 
+                  border: '1px solid var(--primary)', 
+                  color: 'var(--primary)',
+                  width: '100%',
+                  marginTop: 'auto'
+                }}
+                whileHover={{ backgroundColor: 'var(--primary)', color: 'white' }}
               >
-                View on Google Maps
-              </a>
+                OPEN GOOGLE MAPS
+              </motion.a>
             </motion.div>
           ))}
         </div>

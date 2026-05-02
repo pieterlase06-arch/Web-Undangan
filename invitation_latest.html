@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Invitation Editor - Ethereal Invite</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600&amp;family=Noto+Serif:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary-fixed-variant": "#574500",
+                      "error-container": "#ffdad6",
+                      "on-primary-fixed": "#241a00",
+                      "inverse-surface": "#303030",
+                      "surface-tint": "#735c00",
+                      "primary-fixed-dim": "#e9c349",
+                      "primary-fixed": "#ffe088",
+                      "on-tertiary-fixed": "#271816",
+                      "on-surface": "#1b1c1c",
+                      "inverse-primary": "#e9c349",
+                      "surface-dim": "#dcd9d9",
+                      "surface-container-high": "#eae7e7",
+                      "background": "#fcf9f8",
+                      "outline-variant": "#d0c5af",
+                      "on-tertiary-fixed-variant": "#564240",
+                      "surface-bright": "#fcf9f8",
+                      "on-secondary-fixed-variant": "#364c39",
+                      "on-secondary-fixed": "#0a2010",
+                      "secondary-fixed": "#cfe9d0",
+                      "on-error-container": "#93000a",
+                      "outline": "#7f7663",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-on-surface": "#f3f0f0",
+                      "tertiary": "#6f5957",
+                      "error": "#ba1a1a",
+                      "tertiary-fixed": "#f9dcd9",
+                      "surface-variant": "#e4e2e1",
+                      "secondary": "#4d6450",
+                      "on-secondary": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "surface-container-low": "#f6f3f2",
+                      "tertiary-fixed-dim": "#dcc0bd",
+                      "on-tertiary-container": "#54413f",
+                      "on-secondary-container": "#4d6551",
+                      "on-primary-container": "#554300",
+                      "on-tertiary": "#ffffff",
+                      "tertiary-container": "#c8adaa",
+                      "secondary-container": "#c7e1c8",
+                      "primary-container": "#d4af37",
+                      "on-background": "#1b1c1c",
+                      "surface-container-highest": "#e4e2e1",
+                      "surface": "#fcf9f8",
+                      "surface-container": "#f0eded",
+                      "secondary-fixed-dim": "#b3cdb5",
+                      "on-surface-variant": "#4d4635",
+                      "primary": "#735c00",
+                      "on-error": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "40px",
+                      "gutter": "24px",
+                      "container-max": "1200px",
+                      "margin-mobile": "16px",
+                      "unit": "8px"
+              },
+              "fontFamily": {
+                      "headline-md": [
+                              "Noto Serif"
+                      ],
+                      "body-lg": [
+                              "Manrope"
+                      ],
+                      "headline-sm": [
+                              "Noto Serif"
+                      ],
+                      "label-md": [
+                              "Manrope"
+                      ],
+                      "display-lg": [
+                              "Noto Serif"
+                      ],
+                      "body-md": [
+                              "Manrope"
+                      ]
+              },
+              "fontSize": {
+                      "headline-md": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-sm": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col">
+<!-- TopAppBar Semantic Shell: Destination Rule implies we suppress standard global nav for an Editor (task-focused/departure), 
+         but the prompt doesn't explicitly say hide it entirely. It asks for a split screen. 
+         We'll provide a simplified header or suppress standard nav based on "Task-Focused: Any sub-page... implies temporary departure". 
+         Since it's an editor, we'll keep a slim header with a back button. -->
+<header class="bg-surface-container-lowest border-b border-surface-variant px-margin-desktop py-4 flex items-center justify-between z-10 sticky top-0">
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center p-2 rounded-full hover:bg-surface-container-low">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-headline-sm text-headline-sm text-on-surface">Ethereal Invite</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-primary hover:text-on-primary-container font-label-md text-label-md px-4 py-2 rounded-lg transition-colors border border-outline-variant hover:bg-surface-container-low">
+                Save Draft
+            </button>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-6 py-2 rounded-lg shadow-[0_4px_14px_rgba(115,92,0,0.15)] hover:bg-on-primary-container hover:text-on-primary transition-all duration-300">
+                Publish
+            </button>
+</div>
+</header>
+<main class="flex-1 flex overflow-hidden">
+<!-- Live Preview Pane (Left Side) -->
+<section class="flex-1 bg-surface-container-low p-margin-desktop overflow-y-auto flex items-start justify-center relative">
+<div class="max-w-[600px] w-full bg-surface-container-lowest rounded-xl shadow-[0_8px_30px_rgba(77,100,80,0.15)] overflow-hidden flex flex-col items-center relative pb-16">
+<!-- Invitation Header Image -->
+<div class="w-full h-80 bg-surface-variant relative overflow-hidden">
+<img alt="Wedding flowers" class="w-full h-full object-cover opacity-90" data-alt="A beautifully styled overhead shot of delicate blush pink and white floral arrangements on a pristine white marble surface. The lighting is soft and diffused, creating a romantic, ethereal, and sophisticated atmosphere suited for a luxury wedding invitation. The color palette focuses on soft sage greens, blush pinks, and warm gold accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCshWGZ7-j_7QmfpPX9KLrKka1_qgsYyGGwlD7_NG1ZscCwl2XEpJw_FZmjILZONo9CskUhUHu1gr-r08jE9CuuyKW00PdA3EJARz8phXagRusTKzSsyseyBZWmeZY2AkZ7gE9kAzjs3hFTfkG73lo9BWmMikTIhwuM89miAK0ryEqgCUktUKA3Cm91o_eFm80louVm2r9xuy8zw8CfiL5dnm_glTOZI5BOJT30IwH1ADouYuLfTB3YDD_0eehrH1D94YeWwVGitYI"/>
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-surface-container-lowest/80"></div>
+</div>
+<!-- Invitation Content Preview -->
+<div class="w-full px-12 -mt-16 relative z-10 flex flex-col items-center text-center">
+<span class="font-label-md text-label-md text-primary tracking-widest uppercase mb-4 bg-surface-container-lowest/80 px-4 py-1 rounded-full backdrop-blur-sm border border-outline-variant/30">
+                        Join us to celebrate
+                    </span>
+<h2 class="font-display-lg text-display-lg text-on-surface mb-6 mt-4">
+                        Eleanor <span class="text-tertiary mx-2">&amp;</span> James
+                    </h2>
+<div class="flex flex-col gap-2 font-body-lg text-body-lg text-on-surface-variant mb-10">
+<p>Saturday, October 14th, 2024</p>
+<p>at Four o'clock in the afternoon</p>
+</div>
+<div class="w-16 h-px bg-outline-variant mb-10"></div>
+<div class="flex flex-col gap-2 font-body-md text-body-md text-on-surface-variant">
+<p class="font-headline-sm text-headline-sm text-on-surface mb-2">The Botanical Gardens</p>
+<p>123 Conservatory Way</p>
+<p>San Francisco, California</p>
+</div>
+</div>
+<!-- Texture overlay simulation -->
+<div class="absolute inset-0 pointer-events-none opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');"></div>
+</div>
+</section>
+<!-- Editing Panel (Right Side) -->
+<aside class="w-[480px] bg-surface-container-lowest border-l border-surface-variant flex flex-col h-full overflow-hidden shadow-[-4px_0_20px_rgba(0,0,0,0.02)]">
+<!-- Editor Tabs -->
+<div class="flex px-6 pt-6 border-b border-surface-variant bg-surface">
+<button class="flex-1 pb-4 text-center font-label-md text-label-md text-primary border-b-2 border-primary">
+                    Details
+                </button>
+<button class="flex-1 pb-4 text-center font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors">
+                    Design
+                </button>
+<button class="flex-1 pb-4 text-center font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors">
+                    Settings
+                </button>
+</div>
+<!-- Form Content -->
+<div class="flex-1 overflow-y-auto p-8 flex flex-col gap-8 bg-surface">
+<!-- Section: Couple Names -->
+<section>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">favorite</span>
+                        The Couple
+                    </h3>
+<div class="flex flex-col gap-5">
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Partner 1</label>
+<input class="w-full bg-surface-container-lowest border-b border-outline-variant focus:border-primary focus:ring-0 px-0 py-2 font-body-lg text-body-lg text-on-surface placeholder-outline transition-colors outline-none" type="text" value="Eleanor"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Partner 2</label>
+<input class="w-full bg-surface-container-lowest border-b border-outline-variant focus:border-primary focus:ring-0 px-0 py-2 font-body-lg text-body-lg text-on-surface placeholder-outline transition-colors outline-none" type="text" value="James"/>
+</div>
+</div>
+</section>
+<hr class="border-surface-variant"/>
+<!-- Section: Date & Time -->
+<section>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">calendar_today</span>
+                        Date &amp; Time
+                    </h3>
+<div class="grid grid-cols-2 gap-6">
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Date</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 font-body-md text-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors shadow-sm" type="date" value="2024-10-14"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Time</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 font-body-md text-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors shadow-sm" type="time" value="16:00"/>
+</div>
+</div>
+</section>
+<hr class="border-surface-variant"/>
+<!-- Section: Location -->
+<section>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">location_on</span>
+                        Location
+                    </h3>
+<div class="flex flex-col gap-5"><div class="flex flex-col gap-2 mb-2">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Google Maps Location</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full bg-surface-container-lowest border-b border-outline-variant focus:border-primary focus:ring-0 pl-7 py-2 font-body-md text-body-md text-on-surface placeholder-outline transition-colors outline-none" placeholder="Search for a place..." type="text"/>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Venue Name</label>
+<input class="w-full bg-surface-container-lowest border-b border-outline-variant focus:border-primary focus:ring-0 px-0 py-2 font-body-lg text-body-lg text-on-surface placeholder-outline transition-colors outline-none" type="text" value="The Botanical Gardens"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Street Address</label>
+<input class="w-full bg-surface-container-lowest border-b border-outline-variant focus:border-primary focus:ring-0 px-0 py-2 font-body-md text-body-md text-on-surface placeholder-outline transition-colors outline-none" type="text" value="123 Conservatory Way"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">City, State</label>
+<input class="w-full bg-surface-container-lowest border-b border-outline-variant focus:border-primary focus:ring-0 px-0 py-2 font-body-md text-body-md text-on-surface placeholder-outline transition-colors outline-none" type="text" value="San Francisco, California"/>
+</div>
+<div class="flex flex-col gap-3 mt-2">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Map Preview</label>
+<div class="relative w-full h-40 bg-surface-container-high rounded-lg overflow-hidden border border-outline-variant group">
+<img alt="Map Preview" class="w-full h-full object-cover opacity-60 grayscale-[0.5] group-hover:opacity-80 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/ALi7-KKEhI2m_4_h7XyX7_q7_n_8_u_6_y_5_z_4_x_3_v_2_c_1_b_0_a_z_y_x_w_v_u_t_s_r_q_p_o_n_m_l_k_j_i_h_g_f_e_d_c_b_a"/>
+<div class="absolute inset-0 flex items-center justify-center bg-black/5">
+<button class="bg-surface-container-lowest text-on-surface font-label-md text-label-md px-4 py-2 rounded-full shadow-md hover:bg-primary hover:text-on-primary transition-all flex items-center gap-2 border border-outline-variant">
+<span class="material-symbols-outlined text-[18px]">pin_drop</span>
+                Open Map Selector
+            </button>
+</div>
+</div>
+<p class="text-[12px] text-on-surface-variant italic">Pinpoint the exact location for your guests.</p>
+</div></div>
+</section>
+<!-- Spacer for bottom scroll -->
+<div class="h-12"></div>
+</div>
+</aside>
+</main>
+</body></html>

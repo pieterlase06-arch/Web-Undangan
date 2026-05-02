@@ -2,11 +2,52 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>web-undangan</title>
+    <title>Digital Invitation Builder</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp,container-queries"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#735c00',
+              'primary-container': '#d4af37',
+              'on-primary-container': '#554300',
+              tertiary: '#6f5957',
+              'tertiary-container': '#c8adaa',
+              'on-surface': '#1b1c1c',
+              'on-surface-variant': '#4d4635',
+              'surface-container': '#f0eded',
+              'surface-container-low': '#f6f3f2',
+              'surface-container-lowest': '#ffffff',
+              'secondary-container': '#c7e1c8',
+              secondary: '#4d6450',
+            }
+          }
+        }
+      }
+    </script>
+    <!-- Google Fonts & Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+      }
+      .icon-fill {
+        font-variation-settings: 'FILL' 1;
+      }
+      body {
+        font-family: 'Manrope', sans-serif;
+      }
+      .serif {
+        font-family: 'Noto Serif', serif;
+      }
+    </style>
   </head>
-  <body>
+  <body class="bg-[#fcf9f8]">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

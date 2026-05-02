@@ -3,10 +3,7 @@ import { motion } from 'framer-motion';
 
 const Countdown = ({ targetDate }) => {
   const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0
+    days: 0, hours: 0, minutes: 0, seconds: 0
   });
 
   useEffect(() => {
@@ -30,30 +27,45 @@ const Countdown = ({ targetDate }) => {
   }, [targetDate]);
 
   const items = [
-    { label: 'Days', value: timeLeft.days },
-    { label: 'Hours', value: timeLeft.hours },
-    { label: 'Minutes', value: timeLeft.minutes },
-    { label: 'Seconds', value: timeLeft.seconds },
+    { label: 'DAYS', value: timeLeft.days },
+    { label: 'HOURS', value: timeLeft.hours },
+    { label: 'MINS', value: timeLeft.minutes },
+    { label: 'SECS', value: timeLeft.seconds },
   ];
 
   return (
-    <section className="bg-accent py-20">
+    <section style={{ backgroundColor: 'var(--secondary-container)', padding: '100px 0' }}>
       <div className="container text-center">
-        <h2 className="text-4xl mb-12 serif">Counting down to the big day</h2>
-        <div className="flex justify-center gap-4 md:gap-10">
+        <h2 className="serif" style={{ fontSize: '32px', marginBottom: '64px', color: 'var(--secondary)', letterSpacing: '0.05em' }}>
+          COUNTING DOWN TO THE BIG DAY
+        </h2>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', flexWrap: 'wrap' }}>
           {items.map((item, idx) => (
             <motion.div 
               key={idx}
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: idx * 0.1 }}
-              className="flex flex-col items-center"
+              transition={{ delay: idx * 0.1, duration: 0.6 }}
+              style={{ 
+                width: '120px', 
+                height: '120px', 
+                backgroundColor: 'white', 
+                borderRadius: '50%', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                boxShadow: '0 10px 20px rgba(77, 100, 80, 0.05)',
+                border: '1px solid #f0eded'
+              }}
             >
-              <div className="w-20 h-20 md:w-24 md:h-24 glass rounded-full flex items-center justify-center mb-2 shadow-sm border border-primary/20">
-                <span className="text-2xl md:text-3xl font-bold text-primary">{item.value}</span>
-              </div>
-              <span className="text-xs uppercase tracking-widest text-text-light font-medium">{item.label}</span>
+              <span style={{ fontSize: '32px', fontWeight: '400', color: 'var(--primary)', fontFamily: 'var(--font-heading)' }}>
+                {item.value}
+              </span>
+              <span style={{ fontSize: '10px', uppercase: 'true', letterSpacing: '0.1em', color: 'var(--secondary)', fontWeight: '600' }}>
+                {item.label}
+              </span>
             </motion.div>
           ))}
         </div>
