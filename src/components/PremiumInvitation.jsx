@@ -89,8 +89,10 @@ const PremiumInvitation = ({ data }) => {
     { id: 'rsvp', icon: 'mail', label: 'RSVP' }
   ];
 
+  const sectionRefs = useRef({});
+
   const scrollTo = (id) => {
-    const el = document.getElementById(id);
+    const el = sectionRefs.current[id];
     if (el) el.scrollIntoView({ behavior: 'smooth' });
     setActiveTab(id);
   };
@@ -194,7 +196,7 @@ const PremiumInvitation = ({ data }) => {
       <div className={`transition-all duration-1000 ${!isOpened ? 'h-screen overflow-hidden opacity-0' : 'opacity-100'}`}>
         
         {/* HERO SECTION */}
-        <section id="home" className="min-h-screen relative flex items-center justify-center p-6 lg:p-20 overflow-hidden">
+        <section ref={el => sectionRefs.current['home'] = el} id="home" className="min-h-screen relative flex items-center justify-center p-6 lg:p-20 overflow-hidden">
            <div className="absolute inset-0 bg-cover bg-fixed bg-center opacity-20 lg:opacity-30" style={{ backgroundImage: `url(${data.backgroundImage})` }}></div>
            <div className="relative z-10 text-center space-y-8 max-w-3xl">
               <motion.div {...reveal} className="space-y-6">
@@ -215,7 +217,7 @@ const PremiumInvitation = ({ data }) => {
         </section>
 
         {/* COUPLE SECTION */}
-        <section id="couple" className="py-24 lg:py-40 px-6 flex flex-col items-center gap-20 bg-pattern">
+        <section ref={el => sectionRefs.current['couple'] = el} id="couple" className="py-24 lg:py-40 px-6 flex flex-col items-center gap-20 bg-pattern">
            <div className="text-center space-y-4 max-w-xl">
               <h3 className="script-font text-5xl lg:text-6xl" style={{ color: currentTheme.primary }}>Mempelai Bahagia</h3>
               <p className="text-xs uppercase tracking-[0.4em] font-bold opacity-40">Assalamualaikum Warahmatullahi Wabarakatuh</p>
@@ -265,7 +267,7 @@ const PremiumInvitation = ({ data }) => {
         </section>
 
         {/* EVENT SECTION */}
-        <section id="event" className="py-24 lg:py-40 px-6 relative overflow-hidden bg-pattern">
+        <section ref={el => sectionRefs.current['event'] = el} id="event" className="py-24 lg:py-40 px-6 relative overflow-hidden bg-pattern">
            <div className="absolute inset-0 opacity-5" style={{ backgroundColor: currentTheme.primary }}></div>
            <div className="max-w-6xl mx-auto flex flex-col items-center text-center gap-16 relative z-10">
               <div className="space-y-4">
@@ -326,7 +328,7 @@ const PremiumInvitation = ({ data }) => {
         </section>
 
         {/* GALLERY SECTION */}
-        <section id="gallery" className="py-24 lg:py-40 px-6 bg-pattern">
+        <section ref={el => sectionRefs.current['gallery'] = el} id="gallery" className="py-24 lg:py-40 px-6 bg-pattern">
            <div className="max-w-6xl mx-auto space-y-20">
               <div className="text-center space-y-4">
                  <h3 className="script-font text-5xl lg:text-7xl" style={{ color: currentTheme.primary }}>Galeri Bahagia</h3>
@@ -350,7 +352,7 @@ const PremiumInvitation = ({ data }) => {
         </section>
 
         {/* GIFT SECTION (Indo Style) */}
-        <section id="gift" className="py-24 lg:py-40 px-6 bg-pattern">
+        <section ref={el => sectionRefs.current['gift'] = el} id="gift" className="py-24 lg:py-40 px-6 bg-pattern">
            <div className="max-w-3xl mx-auto text-center space-y-16">
               <div className="space-y-4">
                  <h3 className="script-font text-5xl lg:text-7xl" style={{ color: currentTheme.primary }}>Kado Digital</h3>
@@ -384,7 +386,7 @@ const PremiumInvitation = ({ data }) => {
         </section>
 
         {/* RSVP SECTION */}
-        <section id="rsvp" className="py-24 lg:py-40 px-6 bg-pattern">
+        <section ref={el => sectionRefs.current['rsvp'] = el} id="rsvp" className="py-24 lg:py-40 px-6 bg-pattern">
            <div className="max-w-2xl mx-auto bg-white p-12 lg:p-20 rounded-[80px] shadow-4xl border border-stone-50 text-center space-y-16">
               <div className="space-y-6">
                  <h3 className="script-font text-5xl lg:text-7xl" style={{ color: currentTheme.primary }}>Konfirmasi</h3>
