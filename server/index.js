@@ -27,6 +27,14 @@ app.get('/api/data', (req, res) => {
     res.json(getData());
 });
 
+app.get('/api/rsvps', (req, res) => {
+    res.json(getData().rsvps);
+});
+
+app.get('/api/messages', (req, res) => {
+    res.json(getData().messages);
+});
+
 app.post('/api/rsvp', (req, res) => {
     const { name, attendance, guests } = req.body;
     if (!name || attendance === undefined) {
@@ -38,6 +46,18 @@ app.post('/api/rsvp', (req, res) => {
     res.status(201).json({ message: 'RSVP submitted successfully' });
 });
 
+app.delete('/api/rsvp/:index', (req, res) => {
+    const index = parseInt(req.params.index);
+    const data = getData();
+    if (index >= 0 && index < data.rsvps.length) {
+        data.rsvps.splice(index, 1);
+        saveData(data);
+        res.json({ message: 'RSVP deleted successfully' });
+    } else {
+        res.status(404).json({ error: 'RSVP not found' });
+    }
+});
+
 app.post('/api/message', (req, res) => {
     const { name, message } = req.body;
     if (!name || !message) {
@@ -47,6 +67,18 @@ app.post('/api/message', (req, res) => {
     data.messages.push({ name, message, date: new Date().toISOString() });
     saveData(data);
     res.status(201).json({ message: 'Message sent successfully' });
+});
+
+app.delete('/api/message/:index', (req, res) => {
+    const index = parseInt(req.params.index);
+    const data = getData();
+    if (index >= 0 && index < data.messages.length) {
+        data.messages.splice(index, 1);
+        saveData(data);
+        res.json({ message: 'Message deleted successfully' });
+    } else {
+        res.status(404).json({ error: 'Message not found' });
+    }
 });
 
 app.listen(PORT, () => {

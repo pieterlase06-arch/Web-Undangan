@@ -89,6 +89,23 @@ function AppContent() {
     navigate('/editor');
   };
 
+  const resetInvitation = () => {
+    if (window.confirm('Are you sure you want to reset your design? This will revert all changes to default.')) {
+      setInvitationData(initialInvitation);
+      localStorage.removeItem('invitationData');
+    }
+  };
+
+  const deleteGuest = (id) => {
+    if (window.confirm('Delete this guest?')) {
+      setGuests(prev => prev.filter(g => g.id !== id));
+    }
+  };
+
+  const updateGuestStatus = (id, status) => {
+    setGuests(prev => prev.map(g => g.id === id ? { ...g, status } : g));
+  };
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const isEditor = location.pathname === '/editor';
@@ -149,7 +166,13 @@ function AppContent() {
           <Routes location={location} key={location.pathname}>
             <Route path="/desain-saya" element={
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
-                <Dashboard setView={(v) => navigate(v)} invitationData={invitationData} guestCount={guests.length} theme={theme} />
+                <Dashboard 
+                  setView={(v) => navigate(v)} 
+                  invitationData={invitationData} 
+                  guestCount={guests.length} 
+                  theme={theme} 
+                  onReset={resetInvitation}
+                />
               </motion.div>
             } />
             <Route path="/templat" element={
@@ -164,7 +187,12 @@ function AppContent() {
             } />
             <Route path="/daftar-tamu" element={
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
-                <GuestList guests={guests} onAddGuest={(g) => setGuests(prev => [...prev, {...g, id: Date.now()}])} />
+                <GuestList 
+                  guests={guests} 
+                  onAddGuest={(g) => setGuests(prev => [...prev, {...g, id: Date.now()}])} 
+                  onDeleteGuest={deleteGuest}
+                  onUpdateStatus={updateGuestStatus}
+                />
               </motion.div>
             } />
             <Route path="/lacak-rsvp" element={

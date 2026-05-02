@@ -1,6 +1,5 @@
 
-
-const Dashboard = ({ setView, invitationData, guestCount, theme }) => {
+const Dashboard = ({ setView, invitationData, guestCount, theme, onReset }) => {
   const isDark = theme === 'dark';
   const cardClass = isDark ? 'bg-[#1e293b] border-slate-700' : 'bg-white border-stone-100';
   const textClass = isDark ? 'text-white' : 'text-stone-900';
@@ -71,6 +70,13 @@ const Dashboard = ({ setView, invitationData, guestCount, theme }) => {
                     className={`px-6 py-3 border rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${isDark ? 'border-slate-700 text-slate-400 hover:bg-slate-800' : 'border-stone-200 text-stone-500 hover:bg-stone-50'}`}
                   >
                     Share Link
+                  </button>
+                  <button 
+                    onClick={onReset}
+                    className={`p-3 border rounded-xl text-red-400 hover:text-red-600 hover:bg-red-50 transition-all border-transparent`}
+                    title="Delete / Reset Design"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">delete</span>
                   </button>
                </div>
             </div>

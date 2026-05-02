@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const GuestList = ({ guests, onAddGuest }) => {
+const GuestList = ({ guests, onAddGuest, onDeleteGuest, onUpdateStatus }) => {
   const [newName, setNewName] = useState('');
   const [newPhone, setNewPhone] = useState('');
   const [newCategory, setNewCategory] = useState('Keluarga');
@@ -87,16 +87,26 @@ const GuestList = ({ guests, onAddGuest }) => {
                   </span>
                 </td>
                 <td className="px-8 py-5 text-right">
-                  <button 
-                    onClick={() => {
-                      const message = `Halo ${guest.name}, kami mengundang Anda ke pernikahan kami! Lihat undangan selengkapnya di: https://pieterlase06-arch.github.io/Web-Undangan/`;
-                      window.open(`https://wa.me/${guest.phone}?text=${encodeURIComponent(message)}`, '_blank');
-                    }}
-                    className="text-green-600 hover:underline text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 ml-auto"
-                  >
-                    <span className="material-symbols-outlined text-[14px]">send</span>
-                    Send Invitation
-                  </button>
+                  <div className="flex items-center justify-end gap-2">
+                    <button 
+                      onClick={() => {
+                        const message = `Halo ${guest.name}, kami mengundang Anda ke pernikahan kami! Lihat undangan selengkapnya di: https://pieterlase06-arch.github.io/Web-Undangan/`;
+                        window.open(`https://wa.me/${guest.phone}?text=${encodeURIComponent(message)}`, '_blank');
+                        onUpdateStatus(guest.id, 'Sent');
+                      }}
+                      className="text-green-600 hover:bg-green-50 p-2 rounded-lg transition-all"
+                      title="Send WhatsApp"
+                    >
+                      <span className="material-symbols-outlined">send</span>
+                    </button>
+                    <button 
+                      onClick={() => onDeleteGuest(guest.id)}
+                      className="text-red-400 hover:text-red-600 p-2 rounded-lg hover:bg-red-50 transition-all"
+                      title="Delete Guest"
+                    >
+                      <span className="material-symbols-outlined">delete</span>
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

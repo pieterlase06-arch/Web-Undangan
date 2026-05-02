@@ -224,7 +224,7 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
          </div>
 
          {/* MEDIA SECTION */}
-         <div className="space-y-6 pt-6 border-t border-stone-100 dark:border-slate-800">
+         <div id="media-section" className="space-y-6 pt-6 border-t border-stone-100 dark:border-slate-800">
             <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#C5A059]">Media & Photos</h4>
             
             <div className="space-y-4">
@@ -234,26 +234,64 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
                      <p className="text-[9px] font-bold opacity-40 uppercase">Pria</p>
                      <div className="relative aspect-square rounded-2xl overflow-hidden border-2 border-stone-100 dark:border-slate-700 group shadow-sm hover:shadow-lg transition-all">
                         <img src={data.groomImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'} className="w-full h-full object-cover" />
-                        <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
-                           <span className="material-symbols-outlined text-white">upload</span>
+                        <label className="absolute inset-0 bg-black/60 opacity-0 lg:group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+                           <div className="flex flex-col items-center gap-1">
+                              <span className="material-symbols-outlined text-white text-2xl">upload</span>
+                              <span className="text-[8px] text-white font-black uppercase tracking-widest">Ganti</span>
+                           </div>
+                           <input type="file" className="hidden" accept="image/*" onChange={(e) => {
+                              const file = e.target.files[0];
+                              if (file) {
+                                const url = URL.createObjectURL(file);
+                                updateData({ groomImage: url });
+                              }
+                           }} />
+                        </label>
+                     </div>
+                     <div className="flex gap-1 mt-1">
+                        <label className="flex-1 py-2 bg-stone-100 dark:bg-slate-800 rounded-lg text-[8px] font-black uppercase tracking-widest text-stone-600 dark:text-slate-300 flex items-center justify-center gap-1 cursor-pointer hover:bg-stone-200 transition-colors">
+                           <span className="material-symbols-outlined text-[14px]">image</span>
+                           Ganti
                            <input type="file" className="hidden" accept="image/*" onChange={(e) => {
                               const file = e.target.files[0];
                               if (file) updateData({ groomImage: URL.createObjectURL(file) });
                            }} />
                         </label>
+                        <button onClick={() => updateData({ groomImage: null })} className="p-2 bg-stone-100 dark:bg-slate-800 rounded-lg text-red-500 hover:bg-red-50 transition-colors">
+                           <span className="material-symbols-outlined text-[14px]">delete</span>
+                        </button>
                      </div>
                   </div>
                   <div className="space-y-2">
                      <p className="text-[9px] font-bold opacity-40 uppercase">Wanita</p>
                      <div className="relative aspect-square rounded-2xl overflow-hidden border-2 border-stone-100 dark:border-slate-700 group shadow-sm hover:shadow-lg transition-all">
                         <img src={data.brideImage || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80'} className="w-full h-full object-cover" />
-                        <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
-                           <span className="material-symbols-outlined text-white">upload</span>
+                        <label className="absolute inset-0 bg-black/60 opacity-0 lg:group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+                           <div className="flex flex-col items-center gap-1">
+                              <span className="material-symbols-outlined text-white text-2xl">upload</span>
+                              <span className="text-[8px] text-white font-black uppercase tracking-widest">Ganti</span>
+                           </div>
+                           <input type="file" className="hidden" accept="image/*" onChange={(e) => {
+                              const file = e.target.files[0];
+                              if (file) {
+                                const url = URL.createObjectURL(file);
+                                updateData({ brideImage: url });
+                              }
+                           }} />
+                        </label>
+                     </div>
+                     <div className="flex gap-1 mt-1">
+                        <label className="flex-1 py-2 bg-stone-100 dark:bg-slate-800 rounded-lg text-[8px] font-black uppercase tracking-widest text-stone-600 dark:text-slate-300 flex items-center justify-center gap-1 cursor-pointer hover:bg-stone-200 transition-colors">
+                           <span className="material-symbols-outlined text-[14px]">image</span>
+                           Ganti
                            <input type="file" className="hidden" accept="image/*" onChange={(e) => {
                               const file = e.target.files[0];
                               if (file) updateData({ brideImage: URL.createObjectURL(file) });
                            }} />
                         </label>
+                        <button onClick={() => updateData({ brideImage: null })} className="p-2 bg-stone-100 dark:bg-slate-800 rounded-lg text-red-500 hover:bg-red-50 transition-colors">
+                           <span className="material-symbols-outlined text-[14px]">delete</span>
+                        </button>
                      </div>
                   </div>
                </div>
@@ -335,13 +373,13 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
     </div>
   );
 
-  const renderLayersTab = () => (
+   const renderLayersTab = () => (
     <div className="space-y-4">
        {[
          { id: 'cover', name: 'Cover Frame (Amplop)', icon: 'mail', status: showCover ? 'Editing' : 'Hidden', toggle: () => setShowCover(!showCover) },
          { id: 'bg', name: 'Background Frame', icon: 'image', status: 'Active', toggle: () => { setActiveTab('design'); setTimeout(() => document.getElementById('bg-section')?.scrollIntoView({ behavior: 'smooth' }), 100); } },
-         { id: 'floral', name: 'Premium Floral Art', icon: 'filter_vintage', status: 'Active' },
-         { id: 'text', name: 'Core Typography', icon: 'text_fields', status: 'Active' },
+         { id: 'floral', name: 'Premium Floral Art', icon: 'filter_vintage', status: 'Active', toggle: () => { setActiveTab('design'); setTimeout(() => document.getElementById('design-theme-section')?.scrollIntoView({ behavior: 'smooth' }), 100); } },
+         { id: 'text', name: 'Core Typography', icon: 'text_fields', status: 'Active', toggle: () => { setActiveTab('content'); setTimeout(() => document.getElementById('basic-section')?.scrollIntoView({ behavior: 'smooth' }), 100); } },
        ].map(layer => (
          <div 
            key={layer.id} 
@@ -355,7 +393,10 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
                  <span className="text-[8px] text-stone-400 uppercase font-bold">{layer.status}</span>
                </div>
             </div>
-            <span className="material-symbols-outlined text-[18px] text-stone-300">{layer.status === 'Hidden' ? 'visibility_off' : 'visibility'}</span>
+            <div className="flex items-center gap-2">
+               <span className="material-symbols-outlined text-[16px] text-stone-300 hover:text-stone-900 dark:hover:text-white transition-colors">lock</span>
+               <span className="material-symbols-outlined text-[18px] text-stone-300 group-hover:text-[#C5A059] transition-colors">{layer.status === 'Hidden' ? 'visibility_off' : 'visibility'}</span>
+            </div>
          </div>
        ))}
     </div>
@@ -428,7 +469,20 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
                <div className={`w-full h-full overflow-hidden transition-colors ${theme === 'dark' ? 'bg-[#0b1120]' : 'bg-white'}`}>
                   <div className="w-full h-full overflow-y-auto no-scrollbar scroll-smooth relative">
                      <div className="w-full min-h-full">
-                        <PremiumInvitation data={data} isEditMode={true} forceShowCover={showCover} />
+                        <PremiumInvitation 
+                          data={data} 
+                          isEditMode={true} 
+                          forceShowCover={showCover} 
+                          onEdit={(sectionId) => {
+                            const el = document.getElementById(sectionId);
+                            if (el) {
+                              el.scrollIntoView({ behavior: 'smooth' });
+                              // Highlight effect
+                              el.classList.add('ring-4', 'ring-[#C5A059]', 'ring-offset-4');
+                              setTimeout(() => el.classList.remove('ring-4', 'ring-[#C5A059]', 'ring-offset-4'), 2000);
+                            }
+                          }}
+                        />
                      </div>
                   </div>
                </div>
