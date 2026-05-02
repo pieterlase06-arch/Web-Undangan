@@ -7,6 +7,7 @@ import Editor from './pages/Editor';
 import GuestList from './pages/GuestList';
 import RSVPTracking from './pages/RSVPTracking';
 import Sidebar from './components/Sidebar';
+import PremiumInvitation from './components/PremiumInvitation';
 
 // Root Component to handle Routing
 function App() {
@@ -90,7 +91,11 @@ function AppContent() {
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  if (!isLoggedIn) {
+  const isEditor = location.pathname === '/editor';
+  const isView = location.pathname === '/v';
+
+  // Allow public access to the invitation view
+  if (!isLoggedIn && !isView) {
     return (
       <div className="h-screen bg-[#fcf9f6] flex flex-col items-center justify-center p-6 text-center">
         <motion.div 
@@ -118,7 +123,7 @@ function AppContent() {
 
   return (
     <div className={`min-h-screen flex ${theme === 'dark' ? 'bg-[#0f172a]' : 'bg-[#fcf9f6]'} transition-colors duration-300 relative`}>
-      {!isEditor && (
+      {!isEditor && !isView && (
         <div className={`lg:hidden fixed top-0 left-0 right-0 h-16 px-6 flex items-center justify-between z-[60] backdrop-blur-md border-b ${theme === 'dark' ? 'bg-slate-900/80 border-slate-800' : 'bg-white/80 border-stone-100'}`}>
            <h1 className={`serif font-black text-xl ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>LuxeInvite</h1>
            <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 rounded-xl bg-stone-900 text-white shadow-lg flex items-center justify-center">
@@ -127,7 +132,7 @@ function AppContent() {
         </div>
       )}
 
-      {!isEditor && (
+      {!isEditor && !isView && (
         <Sidebar 
           currentView={location.pathname} 
           setView={(v) => { navigate(v); setIsSidebarOpen(false); }} 
@@ -140,7 +145,7 @@ function AppContent() {
         />
       )}
 
-      <main className={`flex-1 overflow-y-auto transition-all duration-500 ${isEditor ? 'ml-0' : 'lg:ml-64 pt-16 lg:pt-0'}`}>
+      <main className={`flex-1 overflow-y-auto transition-all duration-500 ${(isEditor || isView) ? 'ml-0' : 'lg:ml-64 pt-16 lg:pt-0'}`}>
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route path="/desain-saya" element={
@@ -166,6 +171,11 @@ function AppContent() {
             <Route path="/lacak-rsvp" element={
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
                 <RSVPTracking guests={guests} />
+              </motion.div>
+            } />
+            <Route path="/v" element={
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
+                <PremiumInvitation data={invitationData} />
               </motion.div>
             } />
             <Route path="*" element={<Navigate to="/desain-saya" replace />} />

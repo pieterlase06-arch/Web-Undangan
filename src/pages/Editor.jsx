@@ -494,14 +494,22 @@ const Editor = ({ setView, data, updateData, lang, theme }) => {
               <h2 className={`serif text-3xl font-black mb-4 ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>{t.success}</h2>
               <p className="text-stone-400 text-sm mb-10">{t.link}</p>
               <div className={`p-4 rounded-2xl mb-8 font-mono text-xs break-all ${theme === 'dark' ? 'bg-slate-800 text-[#C5A059]' : 'bg-stone-50 text-stone-600'}`}>
-                https://pieterlase06-arch.github.io/Web-Undangan/
+                {window.location.origin + window.location.pathname}#/v
               </div>
-              <button 
-                onClick={() => setIsPublished(false)}
-                className="w-full py-4 bg-[#0F172A] text-white rounded-2xl font-bold uppercase tracking-widest text-xs hover:bg-black transition-all"
-              >
-                Done
-              </button>
+              <div className="space-y-3">
+                <button 
+                  onClick={() => window.open(window.location.origin + window.location.pathname + '#/v', '_blank')}
+                  className="w-full py-4 bg-[#C5A059] text-white rounded-2xl font-bold uppercase tracking-widest text-xs hover:brightness-110 shadow-lg transition-all"
+                >
+                  Buka Undangan
+                </button>
+                <button 
+                  onClick={() => setIsPublished(false)}
+                  className={`w-full py-4 rounded-2xl font-bold uppercase tracking-widest text-xs transition-all ${theme === 'dark' ? 'bg-slate-800 text-slate-400 hover:bg-slate-700' : 'bg-stone-100 text-stone-500 hover:bg-stone-200'}`}
+                >
+                  Done
+                </button>
+              </div>
             </motion.div>
           </div>
         )}

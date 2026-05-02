@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
 
 const PremiumInvitation = ({ data }) => {
+  const location = useLocation();
   const [isOpened, setIsOpened] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [rsvpStatus, setRsvpStatus] = useState(null);
@@ -42,7 +44,7 @@ const PremiumInvitation = ({ data }) => {
   
   // Initialize guest name directly from URL
   const [guestName] = useState(() => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(location.search);
     const kpd = params.get('kpd');
     return kpd ? decodeURIComponent(kpd) : '';
   });
