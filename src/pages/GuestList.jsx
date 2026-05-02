@@ -87,7 +87,13 @@ const GuestList = ({ guests, onAddGuest }) => {
                   </span>
                 </td>
                 <td className="px-8 py-5 text-right">
-                  <button className="text-green-600 hover:underline text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 ml-auto">
+                  <button 
+                    onClick={() => {
+                      const message = `Halo ${guest.name}, kami mengundang Anda ke pernikahan kami! Lihat undangan selengkapnya di: https://pieterlase06-arch.github.io/Web-Undangan/`;
+                      window.open(`https://wa.me/${guest.phone}?text=${encodeURIComponent(message)}`, '_blank');
+                    }}
+                    className="text-green-600 hover:underline text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 ml-auto"
+                  >
                     <span className="material-symbols-outlined text-[14px]">send</span>
                     Send Invitation
                   </button>

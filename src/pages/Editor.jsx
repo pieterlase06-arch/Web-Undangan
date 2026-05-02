@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const Editor = ({ setView, data, updateData, lang, theme }) => {
   const [activeTab, setActiveTab] = useState('design');
+  const [zoom, setZoom] = useState(100);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [isPublished, setIsPublished] = useState(false);
+  const [rsvpStatus, setRsvpStatus] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const t = {
     id: { 
@@ -243,14 +249,60 @@ import { motion, AnimatePresence } from 'framer-motion';
                  animate={{ opacity: 1, y: 0 }}
                  className="max-w-[500px] w-full bg-white shadow-2xl rounded-2xl p-16 flex flex-col items-center text-center gap-10"
                >
-                 {/* Preview content simplified for demo */}
                  <h1 className="serif text-[56px] text-stone-900 leading-tight">
                    {data.partner1}<br/><span className="text-[32px] italic text-[#C5A059]">&</span><br/>{data.partner2}
                  </h1>
                  <p className="serif text-xl text-stone-600">{new Date(data.date).toLocaleDateString(lang === 'id' ? 'id-ID' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                 <div className="pt-10 w-full">
-                    <button className="w-full py-5 bg-[#0F172A] text-white rounded-2xl font-bold uppercase tracking-widest text-xs shadow-2xl">Confirm RSVP</button>
-                 </div>
+                  <div className="space-y-4 w-full pt-10">
+                    {rsvpStatus ? (
+                      <div className="p-6 bg-green-50 rounded-2xl border border-green-100 animate-bounce">
+                        <span className="material-symbols-outlined text-green-600 text-3xl mb-2">check_circle</span>
+                        <p className="text-green-800 font-bold text-sm">Thank you for confirming!</p>
+                        <p className="text-green-600 text-[10px] uppercase tracking-widest mt-1">We can't wait to see you.</p>
+                      </div>
+                    ) : (
+                      <>
+                        <button 
+                          onClick={() => setRsvpStatus('confirmed')}
+                          className="w-full py-5 bg-[#0F172A] text-white rounded-2xl font-bold uppercase tracking-widest text-xs shadow-2xl hover:bg-black transition-all"
+                        >
+                          Confirm Attendance
+                        </button>
+                        <button 
+                          onClick={() => setRsvpStatus('declined')}
+                          className="w-full py-4 text-stone-400 font-bold uppercase tracking-widest text-[10px] hover:text-stone-900 transition-all"
+                        >
+                          Sorry, I can't make it
+                        </button>
+                      </>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 w-full border-t border-stone-100 pt-10">
+                    <button 
+                      onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.address || data.venue)}`, '_blank')}
+                      className="flex flex-col items-center gap-2 p-4 border border-stone-100 rounded-2xl hover:bg-stone-50 transition-all"
+                    >
+                      <span className="material-symbols-outlined text-stone-400">location_on</span>
+                      <span className="text-[9px] font-bold uppercase tracking-widest text-stone-600">Open Maps</span>
+                    </button>
+                    <button 
+                      onClick={() => alert('Event added to your calendar!')}
+                      className="flex flex-col items-center gap-2 p-4 border border-stone-100 rounded-2xl hover:bg-stone-50 transition-all"
+                    >
+                      <span className="material-symbols-outlined text-stone-400">calendar_today</span>
+                      <span className="text-[9px] font-bold uppercase tracking-widest text-stone-600">Calendar</span>
+                    </button>
+                  </div>
+
+                  <div className="flex justify-center gap-6 w-full pt-4">
+                    <button onClick={() => setIsPlaying(!isPlaying)} className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isPlaying ? 'bg-[#C5A059] text-white animate-spin-slow' : 'bg-stone-100 text-stone-400'}`}>
+                      <span className="material-symbols-outlined">{isPlaying ? 'music_note' : 'music_off'}</span>
+                    </button>
+                    <button onClick={() => alert('Sharing options coming soon!') } className="w-12 h-12 rounded-full bg-stone-100 text-stone-400 flex items-center justify-center hover:bg-stone-200">
+                      <span className="material-symbols-outlined">share</span>
+                    </button>
+                  </div>
                </motion.div>
             </div>
           </motion.div>

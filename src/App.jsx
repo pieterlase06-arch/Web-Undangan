@@ -76,6 +76,8 @@ function App() {
     setCurrentView('editor');
   };
 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   if (!isLoggedIn) {
     return (
       <div className="h-screen bg-[#fcf9f6] flex flex-col items-center justify-center p-6 text-center">
@@ -99,8 +101,6 @@ function App() {
       </div>
     );
   }
-
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
     <div className={`min-h-screen flex ${theme === 'dark' ? 'bg-[#0f172a]' : 'bg-[#fcf9f6]'} transition-colors duration-300 relative`}>

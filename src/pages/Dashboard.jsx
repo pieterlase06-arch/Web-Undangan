@@ -64,7 +64,15 @@ const Dashboard = ({ setView, invitationData, guestCount, theme }) => {
                </div>
                <div className="flex gap-4">
                   <button onClick={() => setView('editor')} className="bg-[#C5A059] text-white px-6 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-xl hover:brightness-110 transition-all">Resume Design</button>
-                  <button className={`px-6 py-3 border rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${isDark ? 'border-slate-700 text-slate-400 hover:bg-slate-800' : 'border-stone-200 text-stone-500 hover:bg-stone-50'}`}>Share Link</button>
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText('https://pieterlase06-arch.github.io/Web-Undangan/');
+                      alert('Link copied to clipboard!');
+                    }}
+                    className={`px-6 py-3 border rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${isDark ? 'border-slate-700 text-slate-400 hover:bg-slate-800' : 'border-stone-200 text-stone-500 hover:bg-stone-50'}`}
+                  >
+                    Share Link
+                  </button>
                </div>
             </div>
           </div>
