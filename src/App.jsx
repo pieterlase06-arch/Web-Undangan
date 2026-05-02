@@ -277,7 +277,7 @@ function AppContent() {
             } />
             <Route path="/editor" element={
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
-                <Editor data={invitationData} updateData={(d) => setInvitationData(prev => ({ ...prev, ...d }))} theme={theme} />
+                <Editor data={invitationData} updateData={(d) => setInvitationData(prev => ({ ...prev, ...d }))} theme={theme} setView={(v) => navigate(v)} />
               </motion.div>
             } />
             <Route path="/buku-tamu" element={
