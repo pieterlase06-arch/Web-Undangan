@@ -288,27 +288,19 @@ const Editor = ({ data, updateData, theme, setView }) => {
            </div>
         </aside>
 
-        <main className={`flex-1 relative overflow-auto ${theme === 'dark' ? 'bg-[#0b1120]' : 'bg-[#f4f4f5]'} flex items-center justify-center p-20`}>
-           {/* CANVAS SCALE WRAPPER */}
-           <div style={{ transform: `scale(${zoom/100})`, transformOrigin: 'center center' }} className="w-[450px] h-[850px] bg-white shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] rounded-[60px] overflow-hidden relative border-[12px] border-stone-900 ring-[20px] ring-stone-800/10">
-              <div className="w-full h-full overflow-y-auto no-scrollbar">
-                 <PremiumInvitation 
-                    data={data} 
-                    isEditMode={true} 
-                    forceShowCover={showCover} 
-                    onEdit={(s) => setActiveTab('content')}
-                 />
-              </div>
-              {/* PHONE UI DECOR */}
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-stone-900 rounded-b-3xl z-[200]" />
+        <main className={`flex-1 relative overflow-y-auto ${theme === 'dark' ? 'bg-[#0b1120]' : 'bg-[#f4f4f5]'}`}>
+           {/* FULL CANVAS VIEW */}
+           <div className="w-full min-h-full bg-white shadow-inner">
+              <PremiumInvitation 
+                 data={data} 
+                 isEditMode={true} 
+                 forceShowCover={showCover} 
+                 onEdit={(s) => setActiveTab('content')}
+              />
            </div>
+        </main>
 
-           {/* ZOOM CONTROLS */}
-           <div className="fixed bottom-10 left-1/2 -translate-x-1/2 bg-stone-900 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-6 z-[100]">
-              <button onClick={() => setZoom(z => Math.max(30, z-10))} className="hover:text-[#C5A059]"><span className="material-symbols-outlined">remove</span></button>
-              <span className="text-xs font-black w-10 text-center">{zoom}%</span>
-              <button onClick={() => setZoom(z => Math.min(150, z+10))} className="hover:text-[#C5A059]"><span className="material-symbols-outlined">add</span></button>
-           </div>
+
         </main>
       </div>
 
