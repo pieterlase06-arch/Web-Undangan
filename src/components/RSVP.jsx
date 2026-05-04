@@ -1,86 +1,104 @@
 import { motion } from 'framer-motion';
+import LuxeButton from './ui/LuxeButton';
+import LuxeInput from './ui/LuxeInput';
+import LuxeSelect from './ui/LuxeSelect';
+import LuxeCard from './ui/LuxeCard';
 
-const RSVP = () => {
+/**
+ * RSVP - A high-fidelity form for guest attendance confirmation.
+ * Integrated with the Luxe atomic UI kit for a professional SaaS feel.
+ */
+const RSVP = ({ data = {} }) => {
+  const attendanceOptions = [
+    { id: 'yes', label: 'Joyfully Accept' },
+    { id: 'no', label: 'Regretfully Decline' }
+  ];
+
+  const guestOptions = [
+    { id: '1', label: '1 Guest' },
+    { id: '2', label: '2 Guests' },
+    { id: '3', label: '3 Guests' },
+    { id: '4', label: '4 Guests' },
+    { id: '5', label: '5+ Guests' }
+  ];
 
   return (
-    <section id="rsvp" className="relative py-24 bg-background overflow-hidden">
-      {/* Decorative Layers */}
-      <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary-container/5 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-tertiary-container/5 rounded-full blur-3xl pointer-events-none"></div>
+    <section className="py-32 px-6 bg-[#f8f9fa] relative overflow-hidden">
+      {/* Decorative Branding */}
+      <div className="absolute top-0 left-0 w-full h-full opacity-[0.02] pointer-events-none">
+        <h1 className="text-[20vw] font-black absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none">CONFIRM</h1>
+      </div>
 
-      <div className="container max-w-2xl mx-auto px-6 relative z-10">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.04)] border border-outline-variant/30 overflow-hidden"
+      <div className="max-w-3xl mx-auto relative z-10">
+        <LuxeCard 
+          className="overflow-hidden"
+          padding="p-0"
         >
-          {/* RSVP Header Layer */}
-          <div className="h-48 bg-cover bg-center relative" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1510076857177-7470076d4098?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80')" }}>
-            <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"></div>
+          {/* Hero Banner Layer */}
+          <div className="h-64 bg-slate-900 relative overflow-hidden">
+             <img 
+               src="https://images.unsplash.com/photo-1510076857177-7470076d4098?auto=format&fit=crop&w=1200" 
+               className="w-full h-full object-cover opacity-50 grayscale"
+               alt="RSVP Background"
+             />
+             <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" />
+             <div className="absolute bottom-8 left-12">
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-600 mb-2">Registration</p>
+                <h2 className="serif text-5xl text-slate-900 font-light italic">RSVP</h2>
+             </div>
           </div>
 
-          <div className="px-8 sm:px-12 pb-12 -mt-12 relative z-10 bg-white rounded-t-3xl">
-            <div className="text-center mb-12">
-              <h2 className="serif text-[42px] text-on-surface mb-2">RSVP</h2>
-              <p className="text-on-surface-variant italic">The wedding of Emma & James • August 12, 2024</p>
+          <div className="p-12 md:p-16 space-y-12">
+            <div className="space-y-4">
+              <p className="text-slate-500 font-medium text-sm leading-relaxed">
+                Kami sangat menantikan kehadiran Anda di hari bahagia kami. Mohon konfirmasi kehadiran Anda melalui formulir di bawah ini.
+              </p>
             </div>
 
-            <form className="space-y-8">
-              {/* Layer: Guest Name */}
-              <div className="relative">
-                <label className="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold absolute -top-2 left-0 bg-white px-1">Guest Name(s)</label>
-                <input 
-                  type="text" 
-                  placeholder="Please enter your full name"
-                  className="w-full border-b border-outline-variant py-3 focus:border-primary transition-colors outline-none text-lg"
-                />
-              </div>
+            <form className="space-y-10" onSubmit={(e) => e.preventDefault()}>
+              <LuxeInput 
+                label="Nama Lengkap"
+                placeholder="Masukkan nama Anda..."
+                icon="person"
+              />
 
-              {/* Layer: Attendance Toggle Cards */}
-              <div className="pt-4">
-                <p className="text-center text-[12px] uppercase tracking-[0.2em] text-on-surface mb-6 font-bold">Will you be attending?</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <label className="relative cursor-pointer group">
-                    <input type="radio" name="attendance" value="yes" className="peer sr-only" />
-                    <div className="p-6 border border-outline-variant rounded-xl text-center transition-all peer-checked:bg-secondary-container peer-checked:border-secondary group-hover:bg-surface-container-low">
-                      <span className="material-symbols-outlined text-3xl mb-2 block">celebration</span>
-                      <p className="serif text-xl">Joyfully Accept</p>
-                    </div>
-                  </label>
-
-                  <label className="relative cursor-pointer group">
-                    <input type="radio" name="attendance" value="no" className="peer sr-only" />
-                    <div className="p-6 border border-outline-variant rounded-xl text-center transition-all peer-checked:bg-tertiary-container peer-checked:border-tertiary group-hover:bg-surface-container-low">
-                      <span className="material-symbols-outlined text-3xl mb-2 block">mail</span>
-                      <p className="serif text-xl">Regretfully Decline</p>
-                    </div>
-                  </label>
+              <div className="space-y-4">
+                <label className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Konfirmasi Kehadiran</label>
+                <div className="grid grid-cols-2 gap-4">
+                  {attendanceOptions.map((opt) => (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      className="group relative p-8 rounded-[32px] border-2 border-slate-100 bg-slate-50/50 hover:bg-white hover:border-indigo-600 transition-all duration-500 text-center"
+                    >
+                      <span className="material-symbols-outlined text-3xl text-slate-300 group-hover:text-indigo-600 transition-all mb-4 block">
+                        {opt.id === 'yes' ? 'celebration' : 'sentiment_dissatisfied'}
+                      </span>
+                      <p className="text-[11px] font-black uppercase tracking-widest text-slate-400 group-hover:text-slate-900 transition-all">{opt.label}</p>
+                    </button>
+                  ))}
                 </div>
               </div>
 
-              {/* Layer: Guest Count */}
-              <div className="pt-4">
-                <label className="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold block mb-2">Total number attending</label>
-                <select className="w-full border-b border-outline-variant py-3 focus:border-primary transition-colors outline-none bg-transparent">
-                  <option>1 Guest</option>
-                  <option>2 Guests</option>
-                  <option>3 Guests</option>
-                  <option>4 Guests</option>
-                </select>
-              </div>
+              <LuxeSelect 
+                label="Jumlah Tamu"
+                options={guestOptions}
+                onChange={(val) => console.log(val)}
+                placeholder="Pilih jumlah tamu..."
+              />
 
-              <div className="pt-8 text-center">
-                <motion.button 
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="bg-primary text-white px-12 py-4 rounded-full text-[14px] uppercase tracking-widest font-bold shadow-lg shadow-primary/20"
+              <div className="pt-8">
+                <LuxeButton 
+                  fullWidth 
+                  size="lg"
+                  icon="send"
                 >
-                  Send RSVP
-                </motion.button>
+                  Kirim Konfirmasi
+                </LuxeButton>
               </div>
             </form>
           </div>
-        </motion.div>
+        </LuxeCard>
       </div>
     </section>
   );

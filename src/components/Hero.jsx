@@ -1,52 +1,93 @@
 import { motion } from 'framer-motion';
 
-const Hero = () => {
+/**
+ * Hero - The flagship opening section of the invitation.
+ * Features a high-density "Industrial Luxe" design with layered depth.
+ */
+const Hero = ({ 
+  partner1 = "Eleanor", 
+  partner2 = "James", 
+  date = "Saturday, October 14th",
+  year = "2024",
+  venue = "The Botanical Gardens",
+  location = "San Francisco, California",
+  image = "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80"
+}) => {
+  const reveal = {
+    initial: { opacity: 0, y: 30 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+  };
+
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="max-w-[550px] w-full bg-white rounded-2xl stitch-card-shadow overflow-hidden flex flex-col items-center relative pb-20 paper-texture border border-white"
-    >
-      {/* Visual Image Layer */}
-      <div className="w-full h-[320px] relative overflow-hidden">
-        <img 
-          alt="Wedding flowers" 
-          src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80" 
-          className="w-full h-full object-cover grayscale-[0.2] contrast-[1.1]" 
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-white">
+      {/* Background Media Layer */}
+      <div className="absolute inset-0 z-0">
+        <motion.img 
+          initial={{ scale: 1.1, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 2, ease: "easeOut" }}
+          src={image}
+          className="w-full h-full object-cover grayscale-[0.2] contrast-[1.1]"
+          alt="Hero background"
         />
-        {/* Soft Fade Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-white" />
       </div>
 
-      {/* Text Content Layer */}
-      <div className="w-full px-12 -mt-12 relative z-10 flex flex-col items-center text-center">
-        <span className="font-bold text-[11px] text-primary tracking-[0.3em] uppercase mb-6 bg-white/90 px-5 py-1.5 rounded-full shadow-sm border border-stone-100">
-          Join us to celebrate
-        </span>
-        
-        <h2 className="serif text-[52px] text-stone-900 mb-8 leading-[1.1] tracking-tight">
-          Eleanor <br />
-          <span className="text-[32px] text-tertiary italic font-light lowercase">and</span> <br />
-          James
-        </h2>
-        
-        <div className="flex flex-col gap-1.5 text-[16px] text-stone-500 uppercase tracking-[0.1em] mb-12">
-          <p className="font-semibold text-stone-800">Saturday, October 14th</p>
-          <p>Two Thousand Twenty Four</p>
-        </div>
-        
-        <div className="w-12 h-[2px] bg-primary-container/40 mb-10"></div>
-        
-        <div className="flex flex-col gap-2">
-          <p className="serif text-[26px] text-stone-900 font-medium">The Botanical Gardens</p>
-          <p className="text-stone-500 italic">San Francisco, California</p>
-        </div>
+      {/* Content Layer */}
+      <div className="relative z-10 w-full max-w-5xl px-8 text-center pt-20">
+        <motion.div {...reveal} transition={{ delay: 0.2 }} className="space-y-6">
+          <span className="inline-block px-6 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-[10px] font-black uppercase tracking-[0.4em] text-white shadow-2xl">
+            Save Our Date
+          </span>
+          
+          <h1 className="flex flex-col items-center gap-2">
+            <span className="serif text-6xl md:text-[120px] text-white leading-none font-light drop-shadow-2xl">
+              {partner1}
+            </span>
+            <span className="script-font text-5xl md:text-7xl text-white/80 lowercase italic my-[-10px] md:my-[-30px]">
+              &
+            </span>
+            <span className="serif text-6xl md:text-[120px] text-white leading-none font-light drop-shadow-2xl">
+              {partner2}
+            </span>
+          </h1>
+
+          <div className="flex flex-col items-center gap-8 mt-12">
+            <div className="h-20 w-px bg-gradient-to-b from-white/60 to-transparent" />
+            
+            <div className="space-y-2">
+              <p className="text-stone-900 font-bold text-lg md:text-xl uppercase tracking-[0.2em]">
+                {date}
+              </p>
+              <p className="text-stone-500 font-medium text-xs md:text-sm uppercase tracking-[0.3em]">
+                {year}
+              </p>
+            </div>
+
+            <div className="space-y-1">
+              <p className="serif text-2xl md:text-3xl text-stone-900 italic font-medium">
+                {venue}
+              </p>
+              <p className="text-stone-400 text-xs md:text-sm uppercase tracking-widest">
+                {location}
+              </p>
+            </div>
+          </div>
+        </motion.div>
       </div>
 
-      {/* Decorative Blur Blobs (Subtle Background Layers) */}
-      <div className="absolute -top-20 -left-20 w-64 h-64 bg-amber-100/30 blur-[100px] rounded-full"></div>
-      <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-stone-200/30 blur-[100px] rounded-full"></div>
-    </motion.div>
+      {/* Scroll Indicator */}
+      <motion.div 
+        animate={{ y: [0, 10, 0] }}
+        transition={{ repeat: Infinity, duration: 2 }}
+        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4"
+      >
+        <span className="text-[8px] font-black uppercase tracking-[0.5em] text-stone-400">Scroll</span>
+        <div className="w-px h-12 bg-gradient-to-b from-stone-200 to-transparent" />
+      </motion.div>
+    </section>
   );
 };
 

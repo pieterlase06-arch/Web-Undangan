@@ -1,83 +1,100 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Calendar, Clock } from 'lucide-react';
 
-const EventDetails = () => {
+/**
+ * EventDetails - A premium section displaying ceremony and reception information.
+ * Uses the "Luxe" industrial aesthetic with refined typography and card layouts.
+ */
+const EventDetails = ({ data = {} }) => {
   const events = [
     {
-      title: 'THE CEREMONY',
-      date: 'Saturday, January 1, 2027',
-      time: '10:00 AM - 12:00 PM',
-      location: 'The Grand Palace Ballroom',
-      address: '123 Royal Ave, Jakarta, Indonesia',
-      mapUrl: 'https://goo.gl/maps/xyz'
+      title: 'The Ceremony',
+      date: data.akadDate || 'Saturday, January 1, 2027',
+      time: data.akadTime || '10:00 AM - 12:00 PM',
+      location: data.akadVenue || 'The Grand Palace Ballroom',
+      address: data.akadAddress || '123 Royal Ave, Jakarta, Indonesia',
+      mapUrl: data.akadMap || '#'
     },
     {
-      title: 'THE RECEPTION',
-      date: 'Saturday, January 1, 2027',
-      time: '06:00 PM - 09:00 PM',
-      location: 'The Crystal Garden',
-      address: '456 Garden St, Jakarta, Indonesia',
-      mapUrl: 'https://goo.gl/maps/abc'
+      title: 'The Reception',
+      date: data.resepsiDate || 'Saturday, January 1, 2027',
+      time: data.resepsiTime || '06:00 PM - 09:00 PM',
+      location: data.resepsiVenue || 'The Crystal Garden',
+      address: data.resepsiAddress || '456 Garden St, Jakarta, Indonesia',
+      mapUrl: data.resepsiMap || '#'
     }
   ];
 
-  return (
-    <section id="details" style={{ backgroundColor: 'white', padding: '120px 0' }}>
-      <div className="container">
-        <div style={{ textAlign: 'center', marginBottom: '80px' }}>
-          <span style={{ textTransform: 'uppercase', letterSpacing: '0.2em', fontSize: '12px', color: 'var(--secondary)', fontWeight: '600' }}>When & Where</span>
-          <h2 className="serif" style={{ fontSize: '48px', color: 'var(--on-surface)', marginTop: '16px' }}>Event Details</h2>
-          <div style={{ width: '40px', height: '2px', backgroundColor: 'var(--primary)', margin: '24px auto' }}></div>
-        </div>
+  const reveal = {
+    initial: { opacity: 0, y: 30 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+  };
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '40px' }}>
+  return (
+    <section className="py-32 px-6 bg-white relative overflow-hidden">
+      {/* Background Decoration */}
+      <div className="absolute top-0 right-0 w-full h-full opacity-[0.02] pointer-events-none">
+        <h1 className="text-[25vw] font-black absolute bottom-0 right-0 select-none">VENUE</h1>
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        <motion.div {...reveal} className="text-center mb-24 space-y-4">
+          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-600">The Celebration</p>
+          <h2 className="serif text-5xl md:text-6xl text-slate-900 font-light italic">Detail Acara</h2>
+          <div className="w-12 h-px bg-indigo-600/30 mx-auto mt-8" />
+        </motion.div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-20">
           {events.map((event, idx) => (
             <motion.div
               key={idx}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: idx * 0.2 }}
-              className="card"
-              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}
+              {...reveal}
+              transition={{ ...reveal.transition, delay: idx * 0.2 }}
+              className="group relative"
             >
-              <h3 className="serif" style={{ fontSize: '24px', marginBottom: '32px', color: 'var(--primary)', letterSpacing: '0.1em' }}>{event.title}</h3>
-              
-              <div style={{ marginBottom: '40px', width: '100%' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', marginBottom: '32px' }}>
-                  <Calendar size={24} color="var(--primary)" strokeWidth={1.5} />
-                  <span style={{ fontSize: '18px', color: 'var(--on-surface)' }}>{event.date}</span>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', marginBottom: '32px' }}>
-                  <Clock size={24} color="var(--primary)" strokeWidth={1.5} />
-                  <span style={{ fontSize: '18px', color: 'var(--on-surface)' }}>{event.time}</span>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-                  <MapPin size={24} color="var(--primary)" strokeWidth={1.5} />
-                  <div style={{ textAlign: 'center' }}>
-                    <p style={{ fontWeight: '600', marginBottom: '8px', fontSize: '18px' }}>{event.location}</p>
-                    <p style={{ color: 'var(--secondary)', fontSize: '15px', lineHeight: '1.6' }}>{event.address}</p>
+              <div className="bg-slate-50/50 rounded-[60px] p-12 md:p-16 border border-slate-100 transition-all duration-700 hover:bg-white hover:shadow-2xl hover:shadow-slate-200/50">
+                <div className="space-y-12">
+                  <h3 className="serif text-3xl md:text-4xl text-slate-800 font-medium italic border-b border-slate-200 pb-8 inline-block">
+                    {event.title}
+                  </h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div className="space-y-3">
+                      <p className="text-[9px] font-black uppercase tracking-[0.2em] text-indigo-600">Tanggal</p>
+                      <p className="text-lg font-bold text-slate-800">{event.date}</p>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <p className="text-[9px] font-black uppercase tracking-[0.2em] text-indigo-600">Waktu</p>
+                      <p className="text-lg font-bold text-slate-800">{event.time}</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4 pt-4">
+                    <p className="text-[9px] font-black uppercase tracking-[0.2em] text-indigo-600">Lokasi</p>
+                    <div className="space-y-2">
+                      <p className="text-2xl font-black text-slate-900 leading-tight tracking-tight">{event.location}</p>
+                      <p className="text-slate-500 font-medium text-sm leading-relaxed max-w-sm">{event.address}</p>
+                    </div>
+                  </div>
+
+                  <div className="pt-8">
+                    <motion.a 
+                      href={event.mapUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      whileHover={{ x: 10 }}
+                      className="inline-flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.3em] text-indigo-600 hover:text-indigo-800 transition-colors"
+                    >
+                      <span className="material-symbols-outlined text-lg">explore</span>
+                      Buka Google Maps
+                      <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                    </motion.a>
                   </div>
                 </div>
               </div>
-
-              <motion.a 
-                href={event.mapUrl} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="btn"
-                style={{ 
-                  backgroundColor: 'transparent', 
-                  border: '1px solid var(--primary)', 
-                  color: 'var(--primary)',
-                  width: '100%',
-                  marginTop: 'auto'
-                }}
-                whileHover={{ backgroundColor: 'var(--primary)', color: 'white' }}
-              >
-                OPEN GOOGLE MAPS
-              </motion.a>
             </motion.div>
           ))}
         </div>

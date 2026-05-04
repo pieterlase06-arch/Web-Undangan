@@ -1,257 +1,247 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useLocation } from 'react-router-dom';
 import config from '../config';
+
+// Import Refactored Modular Components
+import Hero from './Hero';
+import EventDetails from './EventDetails';
+import RSVP from './RSVP';
+import Guestbook from './Guestbook';
+import Countdown from './Countdown';
+import MusicToggle from './MusicToggle';
 
 const API_URL = config.API_URL;
 
-// --- LUXURY ANIMATIONS ---
+const SectionWrapper = ({ children, id, visibility, spacing, padding, animation, isHighlighted }) => {
+  if (visibility && visibility[id] === false) return null;
 
-const FallingPetals = ({ isDark }) => {
-  const canvasRef = useRef(null);
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    let animationFrameId;
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    const petals = [];
-    for (let i = 0; i < 25; i++) {
-      petals.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        r: Math.random() * 5 + 2,
-        a: Math.random() * 5
-      });
-    }
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = isDark ? 'rgba(197, 160, 89, 0.3)' : 'rgba(197, 160, 89, 0.15)';
-      petals.forEach(p => {
-        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
-        p.y += 1 + p.r / 2; p.x += Math.sin(p.a) * 2;
-        if (p.y > canvas.height) { p.y = -10; p.x = Math.random() * canvas.width; }
-      });
-      animationFrameId = requestAnimationFrame(draw);
-    };
-    draw();
-    return () => cancelAnimationFrame(animationFrameId);
-  }, [isDark]);
-  return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-[80]" />;
-};
+  const variants = {
+    reveal: { initial: { opacity: 0, y: 40 }, whileInView: { opacity: 1, y: 0 } },
+    slide: { initial: { opacity: 0, x: -40 }, whileInView: { opacity: 1, x: 0 } },
+    zoom: { initial: { opacity: 0, scale: 0.98 }, whileInView: { opacity: 1, scale: 1 } }
+  };
 
-const BottomNav = ({ activeSection, onNav, theme }) => {
-  const navs = [
-    { id: 'hero', icon: 'home' }, { id: 'couple', icon: 'favorite' }, { id: 'event', icon: 'event' }, { id: 'story', icon: 'history_edu' }, { id: 'rsvp', icon: 'mail' }
-  ];
+  const selectedVariant = variants[animation] || variants.reveal;
+
   return (
-    <motion.div initial={{ y: 100 }} animate={{ y: 0 }} className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-2xl border border-white/20 px-6 py-4 rounded-full shadow-2xl z-[500] flex items-center gap-10">
-      {navs.map(n => (
-        <button key={n.id} onClick={() => onNav(n.id)} className={`transition-all ${activeSection === n.id ? 'scale-125' : 'opacity-40 hover:opacity-100'}`}>
-          <span className="material-symbols-outlined text-[22px]" style={{ color: activeSection === n.id ? theme.primary : 'white' }}>{n.icon}</span>
-        </button>
-      ))}
-    </motion.div>
+    <motion.section 
+      initial={selectedVariant.initial}
+      whileInView={selectedVariant.whileInView}
+      viewport={{ once: true, margin: "-10%" }}
+      transition={{ duration: 1.2, ease: [0.33, 1, 0.68, 1] }}
+      style={{ 
+        paddingTop: `${spacing}px`, 
+        paddingBottom: `${spacing}px`, 
+        paddingLeft: `${padding}px`, 
+        paddingRight: `${padding}px` 
+      }}
+      className="relative w-full group"
+    >
+      <AnimatePresence>
+        {isHighlighted && (
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="absolute inset-0 z-50 pointer-events-none ring-[12px] ring-indigo-500/30 ring-inset bg-indigo-500/5 animate-pulse"
+          />
+        )}
+      </AnimatePresence>
+      {children}
+    </motion.section>
   );
 };
 
-// --- MAIN LUXURY COMPONENT ---
-
-const PremiumInvitation = ({ data, isEditMode = false, forceShowCover = false, onEdit = () => {} }) => {
+const PremiumInvitation = ({ data, isEditMode = false, onElementSelect, updateData, highlightedId }) => {
   const [isOpened, setIsOpened] = useState(isEditMode);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [activeSection, setActiveSection] = useState('hero');
-  const [messages, setMessages] = useState([]);
+
+  // DESIGN TOKENS
+  const primary = data?.primaryColor || '#C5A059';
+  const bgColor = data?.bgColor || '#FCF9F6';
+  const surfaceColor = data?.surfaceColor || '#FFFFFF';
+  const textColor = data?.textColor || '#1C1917';
   
-  const isDark = data.isDarkMode === true;
-  const audioRef = useRef(null);
-  const sectionRefs = { hero: useRef(null), couple: useRef(null), event: useRef(null), story: useRef(null), rsvp: useRef(null) };
+  const headingFont = data?.headingFont || "'Cinzel', serif";
+  const bodyFont = data?.bodyFont || "'Inter', sans-serif";
+  const accentFont = data?.accentFont || "'Pinyon Script', cursive";
+  
+  const borderRadius = `${data?.borderRadius || 40}px`;
+  const shadow = `0 ${data?.shadowStrength || 20}px ${data?.shadowStrength * 3 || 60}px rgba(0,0,0,0.08)`;
+  const layoutMode = data?.layoutMode || 'card';
+  const containerWidth = data?.containerWidth || 'max-w-5xl';
+  const animation = data?.entranceAnimation || 'reveal';
 
-  const themes = {
-    gold: { primary: '#C5A059', bg: '#FCF9F6', darkBg: '#0C0A09', text: '#1C1917', darkText: '#F5F5F4', fontSerif: '"Cinzel", serif', fontScript: '"Pinyon Script", cursive' },
-    emerald: { primary: '#10B981', bg: '#ECFDF5', darkBg: '#064E3B', text: '#064E3B', darkText: '#ECFDF5', fontSerif: '"Playfair Display", serif', fontScript: '"Dancing Script", cursive' },
-    linen: { primary: '#A8A29E', bg: '#F5F5F4', darkBg: '#1C1917', text: '#1C1917', darkText: '#F5F5F4', fontSerif: '"Cormorant Garamond", serif', fontScript: '"Great Vibes", cursive' }
-  };
+  const spacing = parseInt(data?.contentSpacing || '120');
+  const padding = parseInt(data?.containerPadding || '40');
 
-  const theme = useMemo(() => {
-    const base = themes[data.themeId] || themes.gold;
-    return {
-      ...base,
-      primary: data.primaryColor || base.primary,
-      bg: isDark ? base.darkBg : base.bg,
-      text: isDark ? base.darkText : base.text,
-      fontSerif: data.fontFamily || base.fontSerif,
-      fontScript: data.titleFont || base.fontScript,
+  const CardWrapper = ({ children, className = "" }) => (
+    <div 
+      className={`${containerWidth} mx-auto transition-all duration-700 ${layoutMode === 'card' ? 'p-12 md:p-24' : ''} ${className}`}
+      style={{ 
+        backgroundColor: layoutMode === 'card' ? surfaceColor : 'transparent',
+        borderRadius: layoutMode === 'card' ? borderRadius : '0px',
+        boxShadow: layoutMode === 'card' ? shadow : 'none',
+        border: layoutMode === 'card' ? '1px solid rgba(0,0,0,0.03)' : 'none'
+      }}
+    >
+      {children}
+    </div>
+  );
+
+  const ImageEngine = ({ src, transform, type, id, className = "" }) => {
+    const t = transform || { scale: 1, x: 0, y: 0 };
+    const containerRef = useRef(null);
+
+    const handleDragEnd = (event, info) => {
+      if (!isEditMode) return;
+      const { width, height } = containerRef.current.getBoundingClientRect();
+      const deltaX = (info.offset.x / width) * 100;
+      const deltaY = (info.offset.y / height) * 100;
+      const newX = t.x + deltaX;
+      const newY = t.y + deltaY;
+
+      if (type === 'custom') {
+        updateData({ customSections: data?.customSections?.map(s => s.id === id ? { ...s, transform: { ...s.transform, x: newX, y: newY } } : s) });
+      } else {
+        updateData({ [`${type}Transform`]: { ...(data[`${type}Transform`] || {scale:1,x:0,y:0}), x: newX, y: newY } });
+      }
     };
-  }, [data, isDark]);
 
-  useEffect(() => {
-    fetchMessages();
-  }, []);
-
-  const fetchMessages = async () => {
-    try {
-      const res = await fetch(`${API_URL}/messages`);
-      if (res.ok) setMessages(await res.json());
-    } catch (err) { console.log(err); }
+    return (
+      <div 
+        ref={containerRef}
+        onClick={(e) => { if (isEditMode) { e.stopPropagation(); onElementSelect({ type, id }); } }}
+        className={`overflow-hidden relative bg-stone-50 group/engine cursor-move transition-all ${className} ${isEditMode ? 'ring-4 ring-transparent hover:ring-indigo-600/40' : ''}`}
+      >
+        <motion.img 
+          src={src} 
+          drag={isEditMode}
+          dragMomentum={false}
+          onDragEnd={handleDragEnd}
+          animate={{ scale: t.scale, x: `${t.x}%`, y: `${t.y}%` }}
+          transition={{ duration: isEditMode ? 0.1 : 0.4 }}
+          className="w-full h-full object-cover origin-center select-none pointer-events-none"
+        />
+        {isEditMode && (
+           <div className="absolute inset-0 border-4 border-indigo-600/20 pointer-events-none opacity-0 group-hover/engine:opacity-100 transition-all">
+              <div className="absolute top-4 left-4 bg-indigo-600 text-white px-4 py-1.5 rounded-full text-[9px] font-black uppercase shadow-2xl flex items-center gap-2">
+                 <span className="material-symbols-outlined text-[14px]">open_with</span> Direct Pan
+              </div>
+           </div>
+        )}
+      </div>
+    );
   };
 
-  const handleOpen = () => { setIsOpened(true); setIsPlaying(true); if (audioRef.current) audioRef.current.play(); };
-  const scrollTo = (id) => { sectionRefs[id].current?.scrollIntoView({ behavior: 'smooth' }); setActiveSection(id); };
-  const reveal = { initial: { opacity: 0, y: 50 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: "-100px" }, transition: { duration: 1.2 } };
-
-  return (
-    <div className="min-h-screen relative transition-colors duration-1000" style={{ backgroundColor: theme.bg, color: theme.text, fontFamily: theme.fontSerif }}>
-      <audio ref={audioRef} src={data.musicUrl} loop />
-      <FallingPetals isDark={isDark} />
-      
-      {isOpened && <BottomNav activeSection={activeSection} onNav={scrollTo} theme={theme} />}
-
-      <AnimatePresence>
-        {!isOpened && (
-          <motion.div exit={{ y: '-100%' }} transition={{ duration: 1.5, ease: [0.82, 0, 0.18, 1] }} className="fixed inset-0 z-[1000] flex items-center justify-center p-6" style={{ backgroundColor: theme.bg }}>
-             <div className="text-center space-y-12 max-w-lg relative z-10">
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-                   <p className="text-[10px] font-black uppercase tracking-[0.8em] opacity-40">The Wedding of</p>
-                   <h1 className="text-6xl md:text-9xl" style={{ fontFamily: theme.fontScript, color: theme.primary }}>{data.partner1} & {data.partner2}</h1>
-                </motion.div>
-                <div className="w-px h-24 bg-gradient-to-b from-stone-300 to-transparent mx-auto" />
-                <button onClick={handleOpen} className="px-16 py-6 bg-stone-900 text-white rounded-full font-black uppercase tracking-[0.3em] text-[10px] shadow-2xl hover:bg-[#C5A059] transition-all">Buka Undangan</button>
+  const renderSection = (id) => {
+    const custom = (data?.customSections || []).find(s => s.id === id);
+    if (custom) {
+      return (
+        <CardWrapper className="space-y-16">
+           {custom.title && (
+             <div className="text-center space-y-4">
+                <h3 className="text-5xl md:text-7xl" style={{ fontFamily: accentFont, color: primary }}>{custom.title}</h3>
+                <div className="w-16 h-px bg-current mx-auto opacity-10" />
              </div>
-             {/* Decorative BG in Dark Mode */}
-             {isDark && <div className="absolute inset-0 bg-gradient-to-b from-transparent via-stone-900/50 to-stone-950 pointer-events-none" />}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {isOpened && (
-        <div className="space-y-40 lg:space-y-80 pb-40">
-           {/* HERO */}
-           <section ref={sectionRefs.hero} className="min-h-screen flex flex-col lg:flex-row items-center justify-center px-6 lg:px-24 gap-20">
-              <motion.div {...reveal} className="lg:w-1/2 flex justify-center">
-                 <div 
-                   onClick={() => isEditMode && onEdit('groomImage')}
-                   className={`w-72 h-[450px] md:w-96 md:h-[650px] rounded-[150px] border-[20px] shadow-2xl overflow-hidden rotate-2 relative ${isEditMode ? 'cursor-pointer group' : ''}`} 
-                   style={{ borderColor: isDark ? '#1C1917' : 'white' }}
-                 >
-                    <img src={data.groomImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800'} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
-                    {isDark && <div className="absolute inset-0 bg-stone-900/10 mix-blend-overlay" />}
-                    {isEditMode && (
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                         <span className="material-symbols-outlined text-white text-5xl">photo_camera</span>
-                      </div>
-                    )}
-                 </div>
-              </motion.div>
-              <motion.div {...reveal} transition={{ delay: 0.3 }} className="lg:w-1/2 text-center lg:text-left space-y-10">
-                 <p className="text-xs font-black uppercase tracking-[0.8em] opacity-40">Wedding Invitation</p>
-                 <h2 className="text-8xl md:text-[10rem] lg:text-[12rem] leading-none" style={{ fontFamily: theme.fontScript, color: theme.primary }}>{data.partner1} & {data.partner2}</h2>
-                 <p className="text-xl font-bold tracking-[0.3em] uppercase">{new Date(data.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-              </motion.div>
-           </section>
-
-           {/* COUPLE */}
-           <section ref={sectionRefs.couple} className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-32 items-center">
-              <motion.div {...reveal} className="text-center lg:text-right space-y-12">
-                 <div className="w-64 h-64 md:w-80 md:h-80 mx-auto lg:ml-auto rounded-[60px] border-8 shadow-2xl overflow-hidden rotate-6" style={{ borderColor: isDark ? '#1C1917' : 'white' }}>
-                    <img src={data.groomImage} className="w-full h-full object-cover" />
-                 </div>
-                 <div className="space-y-4">
-                    <h3 className="text-6xl md:text-8xl" style={{ fontFamily: theme.fontScript, color: theme.primary }}>{data.partner1}</h3>
-                    <p className="text-[10px] opacity-40 uppercase font-black tracking-[0.4em]">Putra dari {data.partner1Parents}</p>
-                 </div>
-              </motion.div>
-              <motion.div {...reveal} transition={{ delay: 0.3 }} className="text-center lg:text-left space-y-12">
-                 <div className="w-64 h-64 md:w-80 md:h-80 mx-auto lg:mr-auto rounded-[60px] border-8 shadow-2xl overflow-hidden -rotate-6" style={{ borderColor: isDark ? '#1C1917' : 'white' }}>
-                    <img src={data.brideImage} className="w-full h-full object-cover" />
-                 </div>
-                 <div className="space-y-4">
-                    <h3 className="text-6xl md:text-8xl" style={{ fontFamily: theme.fontScript, color: theme.primary }}>{data.partner2}</h3>
-                    <p className="text-[10px] opacity-40 uppercase font-black tracking-[0.4em]">Putri dari {data.partner2Parents}</p>
-                 </div>
-              </motion.div>
-           </section>
-
-           {/* EVENT */}
-           <section ref={sectionRefs.event} className="px-6 lg:px-24">
-              <div className="rounded-[100px] p-12 md:p-32 shadow-2xl grid grid-cols-1 lg:grid-cols-3 gap-24 relative overflow-hidden" style={{ backgroundColor: isDark ? '#110F0E' : 'white', border: isDark ? '1px solid #1C1917' : 'none' }}>
-                 <motion.div {...reveal} className="space-y-8 text-center relative z-10">
-                    <span className="material-symbols-outlined text-6xl opacity-20" style={{ color: theme.primary }}>church</span>
-                    <h4 className="text-4xl" style={{ fontFamily: theme.fontScript }}>Akad Nikah</h4>
-                    <p className="text-lg font-bold">{data.time} WIB • {data.venue}</p>
-                 </motion.div>
-                 <motion.div {...reveal} transition={{ delay: 0.2 }} className="space-y-8 text-center lg:border-x border-stone-800 lg:px-10 relative z-10">
-                    <span className="material-symbols-outlined text-6xl opacity-20" style={{ color: theme.primary }}>restaurant</span>
-                    <h4 className="text-4xl" style={{ fontFamily: theme.fontScript }}>Resepsi</h4>
-                    <p className="text-lg font-bold">11:00 WIB • {data.venue}</p>
-                 </motion.div>
-                 <motion.div {...reveal} transition={{ delay: 0.4 }} className="space-y-8 text-center relative z-10">
-                    <span className="material-symbols-outlined text-6xl opacity-20" style={{ color: theme.primary }}>location_on</span>
-                    <h4 className="text-4xl" style={{ fontFamily: theme.fontScript }}>Location</h4>
-                    <p className="text-sm opacity-60 max-w-xs mx-auto italic">{data.address}</p>
-                    <a href={data.mapsLink} target="_blank" className="inline-block px-10 py-4 bg-stone-900 text-white rounded-full text-[10px] font-black uppercase tracking-[0.3em] shadow-xl hover:bg-[#C5A059] transition-all">Open Maps</a>
-                 </motion.div>
-              </div>
-           </section>
-
-           {/* STORY */}
-           {data.showStory !== false && (
-             <section ref={sectionRefs.story} className="max-w-5xl mx-auto px-6 space-y-32">
-                <div className="text-center space-y-6">
-                   <p className="text-[10px] font-black uppercase tracking-[0.8em] opacity-30">Our Journey</p>
-                   <h2 className="text-7xl md:text-9xl" style={{ fontFamily: theme.fontScript, color: theme.primary }}>Love Story</h2>
-                </div>
-                <div className="space-y-32 relative before:absolute before:inset-y-0 before:left-1/2 before:w-px before:bg-stone-800">
-                   {(data.stories || []).map((s, i) => (
-                     <motion.div key={i} {...reveal} className={`flex items-center gap-16 ${i % 2 === 0 ? 'flex-row-reverse' : ''}`}>
-                        <div className="w-1/2 p-10 rounded-[50px] shadow-2xl border" style={{ backgroundColor: isDark ? '#110F0E' : 'white', borderColor: isDark ? '#1C1917' : '#F5F5F4' }}>
-                           <span className="text-[10px] font-black opacity-30 tracking-widest">{s.year}</span>
-                           <h4 className="serif text-2xl font-bold mb-4">{s.title}</h4>
-                           <p className="text-sm opacity-60 leading-relaxed italic">"{s.desc}"</p>
-                        </div>
-                        <div className="w-16 h-16 rounded-full bg-stone-900 border-2 z-10 flex items-center justify-center shrink-0 shadow-2xl" style={{ borderColor: theme.primary }}>
-                           <span className="material-symbols-outlined text-[24px]" style={{ color: theme.primary }}>{s.icon || 'auto_awesome'}</span>
-                        </div>
-                        <div className="w-1/2" />
-                     </motion.div>
-                   ))}
-                </div>
-             </section>
+           )}
+           
+           {custom.type === 'text' && (
+             <p 
+               onClick={() => isEditMode && onElementSelect({ type: 'custom', id: custom.id })}
+               className={`text-xl leading-relaxed opacity-80 font-serif cursor-pointer mx-auto max-w-3xl ${isEditMode ? 'hover:bg-indigo-50 rounded-[32px] p-10' : ''}`} 
+               style={{ 
+                 color: custom.style?.color || textColor, 
+                 fontSize: `${custom.style?.fontSize || 24}px`,
+                 textAlign: custom.style?.textAlign || 'center'
+               }}
+             >
+                {custom.content}
+             </p>
            )}
 
-           {/* RSVP */}
-           <section ref={sectionRefs.rsvp} className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-32 items-start">
-              <motion.div {...reveal} className="p-12 lg:p-24 rounded-[80px] shadow-2xl space-y-12 border" style={{ backgroundColor: isDark ? '#110F0E' : 'white', borderColor: isDark ? '#1C1917' : '#F5F5F4' }}>
-                 <h2 className="text-6xl md:text-8xl" style={{ fontFamily: theme.fontScript, color: theme.primary }}>Konfirmasi Kehadiran</h2>
-                 <div className="space-y-6">
-                    <input className="w-full px-8 py-5 bg-stone-900/50 rounded-3xl outline-none border border-stone-800 text-white placeholder:text-stone-600" placeholder="Nama Anda" />
-                    <textarea className="w-full px-8 py-5 bg-stone-900/50 rounded-3xl outline-none border border-stone-800 h-48 text-white placeholder:text-stone-600" placeholder="Tuliskan ucapan doa..." />
-                    <button className="w-full py-6 bg-stone-900 text-white rounded-full font-black uppercase tracking-[0.5em] text-[11px] shadow-2xl hover:bg-[#C5A059] transition-all">Submit Invitation</button>
-                 </div>
-              </motion.div>
-              <div className="space-y-16 h-[1000px] overflow-y-auto no-scrollbar pt-10 px-4">
-                 <h3 className="serif text-4xl font-black mb-12 tracking-tighter">Beautiful Wishes</h3>
-                 <div className="space-y-10">
-                    {messages.map((m, i) => (
-                      <motion.div key={i} className="p-10 rounded-[60px] shadow-xl border relative overflow-hidden" style={{ backgroundColor: isDark ? '#110F0E' : 'white', borderColor: isDark ? '#1C1917' : '#F5F5F4' }}>
-                         <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: theme.primary }} />
-                         <p className="font-black text-sm uppercase tracking-widest opacity-80 mb-2">{m.name}</p>
-                         <p className="text-sm opacity-60 leading-relaxed italic">"{m.message}"</p>
-                      </motion.div>
-                    ))}
-                 </div>
-              </div>
-           </section>
+           {custom.type === 'image' && (
+             <ImageEngine src={custom.content} transform={custom.transform} type="custom" id={custom.id} className="w-full aspect-[16/10] rounded-[48px] shadow-2xl" />
+           )}
 
-           <footer className="py-40 text-center space-y-12 border-t" style={{ borderColor: isDark ? '#1C1917' : '#F5F5F4' }}>
-              <div className="space-y-4">
-                 <p className="text-[10px] font-black uppercase tracking-[0.8em] opacity-40">Forever & Always</p>
-                 <h2 className="text-8xl md:text-[10rem]" style={{ fontFamily: theme.fontScript, color: theme.primary }}>{data.partner1} & {data.partner2}</h2>
-              </div>
-              <p className="text-[10px] font-black uppercase tracking-[0.6em] opacity-10">LuxeInvite • Industrial Full-Stack Edition</p>
-           </footer>
-        </div>
-      )}
+           {custom.type === 'grid' && (
+             <div className={`grid gap-6 md:gap-10`} style={{ gridTemplateColumns: `repeat(${custom.style?.columns || 2}, 1fr)` }}>
+                {(Array.isArray(custom.content) ? custom.content : []).map((img, idx) => (
+                   <ImageEngine key={idx} src={img} type="custom" id={custom.id} className="w-full aspect-square rounded-[32px] shadow-xl" />
+                ))}
+             </div>
+           )}
+
+           {custom.type === 'divider' && (
+             <div 
+               onClick={() => isEditMode && onElementSelect({ type: 'custom', id: custom.id })}
+               className={`w-40 mx-auto cursor-pointer ${isEditMode ? 'hover:bg-indigo-50 p-6 rounded-full' : ''}`}
+             >
+                <div style={{ height: `${custom.style?.thickness || 2}px`, backgroundColor: primary }} className="w-full opacity-40" />
+             </div>
+           )}
+        </CardWrapper>
+      );
+    }
+
+    switch (id) {
+      case 'hero':
+        return (
+          <Hero 
+            partner1={data?.partner1}
+            partner2={data?.partner2}
+            date={data?.dateText}
+            year={data?.yearText}
+            venue={data?.venue}
+            location={data?.location}
+            image={data?.heroBgImage}
+          />
+        );
+      case 'couple':
+        return (
+          <div className={`${containerWidth} mx-auto grid grid-cols-1 md:grid-cols-2 gap-32 items-center px-6`}>
+             {[
+               { name: data?.partner1, parents: data?.partner1Parents, img: data?.groomImage, role: 'THE GROOM', t: data?.groomTransform, type: 'groom' },
+               { name: data?.partner2, parents: data?.partner2Parents, img: data?.brideImage, role: 'THE BRIDE', t: data?.brideTransform, type: 'bride' }
+             ].map((p, i) => (
+               <div key={i} className="text-center space-y-12">
+                  <div className="relative mx-auto w-80 h-[480px] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] overflow-hidden" style={{ borderRadius: borderRadius }}>
+                     <ImageEngine src={p.img} transform={p.t} type={p.type} className="w-full h-full" />
+                  </div>
+                  <div className="space-y-4">
+                     <p className="text-[10px] font-black tracking-[0.4em] opacity-20 uppercase" style={{ color: textColor }}>{p.role}</p>
+                     <h3 className="text-7xl" style={{ fontFamily: accentFont, color: primary }}>{p.name}</h3>
+                     <p className="text-[10px] uppercase font-bold tracking-[0.2em] opacity-40 italic" style={{ color: textColor }}>Putra dari {p.parents}</p>
+                  </div>
+               </div>
+             ))}
+          </div>
+        );
+      case 'event':
+        return <EventDetails data={data} />;
+      case 'countdown':
+        return <Countdown targetDate={data?.countdownDate} />;
+      case 'rsvp':
+        return <RSVP data={data} />;
+      case 'guestbook':
+        return <Guestbook data={data} />;
+      default: return null;
+    }
+  };
+
+  return (
+    <div className="min-h-screen relative" style={{ backgroundColor: bgColor, color: textColor, fontFamily: bodyFont }}>
+      <MusicToggle url={data?.musicUrl} />
+      
+      <div className="relative z-10 flex flex-col items-center">
+        {(data?.sectionOrder || ['hero', 'couple', 'event', 'countdown', 'rsvp', 'guestbook']).map((id) => (
+          <SectionWrapper key={id} id={id} visibility={data?.sectionVisibility || {}} spacing={spacing} padding={padding} animation={animation} isHighlighted={highlightedId === id}>
+             {renderSection(id)}
+          </SectionWrapper>
+        ))}
+      </div>
+
+      <footer className="py-60 text-center">
+         <h2 className="text-8xl" style={{ fontFamily: accentFont, color: primary }}>{data?.partner1} & {data?.partner2}</h2>
+         <p className="text-[11px] font-black uppercase tracking-[1.2em] opacity-5 mt-16">The Eternal Covenant</p>
+      </footer>
     </div>
   );
 };

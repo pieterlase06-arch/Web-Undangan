@@ -1,268 +1,174 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import PremiumInvitation from '../components/PremiumInvitation';
-import SnapPhotoInvitation from '../components/SnapPhotoInvitation';
 import config from '../config';
+
+// Modular Editor Components
+import EditorHeader from '../components/editor/EditorHeader';
+import EditorPanel from '../components/editor/EditorPanel';
+import AddPanel from '../components/editor/AddPanel';
+import LayersPanel from '../components/editor/LayersPanel';
+import ContentPanel from '../components/editor/ContentPanel';
+import MediaPanel from '../components/editor/MediaPanel';
+import Workspace from '../components/editor/Workspace';
+import ZoomControls from '../components/editor/ZoomControls';
+import ContextualToolbar from '../components/editor/ContextualToolbar';
 
 const Editor = ({ data, updateData }) => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('konten');
-  const [isPublished, setIsPublished] = useState(false);
+  const [activePanel, setActivePanel] = useState('add');
   const [device, setDevice] = useState('mobile'); 
-  const [showCover, setShowCover] = useState(true);
-  const [isUploading, setIsUploading] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [zoom, setZoom] = useState(0.8);
+  const [selectedElement, setSelectedElement] = useState(null); 
+  const [hoveredElement, setHoveredElement] = useState(null);
+  const [isPublishing, setIsPublishing] = useState(false);
 
-  const handleImageUpload = async (file, field) => {
-    if (!file) return;
-    setIsUploading(true);
+  const menuItems = [
+    { id: 'add', label: 'ADD', icon: 'add_circle' },
+    { id: 'content', label: 'DATA', icon: 'database' },
+    { id: 'layers', label: 'LAYERS', icon: 'layers' },
+    { id: 'style', label: 'STYLE', icon: 'palette' },
+    { id: 'media', label: 'ASSETS', icon: 'image' },
+  ];
 
-    // 1. Try API Upload first
-    const formData = new FormData();
-    formData.append('image', file);
-    try {
-      const res = await fetch(`${config.API_URL}/upload`, { method: 'POST', body: formData });
-      if (res.ok) {
-        const { url } = await res.json();
-        updateData({ [field]: url });
-        setIsUploading(false);
-        return;
-      }
-    } catch (err) { 
-      console.log("API Upload failed, falling back to Base64 (Static Mode)");
-    }
+  const moveSection = (id, direction) => {
+    const sections = [...(data?.sectionOrder || ['hero', 'couple', 'event', 'countdown', 'rsvp', 'guestbook'])];
+    const index = sections.indexOf(id);
+    if (index === -1) return;
 
-    // 2. Fallback to Base64 for Static/GitHub Pages
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      updateData({ [field]: reader.result });
-      setIsUploading(false);
-    };
-    reader.readAsDataURL(file);
+    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    if (newIndex < 0 || newIndex >= sections.length) return;
+
+    const temp = sections[index];
+    sections[index] = sections[newIndex];
+    sections[newIndex] = temp;
+
+    updateData({ sectionOrder: sections });
   };
 
-  const addStory = () => {
-    const newStories = [...(data.stories || []), { year: '2024', title: 'Moment Baru', desc: 'Deskripsi moment...', icon: 'favorite' }];
-    updateData({ stories: newStories });
+  // Local state for debounced inputs
+  const [localData, setLocalData] = useState(data);
+  const debounceTimer = useRef(null);
+
+  useEffect(() => {
+    setLocalData(data);
+  }, [data?.id]); // Update when switching projects
+
+  const debouncedUpdate = (updates) => {
+    setLocalData(prev => ({ ...prev, ...updates }));
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(() => {
+      updateData(updates);
+    }, 500);
   };
-
-  const addBank = () => {
-    const newBanks = [...(data.bankAccounts || []), { bank: 'BCA', number: '', owner: '' }];
-    updateData({ bankAccounts: newBanks });
-  };
-
-  const updateBank = (index, field, value) => {
-    const newBanks = [...data.bankAccounts];
-    newBanks[index][field] = value;
-    updateData({ bankAccounts: newBanks });
-  };
-
-  const renderDesignTab = () => (
-    <div className="space-y-6">
-       <section className="space-y-4">
-          <p className="text-[9px] font-black uppercase tracking-widest text-stone-500">Gaya & Tema</p>
-          <div className="p-6 bg-stone-100 rounded-2xl space-y-4 border border-stone-200">
-             <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-stone-900 uppercase">Mode Gelap (Dark)</span>
-                <button onClick={() => updateData({ isDarkMode: !data.isDarkMode })} className={`w-12 h-6 rounded-full flex items-center px-1 transition-colors ${data.isDarkMode ? 'bg-[#C5A059]' : 'bg-stone-300'}`}>
-                   <motion.div animate={{ x: data.isDarkMode ? 24 : 0 }} className="w-4 h-4 bg-white rounded-full shadow-md" />
-                </button>
-             </div>
-          </div>
-          <div className="grid grid-cols-1 gap-4">
-             <div className="space-y-2">
-                <label className="text-[9px] font-black text-stone-400 uppercase">Warna Aksen</label>
-                <div className="flex gap-3">
-                   <input type="color" className="w-12 h-12 rounded-xl cursor-pointer border-2 border-white shadow-md" value={data.primaryColor || '#C5A059'} onChange={(e) => updateData({ primaryColor: e.target.value })} />
-                   <input className="flex-1 bg-stone-100 rounded-xl px-4 text-xs font-mono text-stone-900 outline-none border border-stone-200" value={data.primaryColor || '#C5A059'} onChange={(e) => updateData({ primaryColor: e.target.value })} />
-                </div>
-             </div>
-             <div className="space-y-2">
-                <label className="text-[9px] font-black text-stone-400 uppercase">Jenis Font</label>
-                <select className="w-full p-3 bg-stone-100 rounded-xl outline-none text-xs font-bold text-stone-900 border border-stone-200" value={data.fontFamily} onChange={(e) => updateData({ fontFamily: e.target.value })}>
-                   <option value="'Cinzel', serif">Imperial Serif (Cinzel)</option>
-                   <option value="'Playfair Display', serif">Classic Serif (Playfair)</option>
-                   <option value="'Montserrat', sans-serif">Modern Sans (Montserrat)</option>
-                   <option value="'Outfit', sans-serif">Snap Elegant (Outfit)</option>
-                </select>
-             </div>
-          </div>
-       </section>
-       <section className="space-y-4 pt-6 border-t border-stone-100">
-          <p className="text-[9px] font-black uppercase tracking-widest text-stone-500">Musik Latar</p>
-          <input className="w-full p-3 bg-stone-100 rounded-xl text-[10px] text-stone-900 outline-none border border-stone-200" placeholder="URL Lagu MP3..." value={data.musicUrl} onChange={(e) => updateData({ musicUrl: e.target.value })} />
-       </section>
-    </div>
-  );
-
-  const renderContentTab = () => (
-    <div className="space-y-8 pb-10">
-       <section className="space-y-4">
-          <p className="text-[9px] font-black uppercase tracking-widest text-stone-500">Informasi Mempelai</p>
-          <div className="space-y-6">
-             <div className="p-6 bg-stone-50 rounded-[32px] space-y-6 border border-stone-100 shadow-sm group">
-                <div className="space-y-4">
-                   <div className="relative w-full h-48 rounded-2xl bg-stone-100 overflow-hidden border-2 border-dashed border-stone-200 group-hover:border-[#C5A059] transition-all flex flex-col items-center justify-center gap-3">
-                      {data.groomImage ? (
-                        <img src={data.groomImage} className="absolute inset-0 w-full h-full object-cover" />
-                      ) : (
-                        <span className="material-symbols-outlined text-4xl text-stone-300">add_a_photo</span>
-                      )}
-                      <label className="relative z-10 bg-white/90 backdrop-blur-md px-6 py-2.5 rounded-full shadow-xl cursor-pointer hover:scale-105 transition-transform border border-stone-100 flex items-center gap-2">
-                         <span className="material-symbols-outlined text-[18px] text-[#C5A059]">photo_camera</span>
-                         <span className="text-[10px] font-black uppercase tracking-widest text-stone-900">Ganti Foto Pria</span>
-                         <input type="file" className="hidden" onChange={(e) => handleImageUpload(e.target.files[0], 'groomImage')} />
-                      </label>
-                   </div>
-                   <div className="space-y-2">
-                      <input className="w-full bg-transparent border-b border-stone-200 py-1 text-sm font-black text-stone-900 outline-none focus:border-stone-900" placeholder="Nama Pria" value={data.partner1} onChange={(e) => updateData({ partner1: e.target.value })} />
-                      <input className="w-full bg-transparent py-1 text-[10px] text-stone-500 font-bold outline-none" placeholder="Orang Tua Pria" value={data.partner1Parents} onChange={(e) => updateData({ partner1Parents: e.target.value })} />
-                   </div>
-                </div>
-             </div>
-             <div className="p-6 bg-stone-50 rounded-[32px] space-y-6 border border-stone-100 shadow-sm group">
-                <div className="space-y-4">
-                   <div className="relative w-full h-48 rounded-2xl bg-stone-100 overflow-hidden border-2 border-dashed border-stone-200 group-hover:border-[#C5A059] transition-all flex flex-col items-center justify-center gap-3">
-                      {data.brideImage ? (
-                        <img src={data.brideImage} className="absolute inset-0 w-full h-full object-cover" />
-                      ) : (
-                        <span className="material-symbols-outlined text-4xl text-stone-300">add_a_photo</span>
-                      )}
-                      <label className="relative z-10 bg-white/90 backdrop-blur-md px-6 py-2.5 rounded-full shadow-xl cursor-pointer hover:scale-105 transition-transform border border-stone-100 flex items-center gap-2">
-                         <span className="material-symbols-outlined text-[18px] text-[#C5A059]">photo_camera</span>
-                         <span className="text-[10px] font-black uppercase tracking-widest text-stone-900">Ganti Foto Wanita</span>
-                         <input type="file" className="hidden" onChange={(e) => handleImageUpload(e.target.files[0], 'brideImage')} />
-                      </label>
-                   </div>
-                   <div className="space-y-2">
-                      <input className="w-full bg-transparent border-b border-stone-200 py-1 text-sm font-black text-stone-900 outline-none focus:border-stone-900" placeholder="Nama Wanita" value={data.partner2} onChange={(e) => updateData({ partner2: e.target.value })} />
-                      <input className="w-full bg-transparent py-1 text-[10px] text-stone-500 font-bold outline-none" placeholder="Orang Tua Wanita" value={data.partner2Parents} onChange={(e) => updateData({ partner2Parents: e.target.value })} />
-                   </div>
-                </div>
-             </div>
-          </div>
-       </section>
-
-       <section className="space-y-4 pt-6 border-t border-stone-100">
-          <p className="text-[9px] font-black uppercase tracking-widest text-stone-500">Detail Acara</p>
-          <div className="p-6 bg-stone-100/50 rounded-3xl space-y-6 border border-stone-100">
-             <div className="space-y-2">
-                <label className="text-[9px] font-black text-stone-400 uppercase">Tanggal</label>
-                <input type="date" className="w-full p-3 bg-white border border-stone-200 rounded-xl outline-none text-xs font-bold text-stone-900" value={data.date} onChange={(e) => updateData({ date: e.target.value })} />
-             </div>
-             <div className="space-y-2">
-                <label className="text-[9px] font-black text-stone-400 uppercase">Lokasi</label>
-                <input className="w-full p-3 bg-white border border-stone-200 rounded-xl outline-none text-xs font-bold text-stone-900" placeholder="Gedung..." value={data.venue} onChange={(e) => updateData({ venue: e.target.value })} />
-             </div>
-             <div className="space-y-2">
-                <label className="text-[9px] font-black text-stone-400 uppercase">Maps</label>
-                <input className="w-full p-3 bg-white border border-stone-200 rounded-xl outline-none text-[9px] font-mono text-stone-500" placeholder="Link..." value={data.mapsLink} onChange={(e) => updateData({ mapsLink: e.target.value })} />
-             </div>
-          </div>
-       </section>
-    </div>
-  );
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-white">
-      <header className="h-14 border-b px-6 flex items-center justify-between z-[100] bg-white border-stone-100">
-        <div className="flex items-center gap-4">
-           <button onClick={() => navigate('/desain-saya')} className="text-stone-400 hover:text-stone-900 flex items-center gap-3 group">
-             <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center transition-all">
-               <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-             </div>
-             <span className="serif font-black text-xl tracking-tighter text-stone-900 hidden md:inline">LuxeInvite</span>
-           </button>
-           <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 bg-stone-100 rounded-lg text-stone-600">
-              <span className="material-symbols-outlined text-[18px]">{isSidebarOpen ? 'close' : 'menu'}</span>
-           </button>
-        </div>
-        
-        <div className="hidden md:flex items-center bg-stone-100 rounded-2xl p-1 gap-1">
-           {[{ id: 'mobile', icon: 'smartphone', label: 'HP' }, { id: 'tablet', icon: 'tablet_android', label: 'Tab' }, { id: 'desktop', icon: 'desktop_windows', label: 'PC' }].map(d => (
-             <button key={d.id} onClick={() => setDevice(d.id)} className={`flex items-center gap-2 p-2 px-4 rounded-xl transition-all ${device === d.id ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-400'}`}>
-                <span className="material-symbols-outlined text-[16px]">{d.icon}</span>
-                <span className="text-[9px] font-black uppercase tracking-widest">{d.label}</span>
-             </button>
-           ))}
-        </div>
+    <div className="h-screen w-screen flex flex-col bg-[#DDE0E6] overflow-hidden">
+      {/* PROFESSIONAL HEADER */}
+      <EditorHeader 
+        onBack={() => navigate('/desain-saya')}
+        title={data?.title}
+        onTitleChange={val => updateData({ title: val })}
+        device={device}
+        setDevice={setDevice}
+        onPublish={() => { setIsPublishing(true); setTimeout(() => { setIsPublishing(false); alert('Design exported to your library!'); }, 2000); }}
+        isPublishing={isPublishing}
+      />
 
-        <div className="flex items-center gap-4 md:gap-6">
-          {isUploading && <div className="flex items-center gap-2 animate-pulse"><div className="w-2 h-2 bg-[#C5A059] rounded-full" /><span className="text-[9px] font-black text-[#C5A059] hidden md:inline">SAVING...</span></div>}
-          <button onClick={() => setIsPublished(true)} className="px-4 md:px-6 py-2 bg-stone-950 text-white rounded-xl text-[10px] font-black uppercase tracking-[0.2em] shadow-lg hover:bg-[#C5A059]">Publish</button>
-        </div>
-      </header>
-
-      <div className="flex flex-1 overflow-hidden relative">
-        <AnimatePresence>
-          {isSidebarOpen && (
-            <motion.aside 
-              initial={{ x: -400 }} animate={{ x: 0 }} exit={{ x: -400 }}
-              className="absolute lg:relative w-full md:w-[360px] border-r flex flex-col h-full bg-white border-stone-50 z-[150] shadow-2xl lg:shadow-none"
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* SIDE RAIL */}
+        <nav className="w-20 bg-[#121212] flex flex-col items-center py-8 gap-4 z-[200]">
+          {menuItems.map(item => (
+            <button 
+              key={item.id}
+              onClick={() => setActivePanel(item.id)}
+              className={`flex flex-col items-center gap-1.5 p-3 rounded-2xl transition-all ${activePanel === item.id ? 'text-white bg-white/10' : 'text-slate-500 hover:text-slate-300'}`}
             >
-               <div className="flex border-b border-stone-100 bg-stone-50/50">
-                  {['desain', 'konten', 'lapisan'].map(tab => (
-                     <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-4 text-[9px] font-black uppercase tracking-[0.3em] transition-all relative ${activeTab === tab ? 'text-stone-900' : 'text-stone-300'}`}>
-                        {tab}
-                        {activeTab === tab && <motion.div layoutId="tab-line" className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#C5A059]" />}
-                     </button>
-                  ))}
-               </div>
-               <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
-                  {activeTab === 'desain' && renderDesignTab()}
-                  {activeTab === 'konten' && renderContentTab()}
-                  {activeTab === 'lapisan' && (
-                    <div className="space-y-4">
-                       <div className="p-6 rounded-3xl bg-stone-50 border border-stone-100 space-y-4 shadow-sm">
-                          <p className="text-[9px] font-black uppercase tracking-widest text-stone-500">Tampilan</p>
-                          <div className="flex items-center justify-between">
-                             <span className="text-xs font-bold text-stone-900">Cover Luar</span>
-                             <button onClick={() => setShowCover(!showCover)} className={`w-10 h-5 rounded-full flex items-center px-0.5 ${showCover ? 'bg-[#C5A059]' : 'bg-stone-200'}`}>
-                                <motion.div animate={{ x: showCover ? 20 : 0 }} className="w-4 h-4 bg-white rounded-full shadow-md" />
-                             </button>
-                          </div>
-                       </div>
-                    </div>
-                  )}
-               </div>
-            </motion.aside>
+              <span className={`material-symbols-outlined text-2xl ${activePanel === item.id ? 'icon-fill' : ''}`}>{item.icon}</span>
+              <span className="text-[8px] font-black tracking-widest uppercase">{item.label}</span>
+            </button>
+          ))}
+          
+          <div className="mt-auto flex flex-col items-center gap-4 border-t border-white/5 pt-6">
+             <button onClick={() => navigate('/desain-saya')} className="flex flex-col items-center gap-1.5 p-3 text-red-400 hover:text-red-300 transition-all">
+                <span className="material-symbols-outlined text-2xl">exit_to_app</span>
+                <span className="text-[8px] font-black tracking-widest uppercase">EXIT</span>
+             </button>
+          </div>
+        </nav>
+
+        {/* SIDE PANEL */}
+        <AnimatePresence mode="wait">
+          {activePanel && (
+            <EditorPanel 
+              title={activePanel.toUpperCase()} 
+              onClose={() => setActivePanel(null)}
+            >
+              {activePanel === 'add' && <AddPanel onSelect={(type) => type === 'media' ? setActivePanel('media') : alert(`${type} tools coming soon`)} />}
+              
+              {activePanel === 'media' && (
+                <MediaPanel 
+                  onSelect={(src) => {
+                    if (selectedElement?.type === 'section') {
+                      if (selectedElement.id === 'hero') updateData({ heroBgImage: src });
+                      if (selectedElement.id === 'couple') updateData({ groomImage: src }); 
+                    } else if (selectedElement?.type === 'groom') {
+                      updateData({ groomImage: src });
+                    } else if (selectedElement?.type === 'bride') {
+                      updateData({ brideImage: src });
+                    } else {
+                      updateData({ heroBgImage: src });
+                    }
+                    setActivePanel(null);
+                  }}
+                />
+              )}
+
+              {activePanel === 'layers' && (
+                <LayersPanel 
+                  data={data}
+                  updateData={updateData}
+                  selectedElement={selectedElement}
+                  setSelectedElement={setSelectedElement}
+                  setHoveredElement={setHoveredElement}
+                />
+              )}
+
+              {activePanel === 'content' && <ContentPanel data={localData} updateData={debouncedUpdate} />}
+            </EditorPanel>
           )}
         </AnimatePresence>
 
-import CustomCanvasInvitation from '../components/CustomCanvasInvitation';
+        <Workspace 
+          data={data}
+          device={device}
+          zoom={zoom}
+          setSelectedElement={setSelectedElement}
+          updateData={updateData}
+          hoveredElement={hoveredElement}
+        />
 
-// ... inside Editor component
-        <main className="flex-1 relative overflow-hidden bg-[#f4f6f8] flex items-center justify-center p-4 md:p-12">
-           <motion.div animate={{ width: device === 'mobile' ? '380px' : device === 'tablet' ? '760px' : '100%', height: device === 'desktop' ? '100%' : '88vh', borderRadius: device === 'desktop' ? '0px' : '40px' }} className="bg-white shadow-2xl overflow-hidden relative border-[10px] border-stone-950 transition-all duration-700">
-              <div className="w-full h-full overflow-y-auto no-scrollbar scroll-smooth">
-                 {data.templateId === 'snap-photo' ? (
-                   <SnapPhotoInvitation data={data} isEditMode={true} />
-                 ) : data.templateId === 'custom' ? (
-                   <CustomCanvasInvitation data={data} isEditMode={true} />
-                 ) : (
-                   <PremiumInvitation data={data} isEditMode={true} forceShowCover={showCover} onEdit={() => { setActiveTab('konten'); setIsSidebarOpen(true); }} />
-                 )}
-              </div>
-           </motion.div>
-        </main>
+        <ZoomControls zoom={zoom} setZoom={setZoom} />
+
+        <AnimatePresence>
+          {selectedElement && (
+            <ContextualToolbar 
+              selectedElement={selectedElement}
+              onClose={() => setSelectedElement(null)}
+              onMoveSection={moveSection}
+              onChangeAsset={() => setActivePanel('media')}
+            />
+          )}
+        </AnimatePresence>
       </div>
 
-      <AnimatePresence>
-         {isPublished && (
-           <div className="fixed inset-0 z-[2000] flex items-center justify-center p-6 bg-stone-900/80 backdrop-blur-xl">
-              <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="max-w-md w-full p-8 md:p-12 bg-white rounded-[60px] text-center shadow-2xl border border-white">
-                 <h2 className="serif text-4xl font-black mb-4 text-stone-900">Publikasi Berhasil!</h2>
-                 <p className="text-stone-400 text-xs mb-10">Undangan Anda sudah online dan siap dibagikan.</p>
-                 <div className="bg-stone-50 p-6 rounded-3xl mb-10 text-[10px] font-mono break-all text-[#C5A059] flex items-center justify-between border border-stone-100">
-                    <span className="truncate mr-4">{config.BASE_URL}#/v</span>
-                    <button onClick={() => { navigator.clipboard.writeText(config.BASE_URL+'#/v'); alert('Link Tersalin!'); }} className="material-symbols-outlined text-[18px] shrink-0">content_copy</button>
-                 </div>
-                 <button onClick={() => setIsPublished(false)} className="w-full py-5 bg-stone-950 text-white rounded-full font-black uppercase tracking-[0.3em] text-[10px]">Selesai</button>
-              </motion.div>
-           </div>
-         )}
-      </AnimatePresence>
+      <style dangerouslySetInnerHTML={{ __html: `
+         .no-scrollbar::-webkit-scrollbar { display: none; }
+         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+         .icon-fill { font-variation-settings: 'FILL' 1; }
+      `}} />
     </div>
   );
 };

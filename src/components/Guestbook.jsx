@@ -1,26 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send } from 'lucide-react';
+import LuxeButton from './ui/LuxeButton';
+import LuxeInput from './ui/LuxeInput';
+import LuxeCard from './ui/LuxeCard';
 
-const Guestbook = () => {
+/**
+ * Guestbook - A premium section for digital well-wishes.
+ * Features a split layout with a refined input form and a scrollable message list.
+ */
+const Guestbook = ({ data = {} }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState({ name: '', message: '' });
   const [loading, setLoading] = useState(true);
 
   const fetchMessages = async () => {
     try {
+      // Note: In a real SaaS, this would use a project-specific ID
       const res = await axios.get('http://localhost:3001/api/data');
-      setMessages(res.data.messages.reverse());
+      if (res.data && res.data.messages) {
+        setMessages(res.data.messages.reverse());
+      }
       setLoading(false);
     } catch (error) {
-      console.error(error);
+      console.error("Fetch failed:", error);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchMessages();
-    const interval = setInterval(fetchMessages, 5000);
+    const interval = setInterval(fetchMessages, 10000); // 10s for better performance
     return () => clearInterval(interval);
   }, []);
 
@@ -28,96 +38,114 @@ const Guestbook = () => {
     e.preventDefault();
     if (!newMessage.name || !newMessage.message) return;
     try {
-      await axios.post('http://localhost:3001/api/message', newMessage);
+      await axios.post('http://localhost:3001/api/message', {
+        ...newMessage,
+        date: new Date().toISOString()
+      });
       setNewMessage({ name: '', message: '' });
       fetchMessages();
     } catch (error) {
-      console.error(error);
+      console.error("Submit failed:", error);
     }
   };
 
   return (
-    <section id="guestbook" style={{ backgroundColor: 'var(--background)', padding: '120px 0' }}>
-      <div className="container" style={{ maxWidth: '1000px' }}>
-        <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-          <h2 className="serif" style={{ fontSize: '40px', color: 'var(--on-surface)', marginBottom: '16px' }}>Guestbook</h2>
-          <p className="serif" style={{ fontSize: '18px', color: 'var(--secondary)', fontStyle: 'italic' }}>
-            Share your well wishes with the happy couple.
-          </p>
+    <section className="py-32 px-6 bg-white relative overflow-hidden">
+      {/* Subtle Background Text */}
+      <div className="absolute top-0 right-0 w-full h-full opacity-[0.02] pointer-events-none select-none">
+        <h1 className="text-[20vw] font-black absolute bottom-10 right-10">WISHES</h1>
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="text-center mb-20 space-y-4">
+          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-600">Digital Well-Wishes</p>
+          <h2 className="serif text-5xl text-slate-900 font-light italic">Buku Tamu Digital</h2>
+          <div className="w-12 h-px bg-indigo-600/30 mx-auto mt-8" />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '64px', alignItems: 'start' }}>
-          {/* Form */}
-          <div className="card" style={{ padding: '32px' }}>
-            <h4 className="serif" style={{ marginBottom: '24px', fontSize: '20px', color: 'var(--primary)' }}>Write a Message</h4>
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', marginBottom: '8px', letterSpacing: '0.05em' }}>NAME</label>
-                <input
-                  type="text"
-                  placeholder="Your Name"
-                  style={{ marginBottom: 0 }}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+          {/* Input Panel */}
+          <div className="lg:col-span-5">
+            <LuxeCard 
+              title="Berikan Doa Restu" 
+              subtitle="Tuliskan pesan hangat untuk mempelai"
+              className="sticky top-10"
+            >
+              <form onSubmit={handleSubmit} className="space-y-8">
+                <LuxeInput 
+                  label="Nama Anda"
+                  placeholder="Nama Lengkap..."
                   value={newMessage.name}
                   onChange={(e) => setNewMessage({...newMessage, name: e.target.value})}
+                  icon="person"
                 />
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', marginBottom: '8px', letterSpacing: '0.05em' }}>MESSAGE</label>
-                <textarea
-                  placeholder="Your warm wishes..."
-                  rows="4"
-                  style={{ 
-                    width: '100%', 
-                    padding: '12px', 
-                    border: '1px solid var(--outline)', 
-                    borderRadius: '8px', 
-                    fontFamily: 'var(--font-body)',
-                    background: 'transparent',
-                    resize: 'none'
-                  }}
-                  value={newMessage.message}
-                  onChange={(e) => setNewMessage({...newMessage, message: e.target.value})}
-                ></textarea>
-              </div>
-              <button type="submit" className="btn btn-primary" style={{ display: 'flex', itemsCenter: 'center', justifyContent: 'center', gap: '10px' }}>
-                SEND MESSAGE <Send size={16} />
-              </button>
-            </form>
+                
+                <div className="space-y-2">
+                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Pesan & Doa</label>
+                  <textarea
+                    rows="5"
+                    className="w-full bg-slate-50 border border-slate-100 rounded-[32px] p-6 text-[11px] font-bold text-slate-700 outline-none focus:bg-white focus:border-indigo-600 focus:shadow-xl focus:shadow-indigo-100/50 transition-all duration-300 resize-none"
+                    placeholder="Tuliskan ucapan Anda di sini..."
+                    value={newMessage.message}
+                    onChange={(e) => setNewMessage({...newMessage, message: e.target.value})}
+                  />
+                </div>
+
+                <LuxeButton 
+                  fullWidth 
+                  size="lg" 
+                  icon="send"
+                  type="submit"
+                >
+                  Kirim Ucapan
+                </LuxeButton>
+              </form>
+            </LuxeCard>
           </div>
 
-          {/* Messages List */}
-          <div style={{ maxHeight: '600px', overflowY: 'auto', paddingRight: '16px' }}>
-            <AnimatePresence>
-              {messages.map((msg, idx) => (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: idx * 0.1 }}
-                  style={{ 
-                    marginBottom: '24px', 
-                    padding: '24px', 
-                    backgroundColor: 'white', 
-                    borderRadius: '12px',
-                    borderLeft: '4px solid var(--primary)',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.03)'
-                  }}
-                >
-                  <p style={{ fontWeight: '600', color: 'var(--primary)', marginBottom: '8px', fontSize: '16px' }}>{msg.name}</p>
-                  <p className="serif" style={{ fontSize: '16px', color: 'var(--on-surface)', fontStyle: 'italic', lineHeight: '1.6' }}>
-                    "{msg.message}"
-                  </p>
-                  <p style={{ fontSize: '10px', color: 'var(--secondary)', marginTop: '16px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                    {new Date(msg.date).toLocaleDateString()}
-                  </p>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-            {messages.length === 0 && !loading && (
-              <p className="serif" style={{ textAlign: 'center', color: 'var(--secondary)', fontStyle: 'italic', padding: '40px 0' }}>
-                No messages yet. Be the first to wish them well!
-              </p>
-            )}
+          {/* Messages Feed */}
+          <div className="lg:col-span-7 space-y-8">
+            <div className="flex items-center justify-between px-4 mb-4">
+               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Semua Ucapan ({messages.length})</p>
+               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            </div>
+
+            <div className="space-y-6 max-h-[800px] overflow-y-auto pr-4 custom-scrollbar">
+              <AnimatePresence mode="popLayout">
+                {messages.map((msg, idx) => (
+                  <motion.div
+                    key={msg.id || idx}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className="bg-slate-50/50 rounded-[40px] p-10 border border-slate-100 hover:bg-white hover:shadow-xl hover:shadow-slate-200/40 transition-all duration-500 group"
+                  >
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-black text-[10px]">
+                          {msg.name.substring(0, 1).toUpperCase()}
+                        </div>
+                        <p className="text-[11px] font-black uppercase tracking-widest text-slate-900">{msg.name}</p>
+                      </div>
+                      <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">
+                        {new Date(msg.date).toLocaleDateString()}
+                      </p>
+                    </div>
+                    
+                    <p className="serif text-lg text-slate-600 italic leading-relaxed pl-4 border-l-2 border-indigo-600/20 group-hover:border-indigo-600 transition-colors">
+                      "{msg.message}"
+                    </p>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+
+              {messages.length === 0 && !loading && (
+                <div className="py-20 text-center space-y-4">
+                   <span className="material-symbols-outlined text-4xl text-slate-200">chat_bubble_outline</span>
+                   <p className="serif text-slate-400 italic">Belum ada pesan. Jadilah yang pertama memberikan ucapan!</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

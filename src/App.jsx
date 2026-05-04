@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HashRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import Dashboard from './pages/Dashboard';
+import { HashRouter as Router, Routes, Route, Navigate, useNavigate, useLocation, useParams } from 'react-router-dom';
+import ProjectOverview from './pages/Dashboard';
 import Catalog from './pages/Catalog';
 import Editor from './pages/Editor';
 import GuestList from './pages/GuestList';
@@ -9,10 +9,59 @@ import RSVPTracking from './pages/RSVPTracking';
 import Sidebar from './components/Sidebar';
 import PremiumInvitation from './components/PremiumInvitation';
 import SnapPhotoInvitation from './components/SnapPhotoInvitation';
-import CustomCanvasInvitation from './components/CustomCanvasInvitation';
+import FloralInvitation from './components/FloralInvitation';
+import VogueInvitation from './components/VogueInvitation';
 import config from './config';
 
-// Root Component to handle Routing
+const INITIAL_TEMPLATE_DATA = {
+  templateId: 'luxury-03',
+  title: 'Undangan Baru',
+  partner1: 'Mempelai Pria',
+  partner2: 'Mempelai Wanita',
+  partner1Parents: 'Bpk. & Ibu Pria',
+  partner2Parents: 'Bpk. & Ibu Wanita',
+  date: new Date().toISOString().split('T')[0],
+  dateText: 'SABTU, 12 JULI',
+  yearText: '2026',
+  countdownDate: '2026-07-12T08:00:00',
+  time: '08:00',
+  venue: 'Luxe Grand Ballroom',
+  location: 'Jakarta, Indonesia',
+  address: 'Jl. Contoh Alamat No. 123, Jakarta Selatan',
+  musicUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+  groomImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800',
+  brideImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800',
+  heroBgImage: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200',
+  mapsLink: 'https://maps.google.com',
+  quote: 'Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu isteri-isteri dari jenismu sendiri...',
+  isDarkMode: false,
+  showGifts: false,
+  bankName: 'BCA',
+  bankNumber: '123-456-789',
+  bankOwner: 'Mempelai',
+  particles: 'petals',
+  showStory: true,
+  groomTransform: { scale: 1, x: 0, y: 0 },
+  brideTransform: { scale: 1, x: 0, y: 0 },
+  heroTransform: { scale: 1, x: 0, y: 0 },
+  sectionOrder: ['hero', 'couple', 'event', 'countdown', 'rsvp', 'guestbook'],
+  sectionVisibility: { hero: true, couple: true, event: true, countdown: true, rsvp: true, guestbook: true },
+  headingFont: "'Cinzel', serif",
+  bodyFont: "'Inter', sans-serif",
+  accentFont: "'Pinyon Script', cursive",
+  primaryColor: '#C5A059',
+  bgColor: '#FCF9F6',
+  surfaceColor: '#FFFFFF',
+  textColor: '#1C1917',
+  containerPadding: '40',
+  contentSpacing: '120',
+  borderRadius: '40',
+  layoutMode: 'card',
+  containerWidth: 'max-w-5xl',
+  entranceAnimation: 'reveal',
+  customSections: []
+};
+
 function App() {
   return (
     <Router>
@@ -28,184 +77,137 @@ function AppContent() {
   const [lang, setLang] = useState(localStorage.getItem('lang') || 'id');
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   
-  // Login State
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
-  
+
+  const [projects, setProjects] = useState(() => {
+    try {
+      const saved = localStorage.getItem('projects');
+      const parsed = saved ? JSON.parse(saved) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch { return []; }
+  });
+
+  const [guests, setGuests] = useState(() => {
+    try {
+      const saved = localStorage.getItem('guests');
+      const parsed = saved ? JSON.parse(saved) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch { return []; }
+  });
+
   useEffect(() => {
+    localStorage.setItem('projects', JSON.stringify(projects));
+    localStorage.setItem('guests', JSON.stringify(guests));
     localStorage.setItem('lang', lang);
     localStorage.setItem('theme', theme);
     document.documentElement.setAttribute('data-theme', theme);
-  }, [lang, theme]);
-  
-  const initialInvitation = {
-    templateId: 'luxury-03',
-    partner1: 'Nama Mempelai Pria',
-    partner2: 'Nama Mempelai Wanita',
-    partner1Parents: 'Bpk. Ahmad & Ibu Siti',
-    partner2Parents: 'Bpk. Yusuf & Ibu Aminah',
-    date: new Date().toISOString().split('T')[0],
-    time: '08:00',
-    venue: 'Lokasi Acara',
-    address: 'Alamat Lengkap',
-    primaryColor: '#C5A059',
-    fontFamily: "'Cinzel', serif",
-    musicUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-    groomImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800',
-    brideImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800',
-    mapsLink: 'https://maps.google.com',
-    quote: 'Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu isteri-isteri dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya, dan dijadikan-Nya diantaramu rasa kasih dan sayang.',
-    isDarkMode: false,
-    stories: [
-      { year: '2020', title: 'Pertemuan Pertama', desc: 'Kami bertemu di sebuah acara...', icon: 'favorite' },
-      { year: '2022', title: 'Lamaran', desc: 'Momen bahagia saat kami memutuskan...', icon: 'diamond' }
-    ],
-    bankAccounts: [
-      { bank: 'BCA', number: '123456789', owner: 'Mempelai' }
-    ]
-  };
-
-  const [invitationData, setInvitationData] = useState(initialInvitation);
-  const [guests, setGuests] = useState([]);
-
-  // Load Initial Data
-  useEffect(() => {
-    if (isLoggedIn) {
-      // 1. Try LocalStorage first for instant feedback
-      const localData = localStorage.getItem('invitationData');
-      if (localData) setInvitationData(JSON.parse(localData));
-
-      // 2. Try API for source of truth
-      fetch(`${config.API_URL}/design`)
-        .then(res => res.json())
-        .then(data => { 
-          if (data.id) {
-            setInvitationData(data);
-            localStorage.setItem('invitationData', JSON.stringify(data));
-          }
-        })
-        .catch(err => console.log("API offline, using local storage"));
-
-      fetch(`${config.API_URL}/guests`)
-        .then(res => res.json())
-        .then(data => setGuests(data))
-        .catch(err => console.log("Guests API offline"));
-    }
-  }, [isLoggedIn]);
-
-  // Sync Data
-  useEffect(() => {
-    if (isLoggedIn && invitationData) {
-      // Always save to LocalStorage immediately
-      localStorage.setItem('invitationData', JSON.stringify(invitationData));
-
-      // Sync to API (Debounced)
-      const timer = setTimeout(() => {
-        fetch(`${config.API_URL}/design`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(invitationData)
-        }).catch(err => {});
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [invitationData, isLoggedIn]);
+  }, [projects, guests, theme, lang]);
 
   const login = (e) => {
     e.preventDefault();
     if (username === 'admin' && password === 'admin123') {
       setIsLoggedIn(true);
       localStorage.setItem('isLoggedIn', 'true');
-    } else {
-      setLoginError('Invalid credentials');
-    }
+      navigate('/desain-saya');
+    } else { setLoginError('Invalid credentials'); }
   };
 
-  const logout = () => {
-    setIsLoggedIn(false);
-    localStorage.removeItem('isLoggedIn');
-    navigate('/');
+  const createNewProject = (templateId) => {
+    const newId = `project-${Date.now()}`;
+    const newProject = { ...INITIAL_TEMPLATE_DATA, id: newId, templateId, createdAt: new Date().toISOString() };
+    setProjects(prev => [...prev, newProject]);
+    navigate(`/editor/${newId}`);
   };
 
-  const selectTemplate = (id) => {
-    setInvitationData(prev => ({ ...prev, templateId: id }));
-    navigate('/editor');
-  };
+  const updateProject = (id, data) => { setProjects(prev => prev.map(p => p.id === id ? { ...p, ...data } : p)); };
+  const deleteProject = (id) => { setProjects(prev => prev.filter(p => p.id !== id)); };
 
-  const resetInvitation = async () => {
-    if (window.confirm('Hapus semua desain dan data? Tindakan ini tidak bisa dibatalkan.')) {
-      try {
-        setInvitationData(initialInvitation);
-        setGuests([]);
-        localStorage.clear();
-        await fetch(`${config.API_URL}/all`, { method: 'DELETE' });
-        alert('Data berhasil dihapus.');
-        window.location.reload();
-      } catch (err) {
-        console.error("Reset failed:", err);
-        localStorage.clear();
-        window.location.reload();
-      }
-    }
-  };
-
-  const deleteGuest = (id) => {
-    if (window.confirm('Delete this guest?')) {
-      setGuests(prev => prev.filter(g => g.id !== id));
-    }
-  };
-
-  const updateGuestStatus = (id, status) => {
-    setGuests(prev => prev.map(g => g.id === id ? { ...g, status } : g));
-  };
+  const addGuest = (guest) => { setGuests(prev => [...prev, { ...guest, id: Date.now() }]); };
+  const deleteGuest = (id) => { setGuests(prev => prev.filter(g => g.id !== id)); };
+  const updateGuestStatus = (id, status) => { setGuests(prev => prev.map(g => g.id === id ? { ...g, status } : g)); };
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  const isEditor = location.pathname === '/editor';
-  const isView = location.pathname === '/v';
+  const isEditor = location.pathname.includes('/editor/');
+  const isView = location.pathname.includes('/v/');
 
   if (!isLoggedIn && !isView) {
     return (
-      <div className="h-screen bg-[#fcf9f6] flex flex-col items-center justify-center p-6 text-center">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-md w-full bg-white p-12 rounded-[40px] shadow-2xl border border-stone-100">
-          <h1 className="serif text-5xl font-black text-stone-900 tracking-tighter mb-4">LuxeInvite</h1>
-          <p className="text-stone-400 text-sm mb-12 uppercase tracking-widest font-bold">Premium Invitation Suite</p>
-          <form onSubmit={login} className="space-y-6">
-            <input type="text" required value={username} onChange={(e) => setUsername(e.target.value)} className="w-full px-6 py-4 bg-stone-50 border border-stone-100 rounded-2xl outline-none text-sm" placeholder="Username" />
-            <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-6 py-4 bg-stone-50 border border-stone-100 rounded-2xl outline-none text-sm" placeholder="Password" />
-            {loginError && <p className="text-red-500 text-[10px] font-bold uppercase">{loginError}</p>}
-            <button type="submit" className="w-full py-5 bg-stone-900 text-white rounded-2xl font-bold uppercase tracking-[0.2em] text-[10px] hover:bg-stone-800 shadow-xl">Sign In</button>
-          </form>
-        </motion.div>
+      <div className="min-h-screen flex items-center justify-center bg-stone-100 p-6">
+        <div className="w-full max-w-md bg-white rounded-[40px] p-12 shadow-2xl space-y-10">
+           <div className="text-center space-y-3">
+              <h1 className="serif text-5xl font-black text-stone-900 tracking-tighter">Luxe<span className="text-[#C5A059]">Invite</span></h1>
+              <p className="text-stone-400 text-[10px] font-black uppercase tracking-widest">Premium Designer Login</p>
+           </div>
+           <form onSubmit={login} className="space-y-6">
+              <input className="w-full bg-stone-50 rounded-2xl p-4 outline-none border border-stone-100 focus:border-stone-900" value={username} onChange={e => setUsername(e.target.value)} placeholder="Username" />
+              <input type="password" className="w-full bg-stone-50 rounded-2xl p-4 outline-none border border-stone-100 focus:border-stone-900" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" />
+              {loginError && <p className="text-red-500 text-[10px] font-bold text-center">{loginError}</p>}
+              <button className="w-full py-5 bg-stone-950 text-white rounded-3xl font-black uppercase tracking-[0.3em] text-[10px]">Sign In</button>
+           </form>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className={`min-h-screen flex ${theme === 'dark' ? 'bg-[#0f172a]' : 'bg-[#fcf9f6]'} transition-colors duration-300 relative`}>
+    <div className={`min-h-screen flex ${theme === 'dark' ? 'bg-[#0f172a]' : 'bg-[#fcf9f6]'} relative`}>
       {!isEditor && !isView && (
-        <Sidebar currentView={location.pathname} setView={(v) => { navigate(v); setIsSidebarOpen(false); }} onLogout={logout} lang={lang} setLang={setLang} theme={theme} setTheme={setTheme} isOpen={isSidebarOpen} />
+        <Sidebar
+          currentView={location.pathname}
+          setView={(v) => navigate(v)}
+          onClose={() => setIsSidebarOpen(false)}
+          onLogout={() => { setIsLoggedIn(false); localStorage.removeItem('isLoggedIn'); navigate('/'); }}
+          theme={theme} setTheme={setTheme}
+          lang={lang} setLang={setLang}
+          isOpen={isSidebarOpen}
+        />
       )}
-      <main className={`flex-1 overflow-y-auto transition-all duration-500 ${(isEditor || isView) ? 'ml-0' : 'lg:ml-64 pt-16 lg:pt-0'}`}>
-        <AnimatePresence mode="wait">
-          <Routes location={location} key={location.pathname}>
-            <Route path="/desain-saya" element={<Dashboard setView={(v) => navigate(v)} invitationData={invitationData} guestCount={guests.length} theme={theme} onReset={resetInvitation} />} />
-            <Route path="/templat" element={<Catalog onSelectTemplate={selectTemplate} theme={theme} />} />
-            <Route path="/editor" element={<Editor data={invitationData} updateData={(d) => setInvitationData(prev => ({ ...prev, ...d }))} />} />
-            <Route path="/buku-tamu" element={<GuestList guests={guests} onDelete={deleteGuest} onStatusUpdate={updateGuestStatus} onAddGuest={(g) => setGuests(prev => [...prev, { ...g, id: Date.now(), status: 'Sent' }])} theme={theme} />} />
-            <Route path="/lacak-rsvp" element={<RSVPTracking guests={guests} />} />
-            <Route path="/v" element={
-              invitationData.templateId === 'snap-photo' ? <SnapPhotoInvitation data={invitationData} /> : 
-              invitationData.templateId === 'custom' ? <CustomCanvasInvitation data={invitationData} /> :
-              <PremiumInvitation data={invitationData} forceShowCover={true} />
-            } />
-            <Route path="*" element={<Navigate to="/desain-saya" replace />} />
-          </Routes>
-        </AnimatePresence>
+      {!isEditor && !isView && (
+        <button 
+          onClick={() => setIsSidebarOpen(true)}
+          className="lg:hidden fixed top-8 left-8 z-[600] w-14 h-14 bg-white shadow-2xl rounded-2xl flex items-center justify-center border border-stone-100 active:scale-95 transition-all text-stone-900"
+        >
+          <span className="material-symbols-outlined">menu</span>
+        </button>
+      )}
+
+      <main className={`flex-1 ${(isEditor || isView) ? 'ml-0' : 'lg:ml-64'}`}>
+        <Routes location={location} key={location.pathname}>
+          <Route path="/desain-saya" element={<ProjectOverview projects={projects} onDelete={deleteProject} />} />
+          <Route path="/katalog" element={<Catalog onSelectTemplate={createNewProject} />} />
+          <Route path="/editor/:projectId" element={<EditorWrapper projects={projects} updateProject={updateProject} />} />
+          <Route path="/v/:projectId" element={<ViewerWrapper projects={projects} />} />
+          <Route path="/buku-tamu" element={<GuestList guests={guests} onAddGuest={addGuest} onDelete={deleteGuest} onStatusUpdate={updateGuestStatus} />} />
+          <Route path="/lacak-rsvp" element={<RSVPTracking guests={guests} />} />
+          <Route path="/" element={<Navigate to="/desain-saya" replace />} />
+          <Route path="*" element={<Navigate to="/desain-saya" replace />} />
+        </Routes>
       </main>
     </div>
   );
 }
+
+const EditorWrapper = ({ projects, updateProject }) => {
+  const { projectId } = useParams();
+  const project = projects.find(p => p.id === projectId);
+  if (!project) return <Navigate to="/desain-saya" replace />;
+  return <Editor data={project} updateData={(d) => updateProject(projectId, d)} />;
+};
+
+const ViewerWrapper = ({ projects }) => {
+  const { projectId } = useParams();
+  const project = projects.find(p => p.id === projectId);
+  if (!project) return <div className="p-20 text-center font-black">404 | Project Not Found</div>;
+  return (
+    <div className="w-full">
+      {project.templateId === 'snap-photo' ? <SnapPhotoInvitation data={project} /> : 
+       project.templateId === 'floral' ? <FloralInvitation data={project} /> :
+       project.templateId === 'vogue' ? <VogueInvitation data={project} /> :
+       <PremiumInvitation data={project} forceShowCover={true} />}
+    </div>
+  );
+};
 
 export default App;

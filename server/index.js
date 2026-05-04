@@ -56,9 +56,21 @@ const initDB = async () => {
             id TEXT PRIMARY KEY,
             name TEXT,
             slug TEXT,
-            status TEXT
+            status TEXT,
+            phone TEXT,
+            category TEXT
         );
     `);
+
+    // Add missing guest columns when upgrading from older databases
+    const guestColumns = await db.all("PRAGMA table_info('guests')");
+    const columnNames = guestColumns.map((col) => col.name);
+    if (!columnNames.includes('phone')) {
+      await db.exec('ALTER TABLE guests ADD COLUMN phone TEXT');
+    }
+    if (!columnNames.includes('category')) {
+      await db.exec('ALTER TABLE guests ADD COLUMN category TEXT');
+    }
 
     // Ensure one design row exists
     const design = await db.get('SELECT * FROM design WHERE id = 1');
@@ -130,11 +142,27 @@ app.get('/api/guests', async (req, res) => {
 });
 
 app.post('/api/guests', async (req, res) => {
-    const { name } = req.body;
-    const id = uuidv4();
+    const { id = uuidv4(), name, phone = '', category = 'Lainnya', status = 'Sent' } = req.body;
     const slug = name.toLowerCase().replace(/ /g, '-');
-    await db.run('INSERT INTO guests (id, name, slug, status) VALUES (?, ?, ?, ?)', [id, name, slug, 'pending']);
-    res.json({ id, name, slug, status: 'pending' });
+    await db.run('INSERT INTO guests (id, name, slug, status, phone, category) VALUES (?, ?, ?, ?, ?, ?)', [id, name, slug, status, phone, category]);
+    res.json({ id, name, slug, status, phone, category });
+});
+
+app.put('/api/guests/:id', async (req, res) => {
+    const { status, name, phone, category } = req.body;
+    const id = req.params.id;
+    const query = 'UPDATE guests SET status = ?, name = ?, phone = ?, category = ? WHERE id = ?';
+    const existing = await db.get('SELECT * FROM guests WHERE id = ?', [id]);
+    if (!existing) return res.status(404).json({ error: 'Guest not found' });
+    await db.run(query, [status ?? existing.status, name ?? existing.name, phone ?? existing.phone, category ?? existing.category, id]);
+    const updated = await db.get('SELECT * FROM guests WHERE id = ?', [id]);
+    res.json(updated);
+});
+
+app.delete('/api/guests/:id', async (req, res) => {
+    const id = req.params.id;
+    await db.run('DELETE FROM guests WHERE id = ?', [id]);
+    res.json({ success: true, id });
 });
 
 // 5. WIPE SYSTEM

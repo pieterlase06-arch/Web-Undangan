@@ -1,8 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import { Music, Music2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const MusicToggle = () => {
+/**
+ * MusicToggle - A floating musical controller for the invitation.
+ * Features a minimalist glassmorphism design with a rotating record animation.
+ */
+const MusicToggle = ({ url = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(null);
 
@@ -16,61 +19,59 @@ const MusicToggle = () => {
   };
 
   useEffect(() => {
-    // Attempt autoplay (might be blocked by browser)
-    const playAttempt = setInterval(() => {
-      if (audioRef.current && !isPlaying) {
-        audioRef.current.play().then(() => {
-          setIsPlaying(true);
-          clearInterval(playAttempt);
-        }).catch(() => {
-          // Autoplay blocked, wait for user interaction
-        });
+    // Autoplay logic
+    const handleAutoplay = () => {
+      if (audioRef.current) {
+        audioRef.current.play()
+          .then(() => setIsPlaying(true))
+          .catch(() => console.log("Autoplay blocked by browser"));
       }
-    }, 1000);
+    };
 
-    return () => clearInterval(playAttempt);
+    window.addEventListener('click', handleAutoplay, { once: true });
+    return () => window.removeEventListener('click', handleAutoplay);
   }, []);
 
   return (
-    <div className="fixed bottom-10 right-10 z-50">
-      <audio 
-        ref={audioRef} 
-        src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" 
-        loop 
-      />
+    <div className="fixed bottom-32 right-8 z-[100] flex items-center gap-4">
+      <audio ref={audioRef} src={url} loop />
       
-      <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={toggleMusic}
-        className={`w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-colors ${
-          isPlaying ? 'bg-primary text-white' : 'bg-white text-primary'
-        }`}
-      >
-        {isPlaying ? (
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
-          >
-            <Music size={24} />
-          </motion.div>
-        ) : (
-          <Music2 size={24} />
-        )}
-      </motion.button>
-
       <AnimatePresence>
         {!isPlaying && (
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            className="absolute right-16 top-1/2 -translate-y-1/2 bg-white px-4 py-2 rounded-full shadow-lg border border-primary/10 whitespace-nowrap"
+            initial={{ opacity: 0, x: 20, scale: 0.8 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 20, scale: 0.8 }}
+            className="bg-white/80 backdrop-blur-xl px-6 py-2.5 rounded-full shadow-2xl border border-white/50"
           >
-            <span className="text-xs font-semibold text-primary">Play Music</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600">Play Music</span>
           </motion.div>
         )}
       </AnimatePresence>
+
+      <motion.button
+        whileHover={{ scale: 1.1, rotate: 5 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={toggleMusic}
+        className={`
+          w-16 h-16 rounded-full flex items-center justify-center shadow-2xl border-4 transition-all duration-700
+          ${isPlaying ? 'bg-indigo-600 border-indigo-100' : 'bg-white border-slate-50'}
+        `}
+      >
+        <div className={`relative w-full h-full flex items-center justify-center ${isPlaying ? 'animate-spin-slow' : ''}`}>
+           {/* Center Point */}
+           <div className={`w-2 h-2 rounded-full absolute z-10 ${isPlaying ? 'bg-white' : 'bg-indigo-600'}`} />
+           
+           {/* Icon */}
+           <span className={`material-symbols-outlined text-2xl ${isPlaying ? 'text-white' : 'text-slate-400'}`}>
+              {isPlaying ? 'pause' : 'music_note'}
+           </span>
+           
+           {/* Record Grooves */}
+           <div className="absolute inset-1 border border-white/20 rounded-full" />
+           <div className="absolute inset-3 border border-white/10 rounded-full" />
+        </div>
+      </motion.button>
     </div>
   );
 };
