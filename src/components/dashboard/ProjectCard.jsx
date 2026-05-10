@@ -56,7 +56,11 @@ const ProjectCard = ({ project, index, onDelete }) => {
                   <LuxeTypography variant="detail" className="text-[#C5A059] font-black uppercase tracking-[0.6em]">{project.templateId?.replace(/-/g, ' ') || 'PREMIUM'} EDITION</LuxeTypography>
                </div>
                <button 
-                 onClick={() => onDelete(project.id)}
+                 onClick={() => {
+                   if (window.confirm('Are you sure you want to delete this design? This action cannot be undone.')) {
+                     onDelete(project.id);
+                   }
+                 }}
                  className="p-3 text-stone-300 hover:text-red-500 hover:bg-red-50 transition-all rounded-full"
                >
                   <span className="material-symbols-outlined text-2xl">delete</span>
