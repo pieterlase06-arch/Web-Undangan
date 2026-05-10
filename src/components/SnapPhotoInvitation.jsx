@@ -2,6 +2,8 @@ import { motion } from 'framer-motion';
 import RSVP from './RSVP';
 import Guestbook from './Guestbook';
 import MusicToggle from './MusicToggle';
+import Story from './Story';
+import Gifts from './Gifts';
 
 const SectionWrapper = ({ children, id, visibility }) => {
   if (visibility && visibility[id] === false) return null;
@@ -110,6 +112,10 @@ const SnapPhotoInvitation = ({ data, isEditMode = false }) => {
         );
       case 'rsvp':
         return <RSVP data={data} />;
+      case 'story':
+        return <Story stories={data?.stories} accentColor={data?.primaryColor} />;
+      case 'gifts':
+        return <Gifts data={data} />;
       case 'guestbook':
         return <Guestbook data={data} />;
       default: return null;
@@ -117,25 +123,42 @@ const SnapPhotoInvitation = ({ data, isEditMode = false }) => {
   };
 
   return (
-    <div className={`min-h-screen relative p-6 md:p-12 space-y-12 ${isDark ? 'bg-zinc-950 text-white' : 'bg-zinc-50 text-zinc-900'}`} style={{ fontFamily: data?.bodyFont || "'Montserrat', sans-serif" }}>
+    <div className={`min-h-screen relative ${isDark ? 'bg-zinc-950 text-white' : 'bg-zinc-50 text-zinc-900'} flex flex-col lg:flex-row`} style={{ fontFamily: data?.bodyFont || "'Montserrat', sans-serif" }}>
       <MusicToggle url={data?.musicUrl} />
       
-      <div className="max-w-7xl mx-auto w-full flex flex-col items-center space-y-24">
-        {(data?.sectionOrder || ['hero', 'grid', 'event', 'rsvp', 'guestbook']).map(id => (
-          <SectionWrapper key={id} id={id} visibility={data?.sectionVisibility}>
-            {renderSection(id)}
-          </SectionWrapper>
-        ))}
+      {/* LEFT PANEL - FIXED ON DESKTOP */}
+      <div className="lg:w-1/3 lg:h-screen lg:sticky lg:top-0 p-12 flex flex-col justify-center items-center text-center space-y-12 border-b lg:border-b-0 lg:border-r border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-black/20 backdrop-blur-xl z-20">
+         <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-8 border-white dark:border-zinc-800 shadow-2xl">
+            <img src={data?.heroBgImage || photos[2]} className="w-full h-full object-cover" />
+         </motion.div>
+         <div className="space-y-4">
+            <h1 className="text-5xl md:text-6xl font-black uppercase tracking-tighter leading-none" style={{ fontFamily: data?.headingFont || "'Montserrat', sans-serif" }}>
+               {partner1.split(' ')[0]} <br/> <span className="text-stone-400">&</span> <br/> {partner2.split(' ')[0]}
+            </h1>
+            <p className="text-[10px] font-black uppercase tracking-[0.5em] opacity-40">{data?.dateText} • {data?.yearText}</p>
+         </div>
+         <div className="hidden lg:block w-px h-20 bg-current opacity-10" />
       </div>
 
-      <footer className="py-40 text-center space-y-12">
-         <p className="text-2xl font-black uppercase tracking-tighter opacity-10 leading-none select-none">Invitation Invitation Invitation Invitation</p>
-         <div className="space-y-6 max-w-lg mx-auto">
-            <p className="text-sm font-medium leading-relaxed italic opacity-60">"{data?.quote}"</p>
-            <div className="w-12 h-px bg-current mx-auto opacity-20" />
-            <h2 className="text-4xl font-black uppercase tracking-tighter">{partner1.split(' ')[0]} & {partner2.split(' ')[0]}</h2>
-         </div>
-      </footer>
+      {/* RIGHT PANEL - SCROLLABLE */}
+      <div className="flex-1 p-6 md:p-12 lg:p-24 space-y-32">
+        <div className="max-w-5xl mx-auto w-full flex flex-col items-center space-y-32">
+          {(data?.sectionOrder || ['hero', 'grid', 'event', 'story', 'rsvp', 'gifts', 'guestbook']).map(id => (
+            <SectionWrapper key={id} id={id} visibility={data?.sectionVisibility}>
+              {renderSection(id)}
+            </SectionWrapper>
+          ))}
+        </div>
+
+        <footer className="py-40 text-center space-y-12 border-t border-zinc-100 dark:border-zinc-900">
+           <p className="text-2xl font-black uppercase tracking-tighter opacity-10 leading-none select-none">Invitation Invitation Invitation Invitation</p>
+           <div className="space-y-6 max-w-lg mx-auto">
+              <p className="text-sm font-medium leading-relaxed italic opacity-60">"{data?.quote}"</p>
+              <div className="w-12 h-px bg-current mx-auto opacity-20" />
+              <h2 className="text-4xl font-black uppercase tracking-tighter">{partner1.split(' ')[0]} & {partner2.split(' ')[0]}</h2>
+           </div>
+        </footer>
+      </div>
     </div>
   );
 };

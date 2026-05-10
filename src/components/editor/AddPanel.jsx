@@ -7,6 +7,8 @@ const AddPanel = ({ onSelect }) => {
   const tools = [
     { label: 'Text', icon: 'title', action: 'text' },
     { label: 'Photo', icon: 'image', action: 'media' },
+    { label: 'Story', icon: 'history_edu', action: 'story' },
+    { label: 'Gifts', icon: 'redeem', action: 'gifts' },
     { label: 'Grid', icon: 'grid_view', action: 'grid' },
     { label: 'Line', icon: 'horizontal_rule', action: 'line' }
   ];

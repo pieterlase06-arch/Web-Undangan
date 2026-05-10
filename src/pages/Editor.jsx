@@ -10,6 +10,7 @@ import AddPanel from '../components/editor/AddPanel';
 import LayersPanel from '../components/editor/LayersPanel';
 import ContentPanel from '../components/editor/ContentPanel';
 import MediaPanel from '../components/editor/MediaPanel';
+import StylePanel from '../components/editor/StylePanel';
 import Workspace from '../components/editor/Workspace';
 import ZoomControls from '../components/editor/ZoomControls';
 import ContextualToolbar from '../components/editor/ContextualToolbar';
@@ -104,7 +105,20 @@ const Editor = ({ data, updateData }) => {
               title={activePanel.toUpperCase()} 
               onClose={() => setActivePanel(null)}
             >
-              {activePanel === 'add' && <AddPanel onSelect={(type) => type === 'media' ? setActivePanel('media') : alert(`${type} tools coming soon`)} />}
+              {activePanel === 'add' && (
+                <AddPanel onSelect={(type) => {
+                  if (type === 'media') setActivePanel('media');
+                  else if (type === 'story') {
+                    updateData({ sectionOrder: [...(data?.sectionOrder || []), 'story'] });
+                    setActivePanel('content');
+                  }
+                  else if (type === 'gifts') {
+                    updateData({ sectionOrder: [...(data?.sectionOrder || []), 'gifts'] });
+                    setActivePanel('content');
+                  }
+                  else alert(`${type} tools coming soon`);
+                }} />
+              )}
               
               {activePanel === 'media' && (
                 <MediaPanel 
@@ -135,6 +149,7 @@ const Editor = ({ data, updateData }) => {
               )}
 
               {activePanel === 'content' && <ContentPanel data={localData} updateData={debouncedUpdate} />}
+              {activePanel === 'style' && <StylePanel data={data} updateData={updateData} />}
             </EditorPanel>
           )}
         </AnimatePresence>
