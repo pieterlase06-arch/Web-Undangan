@@ -11,6 +11,7 @@ import PremiumInvitation from './components/PremiumInvitation';
 import SnapPhotoInvitation from './components/SnapPhotoInvitation';
 import FloralInvitation from './components/FloralInvitation';
 import VogueInvitation from './components/VogueInvitation';
+import ElegantMulyoTemplate from './components/ElegantMulyoTemplate';
 import config from './config';
 
 const INITIAL_TEMPLATE_DATA = {
@@ -205,6 +206,7 @@ const ViewerWrapper = ({ projects }) => {
       {project.templateId === 'snap-photo' ? <SnapPhotoInvitation data={project} /> : 
        project.templateId === 'floral' ? <FloralInvitation data={project} /> :
        project.templateId === 'vogue' ? <VogueInvitation data={project} /> :
+       project.templateId === 'elegant-mulyo' ? <ElegantMulyoTemplate data={project} /> :
        <PremiumInvitation data={project} forceShowCover={true} />}
     </div>
   );

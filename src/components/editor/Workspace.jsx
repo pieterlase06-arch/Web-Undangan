@@ -3,6 +3,7 @@ import FloralInvitation from '../FloralInvitation';
 import VogueInvitation from '../VogueInvitation';
 import SnapPhotoInvitation from '../SnapPhotoInvitation';
 import CustomCanvasInvitation from '../CustomCanvasInvitation';
+import ElegantMulyoTemplate from '../ElegantMulyoTemplate';
 
 /**
  * Workspace - The main canvas area for invitation preview and editing.
@@ -35,6 +36,7 @@ const Workspace = ({
       case 'floral': return <FloralInvitation {...props} />;
       case 'vogue': return <VogueInvitation {...props} />;
       case 'custom': return <CustomCanvasInvitation {...props} />;
+      case 'elegant-mulyo': return <ElegantMulyoTemplate {...props} />;
       default: return <PremiumInvitation {...props} />;
     }
   };

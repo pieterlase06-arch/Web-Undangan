@@ -22,6 +22,13 @@ const Catalog = ({ onSelectTemplate }) => {
       description: 'A clean, image-focused design that captures the essence of your story in every frame.'
     },
     {
+      id: 'elegant-mulyo',
+      name: 'Elegant Mulyo',
+      category: 'Traditional Modern',
+      image: 'https://images.unsplash.com/photo-1549417229-aa67d3263c09?auto=format&fit=crop&w=800',
+      description: 'A sophisticated blend of traditional Indonesian aesthetics and modern minimalist design.'
+    },
+    {
       id: 'custom',
       name: 'Creative Canvas',
       category: 'Professional',
