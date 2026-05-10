@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LuxeTypography from '../components/ui/LuxeTypography';
 import DashboardHeader from '../components/dashboard/DashboardHeader';
@@ -8,6 +9,12 @@ import ProjectCard from '../components/dashboard/ProjectCard';
  */
 const ProjectOverview = ({ projects = [], onDelete }) => {
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredProjects = projects.filter(p => 
+    p.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    p.template?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen mesh-bg p-6 lg:p-12 pb-40">
@@ -15,6 +22,8 @@ const ProjectOverview = ({ projects = [], onDelete }) => {
         
         <DashboardHeader 
           projectCount={projects.length}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
           onExport={() => {
             const data = { 
               projects: JSON.parse(localStorage.getItem('projects') || '[]'),
@@ -50,25 +59,31 @@ const ProjectOverview = ({ projects = [], onDelete }) => {
         />
 
         {/* PROJECTS GRID */}
-        {!projects || projects.length === 0 ? (
+        {!filteredProjects || filteredProjects.length === 0 ? (
           <div className="h-[60vh] flex flex-col items-center justify-center text-center space-y-8 bg-white/40 backdrop-blur-3xl rounded-[80px] border border-white/50 shadow-2xl">
              <div className="w-32 h-32 bg-stone-100 rounded-full flex items-center justify-center text-stone-300 animate-pulse">
-                <span className="material-symbols-outlined text-6xl">inventory_2</span>
+                <span className="material-symbols-outlined text-6xl">{searchQuery ? 'search_off' : 'inventory_2'}</span>
              </div>
              <div className="space-y-3">
-                <LuxeTypography variant="h3" className="text-stone-900">Your studio is empty</LuxeTypography>
-                <LuxeTypography variant="caption" className="text-stone-400">Select a template to begin your masterpiece</LuxeTypography>
+                <LuxeTypography variant="h3" className="text-stone-900">
+                  {searchQuery ? 'No matching designs' : 'Your studio is empty'}
+                </LuxeTypography>
+                <LuxeTypography variant="caption" className="text-stone-400">
+                  {searchQuery ? `We couldn't find "${searchQuery}"` : 'Select a template to begin your masterpiece'}
+                </LuxeTypography>
              </div>
-             <button 
-               onClick={() => navigate('/katalog')} 
-               className="px-12 py-5 border-2 border-stone-900 rounded-3xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-stone-950 hover:text-white transition-all"
-             >
-               Enter Catalog
-             </button>
+             {!searchQuery && (
+               <button 
+                 onClick={() => navigate('/katalog')} 
+                 className="px-12 py-5 border-2 border-stone-900 rounded-3xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-stone-950 hover:text-white transition-all"
+               >
+                 Enter Catalog
+               </button>
+             )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-             {projects.map((p, i) => (
+             {filteredProjects.map((p, i) => (
                <ProjectCard 
                  key={p.id} 
                  project={p} 

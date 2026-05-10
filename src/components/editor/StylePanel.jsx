@@ -13,6 +13,8 @@ const StylePanel = ({ data, updateData }) => {
   const fonts = [
     { name: 'Cinzel', family: "'Cinzel', serif" },
     { name: 'Playfair', family: "'Playfair Display', serif" },
+    { name: 'Noto Serif', family: "'Noto Serif', serif" },
+    { name: 'Manrope', family: "'Manrope', sans-serif" },
     { name: 'Montserrat', family: "'Montserrat', sans-serif" },
     { name: 'Inter', family: "'Inter', sans-serif" },
     { name: 'Pinyon', family: "'Pinyon Script', cursive" },

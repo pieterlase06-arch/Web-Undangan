@@ -1,4 +1,5 @@
 import LuxeTypography from '../ui/LuxeTypography';
+import ProcessStepper from '../ui/ProcessStepper';
 
 /**
  * EditorHeader - Professional studio header with title editing, device controls, and publishing actions.
@@ -10,52 +11,48 @@ const EditorHeader = ({
   device, 
   setDevice, 
   onPublish, 
-  isPublishing 
+  isPublishing,
+  activeStep = 0
 }) => {
   return (
-    <header className="h-16 px-8 flex items-center justify-between z-[100] bg-white border-b border-slate-200 shadow-sm">
-      <div className="flex items-center gap-8">
+    <header className="h-24 px-8 flex items-center justify-between z-[100] bg-white border-b border-slate-100 shadow-sm">
+      <div className="flex items-center gap-8 w-1/4">
          <button onClick={onBack} className="flex items-center gap-4 group">
-            <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-xl group-hover:rotate-12 transition-all">
-               <span className="material-symbols-outlined">auto_awesome</span>
+            <div className="w-12 h-12 rounded-2xl bg-stone-900 flex items-center justify-center text-white shadow-xl group-hover:rotate-12 transition-all">
+               <span className="material-symbols-outlined text-2xl">auto_awesome</span>
             </div>
-            <div>
-               <LuxeTypography variant="h4" className="text-slate-900 leading-none">LuxeInvite Studio</LuxeTypography>
-               <LuxeTypography variant="caption" className="text-slate-400">Studio Workspace</LuxeTypography>
+            <div className="text-left">
+               <LuxeTypography variant="h4" className="text-stone-900 leading-none text-sm">LuxeInvite Studio</LuxeTypography>
+               <LuxeTypography variant="caption" className="text-stone-400 text-[8px]">Studio Workspace</LuxeTypography>
             </div>
          </button>
+      </div>
 
-         <div className="h-8 w-px bg-slate-100 mx-2" />
-              
-         <div className="flex items-center gap-3">
-            <input 
-              className="bg-transparent border-none font-bold text-xs outline-none w-64 text-slate-600 hover:bg-slate-50 px-3 py-2 rounded-lg transition-all focus:bg-slate-50" 
-              value={title || ''} 
-              onChange={e => onTitleChange(e.target.value)}
-              placeholder="Untitled Design"
-            />
+      <div className="flex-1 max-w-xl">
+         <ProcessStepper currentStep={activeStep} />
+      </div>
+
+      <div className="flex items-center justify-end gap-6 w-1/4">
+         <div className="flex items-center gap-2 bg-stone-50 p-1.5 rounded-2xl">
+            {['mobile', 'desktop'].map(type => (
+              <button 
+                key={type}
+                onClick={() => setDevice(type)}
+                className={`w-10 h-8 rounded-xl flex items-center justify-center transition-all ${device === type ? 'bg-white shadow-md text-stone-900' : 'text-stone-300 hover:text-stone-500'}`}
+              >
+                 <span className="material-symbols-outlined text-lg">{type === 'mobile' ? 'smartphone' : 'desktop_windows'}</span>
+              </button>
+            ))}
          </div>
-      </div>
 
-      <div className="flex items-center gap-3 bg-slate-100 p-1.5 rounded-2xl">
-         {['mobile', 'tablet', 'desktop'].map(type => (
-           <button 
-             key={type}
-             onClick={() => setDevice(type)}
-             className={`w-12 h-10 rounded-xl flex items-center justify-center transition-all ${device === type ? 'bg-white shadow-md text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}
-           >
-              <span className="material-symbols-outlined text-xl">{type === 'mobile' ? 'smartphone' : type === 'tablet' ? 'tablet' : 'desktop_windows'}</span>
-           </button>
-         ))}
+         <button 
+           onClick={onPublish}
+           disabled={isPublishing}
+           className="px-8 py-4 bg-stone-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-[#C5A059] transition-all shadow-2xl disabled:opacity-50"
+         >
+           {isPublishing ? 'Transmitting...' : 'Release Design'}
+         </button>
       </div>
-
-      <button 
-        onClick={onPublish}
-        disabled={isPublishing}
-        className="px-8 py-3 bg-indigo-600 text-white rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 disabled:opacity-50"
-      >
-        {isPublishing ? 'Transmitting...' : 'Release Design'}
-      </button>
     </header>
   );
 };

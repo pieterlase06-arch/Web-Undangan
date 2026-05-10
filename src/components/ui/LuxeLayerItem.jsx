@@ -11,6 +11,8 @@ const LuxeLayerItem = ({
   isVisible = true, 
   onSelect, 
   onToggleVisibility,
+  onMoveUp,
+  onMoveDown,
   onMouseEnter,
   onMouseLeave,
   className = ''
@@ -38,6 +40,15 @@ const LuxeLayerItem = ({
       </div>
       
       <div className="flex items-center gap-2">
+        <div className="flex flex-col gap-0.5 mr-2 opacity-0 group-hover:opacity-100 transition-opacity">
+           <button onClick={(e) => { e.stopPropagation(); onMoveUp(); }} className="p-0.5 hover:text-indigo-600 text-slate-300">
+              <span className="material-symbols-outlined text-[14px]">expand_less</span>
+           </button>
+           <button onClick={(e) => { e.stopPropagation(); onMoveDown(); }} className="p-0.5 hover:text-indigo-600 text-slate-300">
+              <span className="material-symbols-outlined text-[14px]">expand_more</span>
+           </button>
+        </div>
+
         <button 
           onClick={(e) => { e.stopPropagation(); onToggleVisibility(); }}
           className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${isVisible ? 'text-slate-300 hover:text-indigo-600' : 'text-red-400 bg-red-50'}`}

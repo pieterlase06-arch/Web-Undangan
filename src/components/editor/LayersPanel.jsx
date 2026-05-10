@@ -9,7 +9,8 @@ const LayersPanel = ({
   updateData, 
   selectedElement, 
   setSelectedElement, 
-  setHoveredElement 
+  setHoveredElement,
+  onMove
 }) => {
   const sections = data?.sectionOrder || ['hero', 'couple', 'event', 'countdown', 'rsvp', 'guestbook'];
 
@@ -27,6 +28,8 @@ const LayersPanel = ({
             onMouseEnter={() => setHoveredElement({ type: 'section', id })}
             onMouseLeave={() => setHoveredElement(null)}
             onSelect={() => setSelectedElement({ type: 'section', id })}
+            onMoveUp={() => onMove(id, 'up')}
+            onMoveDown={() => onMove(id, 'down')}
             onToggleVisibility={() => {
               const currentVisibility = data?.sectionVisibility || {};
               updateData({ 

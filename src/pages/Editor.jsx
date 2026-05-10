@@ -74,6 +74,7 @@ const Editor = ({ data, updateData }) => {
         setDevice={setDevice}
         onPublish={() => { setIsPublishing(true); setTimeout(() => { setIsPublishing(false); alert('Design exported to your library!'); }, 2000); }}
         isPublishing={isPublishing}
+        activeStep={activePanel === 'content' ? 1 : activePanel === 'add' ? 0 : activePanel === 'media' ? 0 : 3}
       />
 
       <div className="flex-1 flex overflow-hidden relative">
@@ -145,6 +146,7 @@ const Editor = ({ data, updateData }) => {
                   selectedElement={selectedElement}
                   setSelectedElement={setSelectedElement}
                   setHoveredElement={setHoveredElement}
+                  onMove={moveSection}
                 />
               )}
 
