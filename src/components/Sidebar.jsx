@@ -32,10 +32,10 @@ const Sidebar = ({ currentView, setView, lang = 'id', setLang, theme, setTheme, 
       </AnimatePresence>
 
       <nav className={`
-        fixed inset-y-0 left-0 z-[500] w-64 transform transition-all duration-500 ease-in-out
+        fixed inset-y-0 left-0 z-[500] w-72 transform transition-all duration-700 ease-[0.16,1,0.3,1]
         ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-        flex flex-col p-6 border-r shadow-2xl lg:shadow-none
-        ${theme === 'dark' ? 'bg-[#0F172A] border-slate-800' : 'bg-white border-stone-100'}
+        flex flex-col p-8 border-r shadow-2xl lg:shadow-none
+        ${theme === 'dark' ? 'glass-dark border-slate-800' : 'glass border-stone-100'}
       `}>
         <div className="flex items-center justify-between mb-12">
           <div>
@@ -54,9 +54,9 @@ const Sidebar = ({ currentView, setView, lang = 'id', setLang, theme, setTheme, 
               <button
                 key={item.id}
                 onClick={() => handleNav(item.id)}
-                className={`flex items-center gap-4 p-4 rounded-2xl transition-all group ${
+                className={`flex items-center gap-5 p-5 rounded-[24px] transition-all group ${
                   isActive
-                    ? 'bg-stone-950 text-white shadow-xl translate-x-1'
+                    ? 'bg-stone-950 text-white shadow-2xl translate-x-2'
                     : 'text-stone-400 hover:bg-stone-50 hover:text-stone-950'
                 }`}
               >

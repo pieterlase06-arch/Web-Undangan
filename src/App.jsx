@@ -12,6 +12,7 @@ import SnapPhotoInvitation from './components/SnapPhotoInvitation';
 import FloralInvitation from './components/FloralInvitation';
 import VogueInvitation from './components/VogueInvitation';
 import ElegantMulyoTemplate from './components/ElegantMulyoTemplate';
+import LuxeLogin from './components/LuxeLogin';
 import config from './config';
 
 const INITIAL_TEMPLATE_DATA = {
@@ -135,20 +136,14 @@ function AppContent() {
 
   if (!isLoggedIn && !isView) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-stone-100 p-6">
-        <div className="w-full max-w-md bg-white rounded-[40px] p-12 shadow-2xl space-y-10">
-           <div className="text-center space-y-3">
-              <h1 className="serif text-5xl font-black text-stone-900 tracking-tighter">Luxe<span className="text-[#C5A059]">Invite</span></h1>
-              <p className="text-stone-400 text-[10px] font-black uppercase tracking-widest">Premium Designer Login</p>
-           </div>
-           <form onSubmit={login} className="space-y-6">
-              <input className="w-full bg-stone-50 rounded-2xl p-4 outline-none border border-stone-100 focus:border-stone-900" value={username} onChange={e => setUsername(e.target.value)} placeholder="Username" />
-              <input type="password" className="w-full bg-stone-50 rounded-2xl p-4 outline-none border border-stone-100 focus:border-stone-900" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" />
-              {loginError && <p className="text-red-500 text-[10px] font-bold text-center">{loginError}</p>}
-              <button className="w-full py-5 bg-stone-950 text-white rounded-3xl font-black uppercase tracking-[0.3em] text-[10px]">Sign In</button>
-           </form>
-        </div>
-      </div>
+      <LuxeLogin 
+        username={username}
+        setUsername={setUsername}
+        password={password}
+        setPassword={setPassword}
+        login={login}
+        error={loginError}
+      />
     );
   }
 

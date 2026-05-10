@@ -13,6 +13,7 @@
   --surface: #fcf9f6;
   --surface-container: #ffffff;
   --text-main: #1c1c1a;
+  --text-main: #1C1917;
   --text-muted: #6b7280;
   --border-color: #e5e7eb;
 }
@@ -26,25 +27,25 @@
 }
 
 body {
-  font-family: 'Manrope', sans-serif;
-  color: var(--text-main);
-  background-color: var(--surface);
-  transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.5s ease;
-  overflow-x: hidden;
+  margin: 0;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #FCF9F6;
+  color: #1C1917;
+  overflow-x: hidden;
+  font-family: 'Inter', sans-serif;
 }
+
+.serif { font-family: 'Playfair Display', serif; }
+.cinzel { font-family: 'Cinzel', serif; }
 
 .mesh-bg {
   background-color: #fcf9f6;
   background-image: 
-    radial-gradient(at 0% 0%, hsla(38, 50%, 85%, 1) 0, transparent 50%), 
-    radial-gradient(at 50% 0%, hsla(217, 33%, 92%, 1) 0, transparent 50%), 
-    radial-gradient(at 100% 0%, hsla(0, 0%, 95%, 1) 0, transparent 50%), 
-    radial-gradient(at 0% 50%, hsla(38, 50%, 90%, 1) 0, transparent 50%), 
-    radial-gradient(at 100% 50%, hsla(217, 33%, 95%, 1) 0, transparent 50%), 
-    radial-gradient(at 0% 100%, hsla(0, 0%, 98%, 1) 0, transparent 50%), 
-    radial-gradient(at 50% 100%, hsla(38, 50%, 95%, 1) 0, transparent 50%), 
-    radial-gradient(at 100% 100%, hsla(217, 33%, 98%, 1) 0, transparent 50%);
+    radial-gradient(at 0% 0%, hsla(38,100%,95%,1) 0, transparent 50%), 
+    radial-gradient(at 50% 0%, hsla(28,100%,97%,1) 0, transparent 50%), 
+    radial-gradient(at 100% 0%, hsla(22,100%,96%,1) 0, transparent 50%);
+  background-attachment: fixed;
 }
 
 [data-theme='dark'] .mesh-bg {
